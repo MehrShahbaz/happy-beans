@@ -1,0 +1,24 @@
+version: 0.2
+
+phases:
+  install:
+    runtime-versions:
+      java: corretto21
+  pre_build:
+    commands:
+      - echo ">>> Cleaning project..."
+      - ./gradlew clean
+  build:
+    commands:
+      - echo ">>> Building jar..."
+      - ./gradlew bootJar --no-daemon
+  post_build:
+    commands:
+      - echo ">>> Build completed. Packaging for deployment..."
+
+artifacts:
+  files:
+    - build/libs/*.jar
+    - appspec.yml
+    - scripts/**/*
+  discard-paths: no
