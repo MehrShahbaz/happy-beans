@@ -151,6 +151,8 @@ git switch -c feature/new-feature-name
 2. Update `Feature Branch` with latest `Name Branch` changes
 3. merge `Feature Branch` back to `Name Branch`
 4. Push updated `Name Branch`
+5. Create a pull request (on github)
+6. Merge it to `develop`, once the pull request is approved
 ```bash
 # 1. Commit and push changes to `Feature Branch`
 git add .
@@ -167,6 +169,12 @@ git merge feature/new-feature-name
 
 # 4. Push updated Name Branch
 git push origin mariyakulikova
+
+# 5. Create a pull request (on github)
+# 6. Merge it to `develop`, once the pull request is approved
+git switch develop
+git merge mariyakulikova
+
 
 # 5. Clean up: Delete feature branch (optional)
 git branch -d feature/new-feature-name
