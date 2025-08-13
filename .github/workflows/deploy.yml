@@ -1,0 +1,34 @@
+name: Build and Deploy Spring Boot App
+
+on:
+  push:
+    branches:
+      - step2  # Only trigger on pushes to the step2 branch
+
+jobs:
+  build-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Checkout code
+      - name: Checkout repository
+        uses: actions/checkout@v4
+
+      # Set up JDK 21
+      - name: Set up Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 21
+
+      # Cache Gradle wrapper distributions
+      - name: Cache Gradle Wrapper
+        uses: actions/cache@v3
+        with:
+          path: ~/.gradle/wrapper/dists
+          key: gradle-wrapper-${{ hashFiles('gradle/wrapper/gradle-wrapper.properties') }}
+          restore-keys: gradle-wrapper-
+
+      # Build JAR using Gradle
+      - name: Build JAR
+        run: ./gradlew clean bootJar
