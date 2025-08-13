@@ -4,6 +4,7 @@ import com.fasterxml.jackson.databind.exc.MismatchedInputException
 import happybeans.dto.error.ErrorResponse
 import happybeans.utils.exception.EntityNotFoundException
 import happybeans.utils.exception.UnauthorisedUserException
+import happybeans.utils.exception.UserAlreadyExistsException
 import jakarta.servlet.http.HttpServletRequest
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
@@ -62,6 +63,14 @@ class GlobalExceptionHandler {
         request: HttpServletRequest,
     ): ResponseEntity<ErrorResponse> {
         return errorResponse(HttpStatus.BAD_REQUEST, ex.message ?: "BAD_REQUEST", request)
+    }
+
+    @ExceptionHandler(UserAlreadyExistsException::class)
+    fun handleUserAlreadyExistsException(
+        ex: UserAlreadyExistsException,
+        request: HttpServletRequest,
+    ): ResponseEntity<ErrorResponse> {
+        return errorResponse(HttpStatus.CONFLICT, ex.message ?: "Already exists", request)
     }
 
     private fun errorResponse(
