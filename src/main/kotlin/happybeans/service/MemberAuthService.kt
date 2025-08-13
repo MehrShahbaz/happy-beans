@@ -5,6 +5,7 @@ import happybeans.dto.user.UserCreateRequestDto
 import happybeans.dto.user.UserCreateResponse
 import happybeans.infrastructure.JwtProvider
 import happybeans.repository.UserRepository
+import happybeans.utils.exception.UserAlreadyExistsException
 import happybeans.utils.mapper.toEntity
 import org.springframework.stereotype.Service
 import java.net.URI
@@ -16,7 +17,7 @@ class MemberAuthService(
 ) {
     fun signUp(userCreateRequestDto: UserCreateRequestDto): UserCreateResponse {
         if (userRepository.existsByEmail(userCreateRequestDto.email)) {
-            throw RuntimeException("User email already exists")
+            throw UserAlreadyExistsException(userCreateRequestDto.email)
         }
         val member = userRepository.save(userCreateRequestDto.toEntity())
         val authTokenPayload = jwtProvider.createToken(AuthTokenPayload(member.email))
