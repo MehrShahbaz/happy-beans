@@ -1,23 +1,21 @@
 # Development Documentation
 
-``` 
+
 ## Table of Contents
-1. [File and Directory Structure](#code-conventions)
-2. [Branching Strategy](#branching-strategy)
-3. [Commit Message Format](#commit-message-format)
+1. [General Principles](#general-principles)
+2. [File and Directory Structure](#file-and-directory-structure)
+3. [Branching Strategy](#branching-strategy)
 4. [Code Review Guidelines](#code-review-guidelines)
-5. [Testing Standards](#testing-standards)
-6. [Documentation Standards](#documentation-standards)
-7. [Deployment Process](#deployment-process)
-8. [Development Workflow](#development-workflow)
-```
+5. [Development Workflow](#development-workflow)
+6. [Commit Message Format](#commit-message-format)
+7. [Documentation Standards](#documentation-standards)
 
-## Table of Contents
-1. [File and Directory Structure](#file-and-directory-structure)
-2. [Branching Strategy](#branching-strategy)
-3. [Code Review Guidelines](#code-review-guidelines)
-
-
+## General Principles
+- Write self-documenting code with clear, descriptive names
+- Follow the DRY (Don't Repeat Yourself) principle
+- Keep functions small and focused on a single responsibility
+- Use consistent indentation and formatting
+- Comment complex business logic and non-obvious implementations
 
 ## File and Directory Structure
 ```
@@ -64,45 +62,32 @@ project-root/
 - `develop`: Integration branch for features, staging environment
 
 ### Supporting Branches
-- Whenever we switch to our name branch, we need to merge with develop
-```kotlin
-//example: mariyakulikova
-
-//1. start from `develop` branch        
-git switch develop //If you are on another branch
-git pull
-
-//2. switch to `Name Branch`
-git switch mariyakulikova
-git merge develop
-
-//3. switch to `Feature Branch`
-git switch feature/*
-git merge mariyakulikova
-```
+- Whenever we switch to our name branch, we need to merge with `develop`
 - After each feature is completed, that branch should be merged with this `Name Branches`
+- 
 #### 2.`Name Branches`
 - Example: origin/apoorva-s-natesh, origin/codebrew42, origin/mariyakulikova, origin/mehrshahbaz
+- Explanation: 
     - Branch from: `develop`
     - Merge to: `devlop`
 
 #### 3.`Feature Branches`
 - feature/*: New features and enhancements
-- Naming: feature/ticket-number-short-description
-  - Example: feature/USER-123-user-authentication
+- Naming: `feature/gitusername-short-description`
+  - Example: `feature/codebrew42-user-authentication`
   - Branch from: `Name Branches`
   - Merge to: `Name Branches`
 
 #### 4.`Bugfix Branches`
-- Naming: bugfix/ticket-number-short-description
-  - Example: bugfix/BUG-456-login-validation-error
+- Naming: `bugfix/gitusername-short-description`
+  - Example: `bugfix/codewbrew42-login-validation-error`
   - Branch from: `develop`
   - Merge to: `develop`
 
 #### 5. `Realease Branches`
 - release/*: Prepare new production releases
-  - Naming: release/version-number
-  - Example: release/1.2.0
+  - Naming: `release/version-number`
+  - Example: `release/1.2.0`
   - Branch from: `develop`
   - Merge to: `main` and `develop`
 
@@ -133,6 +118,138 @@ git merge mariyakulikova
 5. Delete feature branch after successful merge
 
 ## Development Workflow
-1. Pull latest changes from `develop`
-2. Create feature branch from `Name Branch`
 
+### Daily Workflow
+#### Coding Workflow
+1. Start from Name Branch (your personal branch)
+2. Pull latest changes from develop into Name Branch 
+3. Create Feature Branch from updated Name Branch 
+4. Work on your feature
+
+```bash
+# Example: mariyakulikova
+
+# 1. Switch to your Name Branch
+git switch mariyakulikova
+
+# 2. Pull latest changes from develop
+git pull origin develop
+# OR merge develop (but pull is cleaner)
+git merge origin/develop
+
+# 3. Create Feature Branch from Name Branch
+git switch -c feature/new-feature-name
+# This creates and switches to the new branch in one command
+
+# Start coding on your feature branch
+```
+
+### How to Integrate Changes
+
+#### Review Workflow
+1. Commit and push changes to `Feature Branch`
+2. Update `Feature Branch` with latest `Name Branch` changes
+3. merge `Feature Branch` back to `Name Branch`
+4. Push updated `Name Branch`
+```bash
+# 1. Commit and push changes to `Feature Branch`
+git add .
+git commit -m "Add new feature: description"
+git push -u origin feature/new-feature-name  # First push sets upstream
+# OR just: git push  # After upstream is set
+
+#2. Update `Feature Branch` with latest `Name Branch` changes
+git pull origin mariyakulikova
+
+# 3. Switch to `Name Branch` and merge `Feature Branch`
+git switch mariyakulikova
+git merge feature/new-feature-name
+
+# 4. Push updated Name Branch
+git push origin mariyakulikova
+
+# 5. Clean up: Delete feature branch (optional)
+git branch -d feature/new-feature-name
+git push origin --delete feature/new-feature-name
+```
+
+### Communication
+- Use project management tools for task tracking
+- Daily standups for progress updates
+- Document decisions in team wiki
+- Notify team of breaking changes or major updates
+
+## Commit Message Format
+
+### Structure
+```
+<type>(<scope>): <subject>
+
+<body>
+
+<footer>
+```
+
+
+### <Type> list
+- feat        : Feature (a new feature)
+- fix         : Bug (bug fix)
+- refactor    : Refactor
+- design      : Changes to CSS or user UI design
+- comment     : Add or modify necessary comments
+- style       : Style (code formatting, adding semicolons: no change in business logic)
+- docs        : Documentation changes (add, modify, delete docs, README)
+- test        : Add, modify, delete test code
+- chore       : Other changes (e.g., modifying build scripts)
+- init        : Initial creation
+- rename      : Rename
+- remove      : Delete
+
+### Title-Body-Footer
+- Title: first letter capitalized, imperative mood, no period
+- Body (optional)
+    - focusing on what and why
+    - If it's a batch commit affecting many files, add `Body`
+- Footer (optional)
+    - example: Fixes: #47, Related to: #32
+
+### Examples
+```
+feat(auth): add user registration endpoint
+
+Implement user registration with email validation and password hashing.
+Includes input validation and error handling.
+
+Closes #123
+```
+
+### Review Process
+1. Author creates pull request with clear description
+2. At least 2 team members review the code
+3. Address all feedback before approval
+4. Squash commits when merging to maintain clean history
+5. Delete feature branch after successful merge
+
+## Documentation Standards
+
+### Code Documentation
+- Document all public APIs
+- Include parameter types and return values
+- Provide usage examples for complex functions
+- Keep comments up to date with code changes
+
+### README Requirements
+Project should include:
+- Project description and purpose
+- Installation instructions
+- Usage examples
+- API documentation
+- Contributing guidelines
+
+### API Documentation
+- Use Swagger for REST APIs
+- Include request/response examples
+- Document error codes and messages
+- Keep documentation in sync with implementation
+
+*This document is a living resource and should be updated as our practices evolve. All team members are responsible for keeping it current and following these guidelines.*
