@@ -1,5 +1,3 @@
 package happybeans.infrastructure
 
-class JwtProviderTest {
-
-}
+class JwtProviderTest

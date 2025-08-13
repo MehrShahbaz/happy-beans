@@ -1,6 +1,3 @@
 package happybeans.config.interceptor
 
-
-class RestaurantOwnerInterceptorTest {
-
-}
+class RestaurantOwnerInterceptorTest

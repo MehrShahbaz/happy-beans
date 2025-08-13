@@ -1,6 +1,3 @@
 package happybeans.config.interceptor
 
-
-class MemberInterceptorTest {
-
-}
+class MemberInterceptorTest
