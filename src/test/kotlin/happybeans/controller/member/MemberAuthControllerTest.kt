@@ -18,7 +18,7 @@ class MemberAuthControllerTest : BaseApiTest() {
                 "temp@temp.com",
                 "test-456",
                 "First",
-                "Last"
+                "Last",
             )
         val response =
             RestAssured

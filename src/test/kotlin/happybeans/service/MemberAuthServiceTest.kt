@@ -17,14 +17,16 @@ class MemberAuthServiceTest {
 
     @Autowired
     private lateinit var userRepository: UserRepository
+
     @Test
     fun `throws error if already exists signUp`() {
-        val userDTO = UserCreateRequestDto(
-            "temp@temp.com",
-            "test-456",
-            "First",
-            "Last"
-        )
+        val userDTO =
+            UserCreateRequestDto(
+                "temp@temp.com",
+                "test-456",
+                "First",
+                "Last",
+            )
         val member =
             User(
                 userDTO.email,
@@ -38,12 +40,13 @@ class MemberAuthServiceTest {
 
     @Test
     fun signUp() {
-        val userDTO = UserCreateRequestDto(
-            "temp-2@temp.com",
-            "test-456",
-            "First",
-            "Last"
-        )
+        val userDTO =
+            UserCreateRequestDto(
+                "temp-2@temp.com",
+                "test-456",
+                "First",
+                "Last",
+            )
         val result = memberAuthService.signUp(userDTO)
         assertThat(result.token).isNotEmpty
         assertThat(result.uri).isNotNull
