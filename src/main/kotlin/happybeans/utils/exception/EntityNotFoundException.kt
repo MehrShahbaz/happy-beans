@@ -1,3 +1,3 @@
 package happybeans.utils.exception
 
-class EntityNotFoundException(message: String? = null) : RuntimeException(message)
+class EntityNotFoundException(message: String = "Entity not found") : RuntimeException(message)
