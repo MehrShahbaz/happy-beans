@@ -5,6 +5,7 @@ import happybeans.dto.auth.LoginRequestDto
 import happybeans.enums.UserRole
 import happybeans.infrastructure.JwtProvider
 import happybeans.repository.UserRepository
+import happybeans.utils.exception.UnauthorisedUserException
 import happybeans.utils.exception.UserCredentialException
 import org.springframework.stereotype.Service
 
@@ -24,7 +25,7 @@ class LoginService(
             ).orElseThrow { UserCredentialException() }
 
         if (user.role != expectedRole) {
-            throw UserCredentialException("Incorrect role for this endpoint")
+            throw UnauthorisedUserException("Incorrect role for this endpoint")
         }
 
         val token =
