@@ -28,7 +28,7 @@ allOpen {
 }
 
 dependencies {
-    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.6.0")
+    implementation("org.springdoc:springdoc-openapi-starter-webmvc-ui:2.8.6")
     implementation("org.springframework.boot:spring-boot-starter-web")
     implementation("com.fasterxml.jackson.module:jackson-module-kotlin")
     implementation("nz.net.ultraq.thymeleaf:thymeleaf-layout-dialect:3.2.0")
