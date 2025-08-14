@@ -35,7 +35,7 @@ class Order(
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
     var status: OrderStatus = OrderStatus.PENDING,
-    @Column("creation_source", nullable = false)
+    @Column(name = "creation_source", nullable = false)
     @Enumerated(EnumType.STRING)
     var creationSource: CreationSource = CreationSource.USER,
     @CreationTimestamp
