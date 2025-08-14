@@ -1,6 +1,20 @@
 ## Description
 Brief description of changes made.
 
+## PR Title Guidelines
+**Format:** `<type>: <concise description>`
+
+**Available Types:**
+- `feature` - New functionality or enhancements
+- `bugfix` - Bug fixes and corrections
+- `hotfix` - Critical fixes for production issues
+- `docs` - Documentation updates
+- `refactor` - Code restructuring without behavior changes
+- `test` - Test additions or modifications
+
+**Example:**
+`feature: Add user authentication with JWT`
+
 ## Type of Change
 - [ ] Bug fix (non-breaking change which fixes an issue)
 - [ ] New feature (non-breaking change which adds functionality)
