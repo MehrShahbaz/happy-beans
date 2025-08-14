@@ -1,0 +1,29 @@
+package happybeans.config.interceptor
+
+import happybeans.enums.UserRole
+import happybeans.infrastructure.JwtProvider
+import happybeans.model.User
+import happybeans.repository.UserRepository
+import happybeans.utils.exception.UnauthorisedUserException
+import jakarta.servlet.http.HttpServletRequest
+import jakarta.servlet.http.HttpServletResponse
+import org.springframework.stereotype.Component
+
+@Component
+class AdminInterceptor(
+    userRepository: UserRepository,
+    jwtProvider: JwtProvider,
+) : BaseAuthInterceptor(jwtProvider, userRepository) {
+    override fun handleAuthenticatedRequest(
+        request: HttpServletRequest,
+        response: HttpServletResponse,
+        handler: Any,
+        user: User,
+    ): Boolean {
+        if (user.role != UserRole.ADMIN) {
+            throw UnauthorisedUserException("User role not admin")
+        }
+
+        return true
+    }
+}
