@@ -1,0 +1,3 @@
+package happybeans.config.argumentResolver
+
+class LoginMemberArgumentResolverTest
