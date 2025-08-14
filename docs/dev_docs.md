@@ -33,7 +33,6 @@ project-root/
 ├── enums/
 │   └── .../
 ├── infrastructure/
-│   ├── ApplicationLogger.kt
 │   ├── JwtProvider.kt
 │   └── StripeClient.kt/
 ├── model/
