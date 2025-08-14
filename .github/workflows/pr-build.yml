@@ -27,4 +27,4 @@ jobs:
           restore-keys: gradle-wrapper-
 
       - name: Build with Gradle
-        run: ./gradlew clean build --build-cache -Dspring.profiles.active=test
+        run: ./gradlew clean build
