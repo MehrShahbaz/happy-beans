@@ -1,6 +1,7 @@
 package happybeans.service
 
 import happybeans.dto.auth.AuthTokenPayload
+import happybeans.dto.auth.LoginRequestDto
 import happybeans.dto.user.UserCreateRequestDto
 import happybeans.dto.user.UserCreateResponse
 import happybeans.infrastructure.JwtProvider
@@ -14,6 +15,7 @@ import java.net.URI
 class MemberAuthService(
     val userRepository: UserRepository,
     val jwtProvider: JwtProvider,
+    val loginService: LoginService,
 ) {
     fun signUp(userCreateRequestDto: UserCreateRequestDto): UserCreateResponse {
         if (userRepository.existsByEmail(userCreateRequestDto.email)) {
@@ -22,5 +24,9 @@ class MemberAuthService(
         val member = userRepository.save(userCreateRequestDto.toEntity())
         val authTokenPayload = jwtProvider.createToken(AuthTokenPayload(member.email))
         return UserCreateResponse(URI.create("/api/member/$member.id"), "Bearer $authTokenPayload")
+    }
+
+    fun login(loginRequestDto: LoginRequestDto): String {
+        return loginService.login(loginRequestDto)
     }
 }
