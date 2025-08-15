@@ -12,7 +12,6 @@ import org.springframework.web.bind.annotation.PathVariable
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
-import java.net.URI
 
 @RestController
 @RequestMapping("/api/member/orders")
@@ -48,7 +47,7 @@ class MemberOrderController(
         @PathVariable orderId: Long,
     ): ResponseEntity<MessageResponse> {
         val response = orderService.createCheckoutCartIntent(user)
-        return ResponseEntity.ok(MessageResponse("confirm-checkout/${orderId}"))
+        return ResponseEntity.ok(MessageResponse("confirm-checkout/$orderId"))
     }
 
     @PostMapping("/buy-product/{productId}")
@@ -57,6 +56,6 @@ class MemberOrderController(
         @PathVariable productId: Long,
     ): ResponseEntity<MessageResponse> {
         val response = orderService.buyProduct(user, productId)
-        return ResponseEntity.ok(MessageResponse("buy-product/${productId}"))
+        return ResponseEntity.ok(MessageResponse("buy-product/$productId"))
     }
 }
