@@ -32,7 +32,3 @@ jobs:
       # Build JAR using Gradle
       - name: Build JAR
         run: ./gradlew clean build
-
-      # Build Docker image
-      - name: Build Docker image
-        run: docker build -t happy-beans-image:1.0 .
