@@ -1,7 +1,9 @@
 package happybeans.service
 
+import happybeans.dto.order.OrderIntentResponse
 import happybeans.dto.order.OrderProductResponse
 import happybeans.dto.order.OrderResponse
+import happybeans.enums.OrderStatus
 import happybeans.model.Order
 import happybeans.model.OrderProduct
 import happybeans.model.User
@@ -26,17 +28,44 @@ class MemberOrderService(
         }.toOrderResponse()
     }
 
-    fun createCheckoutCartIntent(member: User) {}
+    fun createCheckoutCartIntent(member: User): OrderIntentResponse {
+        // TODO cart items
+        // TODO create payment Intent
+        val order = createCartOrder(member)
+        return OrderIntentResponse("paymentIntentId", order.id)
+    }
 
     fun confirmCheckout(
         member: User,
         orderId: Long,
-    ) {}
+    ) {
+        val order = findOrder(orderId)
+        // TODO Check cart products
+        try {
+            // TODO confirm payment
+            // TODO empty cart
+            order.changeStatus(OrderStatus.COMPLETED)
+        } catch (e: RuntimeException) {
+            order.changeStatus(OrderStatus.REJECTED)
+            throw IllegalArgumentException()
+        }
+    }
 
     fun buyProduct(
         member: User,
-        productId: Long,
-    ) {}
+        dishId: Long,
+    ) {
+    }
+
+    private fun createCartOrder(member: User): Order {
+        return Order(
+            listOf(),
+            member.id,
+            member.email,
+            "paymentId",
+            0.0,
+        )
+    }
 
     private fun Order.toOrderResponse(): OrderResponse {
         return OrderResponse(
@@ -45,7 +74,7 @@ class MemberOrderService(
             status,
             totalAmount,
             paymentId,
-            listOf(),
+            orderProducts.map { it.toResponse() },
         )
     }
 
@@ -55,5 +84,11 @@ class MemberOrderService(
             quantity,
             null,
         )
+    }
+
+    private fun findOrder(orderId: Long): Order {
+        return orderRepository.findById(orderId).orElseThrow {
+            throw EntityNotFoundException("Order with id $orderId not found")
+        }
     }
 }
