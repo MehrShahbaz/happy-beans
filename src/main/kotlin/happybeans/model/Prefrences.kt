@@ -1,4 +1,10 @@
 package happybeans.model
 
-class Prefrences {
-}
+import happybeans.enums.TempType
+import jakarta.persistence.OneToMany
+
+class Prefrences (
+    val user: User? = null,
+    @OneToMany
+    val tags: MutableList<Tag> = mutableListOf()
+)

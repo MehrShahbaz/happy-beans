@@ -34,9 +34,9 @@ class User(
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0L,
-    val restaurants: List<Tag>,
-    val dislikes: List<Tag>,
-    val preferences: List<Tag>,
+//    val restaurants: List<Tag>,
+//    val dislikes: List<Tag>,
+//    val preferences: List<Tag>,
 ) {
     fun fullName(): String = "$firstName $lastName"
 }

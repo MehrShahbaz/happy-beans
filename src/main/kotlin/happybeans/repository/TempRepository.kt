@@ -1,4 +1,8 @@
 package happybeans.repository
 
-class TempRepository {
+import happybeans.model.Temp
+import org.springframework.data.jpa.repository.JpaRepository
+
+interface TempRepository: JpaRepository<Temp, Long> {
+    fun findByUserIdAndType()
 }
