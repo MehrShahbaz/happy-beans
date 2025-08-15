@@ -23,7 +23,7 @@ import java.time.LocalDateTime
 class Order(
     @OneToMany(cascade = [(CascadeType.ALL)], fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "orders_id", nullable = false)
-    val optionProducts: List<OrderProduct> = listOf(),
+    val orderProducts: List<OrderProduct> = listOf(),
     @Column(name = "user_id", nullable = false)
     var userId: Long,
     @Column(name = "user_email", nullable = false)
