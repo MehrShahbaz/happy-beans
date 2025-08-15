@@ -50,12 +50,12 @@ class MemberOrderController(
         return ResponseEntity.ok(MessageResponse("confirm-checkout/$orderId"))
     }
 
-    @PostMapping("/buy-product/{productId}")
+    @PostMapping("/buy-dish/{dishId}")
     fun buyProduct(
         @LoginMember user: User,
-        @PathVariable productId: Long,
+        @PathVariable dishId: Long,
     ): ResponseEntity<MessageResponse> {
-        val response = orderService.buyProduct(user, productId)
-        return ResponseEntity.ok(MessageResponse("buy-product/$productId"))
+        val response = orderService.buyProduct(user, dishId)
+        return ResponseEntity.ok(MessageResponse("buy-product/$dishId"))
     }
 }
