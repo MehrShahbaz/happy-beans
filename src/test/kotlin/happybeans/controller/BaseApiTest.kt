@@ -9,6 +9,6 @@ abstract class BaseApiTest {
     @BeforeAll
     fun setup() {
         RestAssured.baseURI = "http://localhost"
-        RestAssured.port = 80
+        RestAssured.port = 8080
     }
 }
