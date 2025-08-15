@@ -2,7 +2,6 @@ package happybeans.model
 
 import happybeans.enums.TagContainerType
 import jakarta.persistence.CascadeType
-import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.EnumType
 import jakarta.persistence.Enumerated
