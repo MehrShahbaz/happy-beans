@@ -28,10 +28,9 @@ class TagContainer(
     @OneToOne(cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     var user: User? = null,
-    // TODO: Convert to Dish
     @OneToOne(cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
     @JoinColumn(name = "dish_id")
-    var dish: User? = null,
+    var dish: Dish? = null,
     @CreationTimestamp
     var createdAt: LocalDateTime? = null,
     @UpdateTimestamp
