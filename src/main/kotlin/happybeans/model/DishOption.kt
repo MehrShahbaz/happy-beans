@@ -26,6 +26,8 @@ class DishOption(
     @OneToOne(cascade = [(CascadeType.ALL)], fetch = FetchType.LAZY)
     @JoinColumn(name = "tag_containers_id")
     val ingredients: TagContainer,
+
+    // TODO Prep time for dish to calculate restaurant avg
     @CreationTimestamp
     var createdAt: LocalDateTime? = null,
     @UpdateTimestamp
