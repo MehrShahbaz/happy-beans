@@ -62,15 +62,14 @@ class LoginServiceTest {
 
     @Test
     fun `throws if wrong password`() {
-        val user =
-            userRepository.save(
-                User(
-                    "user-login-1@test.com",
-                    "12345678",
-                    "Test",
-                    "User",
-                ),
-            )
+        userRepository.save(
+            User(
+                "user-login-1@test.com",
+                "12345678",
+                "Test",
+                "User",
+            ),
+        )
         assertThrows<UserCredentialException> {
             loginService.login(
                 LoginRequestDto(
@@ -83,16 +82,15 @@ class LoginServiceTest {
 
     @Test
     fun `throws if wrong role`() {
-        val user =
-            userRepository.save(
-                User(
-                    "user-login-2@test.com",
-                    "12345678",
-                    "Test",
-                    "User",
-                    role = UserRole.ADMIN,
-                ),
-            )
+        userRepository.save(
+            User(
+                "user-login-2@test.com",
+                "12345678",
+                "Test",
+                "User",
+                role = UserRole.ADMIN,
+            ),
+        )
         assertThrows<UnauthorisedUserException> {
             loginService.login(
                 LoginRequestDto(

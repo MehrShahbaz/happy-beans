@@ -27,10 +27,7 @@ class MemberAuthService(
             throw UserAlreadyExistsException(userCreateRequestDto.email)
         }
 
-        // TODO create LIKES and DISLIKES
-
         val member = userRepository.save(userCreateRequestDto.toEntity())
-        createLikesAndDislikes(member)
         val authTokenPayload = jwtProvider.createToken(AuthTokenPayload(member.email))
         return UserCreateResponse(URI.create("/api/member/$member.id"), "Bearer $authTokenPayload")
     }
