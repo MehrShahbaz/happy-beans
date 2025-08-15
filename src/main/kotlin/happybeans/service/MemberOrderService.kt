@@ -55,6 +55,19 @@ class MemberOrderService(
         member: User,
         dishId: Long,
     ) {
+        // TODO find dish
+        val order = createProductOrder(member)
+        // TODO Buy Product via stripe
+    }
+
+    private fun createProductOrder(member: User): Order {
+        return Order(
+            listOf(), // TODO add product here
+            member.id,
+            member.email,
+            "paymentId",
+            0.0,
+        )
     }
 
     private fun createCartOrder(member: User): Order {
@@ -65,6 +78,12 @@ class MemberOrderService(
             "paymentId",
             0.0,
         )
+    }
+
+    private fun findOrder(orderId: Long): Order {
+        return orderRepository.findById(orderId).orElseThrow {
+            throw EntityNotFoundException("Order with id $orderId not found")
+        }
     }
 
     private fun Order.toOrderResponse(): OrderResponse {
@@ -84,11 +103,5 @@ class MemberOrderService(
             quantity,
             null,
         )
-    }
-
-    private fun findOrder(orderId: Long): Order {
-        return orderRepository.findById(orderId).orElseThrow {
-            throw EntityNotFoundException("Order with id $orderId not found")
-        }
     }
 }
