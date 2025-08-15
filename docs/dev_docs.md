@@ -37,13 +37,13 @@ project-root/
 │   ├── JwtProvider.kt
 │   └── StripeClient.kt
 ├── model/
-│   ├── CartItem.kt
 │   ├── Dish.kt
+│   ├── DishOption.kt
 │   ├── Ingredients.kt
-│   ├── Order.kt
-│   ├── OrderProduct.kt
 │   ├── Resetaurant.kt
 │   ├── Review.kt
+│   ├── Tag.kt
+│   ├── TagContainer.kt
 │   └── User.kt
 ├── repository/
 │   └── .../
