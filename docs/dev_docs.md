@@ -1,11 +1,11 @@
 # Development Documentation
-*Updated at 13 Aug 2025* 
+*Updated at 15 Aug 2025* 
 
 ## Table of Contents
 1. [General Principles](#general-principles)
 2. [File and Directory Structure](#file-and-directory-structure)
-3. [Naming Conventions](#naming-conventions)
-4. [Branching Strategy](#branching-strategy)
+3. [Branching Strategy](#branching-strategy)
+4. [Naming Conventions](#naming-conventions)
 5. [Code Review Guidelines](#code-review-guidelines)
 6. [Development Workflow](#development-workflow)
 7. [Commit Message Format](#commit-message-format)
@@ -13,11 +13,10 @@
 9. [Documentation Standards](#documentation-standards)
 
 ## General Principles
-- Write self-documenting code with clear, descriptive names
 - Follow the DRY (Don't Repeat Yourself) principle
 - Keep functions small and focused on a single responsibility
-- Use consistent indentation and formatting
-- Comment complex business logic and non-obvious implementations
+- Use consistent formatting
+- Comment TODOs, complex business logic and non-obvious implementations
 
 ## File and Directory Structure
 ```
@@ -38,7 +37,14 @@ project-root/
 │   ├── JwtProvider.kt
 │   └── StripeClient.kt
 ├── model/
-│   └── .../
+│   ├── CartItem.kt
+│   ├── Dish.kt
+│   ├── Ingredients.kt
+│   ├── Order.kt
+│   ├── OrderProduct.kt
+│   ├── Resetaurant.kt
+│   ├── Review.kt
+│   └── User.kt
 ├── repository/
 │   └── .../
 ├── service/
@@ -54,6 +60,45 @@ project-root/
 └── test/
     └── .../
 ```
+## Branching Strategy
+
+### 1. Main Branches
+- **`main`** – Production-ready code. Always deployable.  
+  Only updated when the code is ready for release.  
+  - **Branch from:** `develop`
+
+- **`develop`** – Integration branch for features; acts as the staging environment.  
+  - **Merge to:** `main`
+
+- **`docs`** – For updating all documentation.  
+  - **Merge to:** `develop`
+
+---
+
+### 2. Feature Branches
+- **Naming:** `feature/gitusername-short-description`  
+  - Example: `feature/codebrew42-user-authentication`
+- **Purpose:** For new features and enhancements.  
+- **Branch from:** `develop`  
+- **Merge to:** `develop`
+
+---
+
+### 3. Bugfix Branches
+- **Naming:** `bugfix/gitusername-short-description`  
+  - Example: `bugfix/codebrew42-login-validation-error`
+- **Purpose:** For fixing bugs in a specific feature branch.  
+- **Branch from:** corresponding **Feature Branch**  
+- **Merge to:** the same **Feature Branch**
+
+---
+
+### 4. Release Branches
+- **Naming:** `release/version-number`  
+  - Example: `release/1.2.0`
+- **Purpose:** For preparing new production releases.  
+- **Branch from:** `develop`  
+- **Merge to:** `main` and `develop`
 
 ## Naming Conventions
 
@@ -84,33 +129,6 @@ project-root/
 - Use snake_case for table and column names
 - Examples: `user_profiles`, `order_items`, `created_at`
 
-## Branching Strategy
-
-### 1. Main Branches
-- `main`: Production-ready code, always deployable, Never update it unless it's ready to be deployed
-- `develop`: Integration branch for features, staging environment
-- `docs` : branch for updating all the documentations
-
-### 2. Feature Branches
-- feature/*: New features and enhancements
-- Naming: `feature/gitusername-short-description`
-  - Example: `feature/codebrew42-user-authentication`
-  - Branch from: `Name Branches`
-  - Merge to: `Name Branches`
-
-### 3. Bugfix Branches
-- Naming: `bugfix/gitusername-short-description`
-  - Example: `bugfix/codebrew42-login-validation-error`
-  - Branch from: `develop`
-  - Merge to: `develop`
-
-### 4. Release Branches
-- release/*: Prepare new production releases
-  - Naming: `release/version-number`
-  - Example: `release/1.2.0`
-  - Branch from: `develop`
-  - Merge to: `main` and `develop`
-
 ## Code Review Guidelines
 ### Before Submitting
 - [ ] Code follows established conventions
@@ -128,13 +146,6 @@ project-root/
 - [ ] Tests cover new functionality
 - [ ] Documentation is accurate and complete
 - [ ] Code is DRY
-
-### Review Process
-1. Author creates pull request with clear description
-2. At least 2 team members review the code
-3. Address all feedback before approval
-4. Squash commits when merging to maintain clean history
-5. Delete feature branch after successful merge
 
 ## Development Workflow
 
@@ -179,15 +190,14 @@ git merge feature/new-feature-name
 # 3. Push updates to `develop`
 git push origin develop
 ```
-
-### Review Workflows
-1. Author creates pull request with clear description
-2. At least 2 team members review the code
-3. Address all feedback before approval
-4. (optional) Squash commits when merging to maintain clean history (only to `main` branch before deployment)
-    - Squash commits : combining commits into one commit
-    - To keep the main branch history clean and easy to navigate.
-5. Delete feature branch after fixing bugs
+  
+### Review Process
+1. Author creates **pull request** with clear description
+2. At least **2 team members review** the code
+3. Address all **feedback before approval**
+4. (optional) **Squash commits** when merging to maintain clean history
+    - To keep the main branch history clean before deployment
+5. **Delete feature branch** after successful merge
     - Delete that feature branch on `GitHub`, not locally
 
 ## Commit Message Format
