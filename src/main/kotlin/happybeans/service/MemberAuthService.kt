@@ -13,6 +13,7 @@ import happybeans.repository.UserRepository
 import happybeans.utils.exception.UserAlreadyExistsException
 import happybeans.utils.mapper.toEntity
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.net.URI
 
 @Service
@@ -22,15 +23,15 @@ class MemberAuthService(
     val loginService: LoginService,
     val tagContainerRepository: TagContainerRepository,
 ) {
+    @Transactional
     fun signUp(userCreateRequestDto: UserCreateRequestDto): UserCreateResponse {
         if (userRepository.existsByEmail(userCreateRequestDto.email)) {
             throw UserAlreadyExistsException(userCreateRequestDto.email)
         }
-
-        // TODO create LIKES and DISLIKES
-
         val member = userRepository.save(userCreateRequestDto.toEntity())
-        createLikesAndDislikes(member)
+        userRepository.flush()
+        val list = createLikesAndDislikes(member)
+        tagContainerRepository.saveAll(list)
         val authTokenPayload = jwtProvider.createToken(AuthTokenPayload(member.email))
         return UserCreateResponse(URI.create("/api/member/$member.id"), "Bearer $authTokenPayload")
     }
@@ -39,17 +40,15 @@ class MemberAuthService(
         return loginService.login(loginRequestDto)
     }
 
-    private fun createLikesAndDislikes(member: User) {
-        tagContainerRepository.saveAll(
-            listOf(
-                TagContainer(
-                    type = TagContainerType.LIKES,
-                    user = member,
-                ),
-                TagContainer(
-                    type = TagContainerType.DISLIKES,
-                    user = member,
-                ),
+    private fun createLikesAndDislikes(member: User): List<TagContainer> {
+        return listOf(
+            TagContainer(
+                type = TagContainerType.LIKES,
+                user = member,
+            ),
+            TagContainer(
+                type = TagContainerType.DISLIKES,
+                user = member,
             ),
         )
     }
