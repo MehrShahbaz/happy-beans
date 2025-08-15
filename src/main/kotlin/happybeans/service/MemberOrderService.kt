@@ -31,6 +31,7 @@ class MemberOrderService(
     fun createCheckoutCartIntent(member: User): OrderIntentResponse {
         // TODO cart items
         // TODO create payment Intent
+        // TODO Create Payment entity
         val order = createCartOrder(member)
         return OrderIntentResponse("paymentIntentId", order.id)
     }
@@ -46,6 +47,7 @@ class MemberOrderService(
             // TODO empty cart
             order.changeStatus(OrderStatus.COMPLETED)
         } catch (e: RuntimeException) {
+            // TODO Reject Payment
             order.changeStatus(OrderStatus.REJECTED)
             throw IllegalArgumentException()
         }
@@ -62,7 +64,8 @@ class MemberOrderService(
 
     private fun createProductOrder(member: User): Order {
         return Order(
-            listOf(), // TODO add product here
+            // TODO add product here
+            listOf(),
             member.id,
             member.email,
             "paymentId",
