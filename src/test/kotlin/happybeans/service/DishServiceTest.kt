@@ -1,6 +1,3 @@
 package happybeans.service
 
-
-class DishServiceTest {
-
-}
+class DishServiceTest

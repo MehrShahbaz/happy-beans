@@ -11,9 +11,9 @@ import java.time.LocalDateTime
 
 @Entity
 class Review(
-    @Column(name="user_id", nullable = false)
+    @Column(name = "user_id", nullable = false)
     var userId: Long,
-    @Column(name="user_name", nullable = false)
+    @Column(name = "user_name", nullable = false)
     var userName: Long,
     @Column(name = "rating", nullable = false)
     var rating: Double,

@@ -1,5 +1,3 @@
 package happybeans.model
 
-class ReviewTest {
-
-}
+class ReviewTest

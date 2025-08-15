@@ -27,7 +27,6 @@ class Restaurant(
     // TODO working days R&D
     var workingDays: List<String>,
     var prepTime: Int,
-
     @OneToMany(cascade = [(CascadeType.ALL)], fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "restaurants_id")
     val dishes: MutableList<Dish> = mutableListOf(),
