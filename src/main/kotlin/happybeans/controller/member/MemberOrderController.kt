@@ -2,14 +2,17 @@ package happybeans.controller.member
 
 import happybeans.dto.order.OrderListResponse
 import happybeans.dto.order.OrderResponse
+import happybeans.dto.response.MessageResponse
 import happybeans.model.User
 import happybeans.service.MemberOrderService
 import happybeans.utils.annotations.LoginMember
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import java.net.URI
 
 @RestController
 @RequestMapping("/api/member/orders")
@@ -29,5 +32,31 @@ class MemberOrderController(
         @PathVariable orderId: Long,
     ): ResponseEntity<OrderResponse> {
         return ResponseEntity.ok(orderService.getOrderById(orderId))
+    }
+
+    @PostMapping("/cart-checkout")
+    fun createCheckoutCartIntent(
+        @LoginMember user: User,
+    ): ResponseEntity<MessageResponse> {
+        val response = orderService.createCheckoutCartIntent(user)
+        return ResponseEntity.ok(MessageResponse("Cart Checkout"))
+    }
+
+    @PostMapping("/confirm-checkout/{orderId}")
+    fun confirmCheckout(
+        @LoginMember user: User,
+        @PathVariable orderId: Long,
+    ): ResponseEntity<MessageResponse> {
+        val response = orderService.createCheckoutCartIntent(user)
+        return ResponseEntity.ok(MessageResponse("confirm-checkout/${orderId}"))
+    }
+
+    @PostMapping("/buy-product/{productId}")
+    fun buyProduct(
+        @LoginMember user: User,
+        @PathVariable productId: Long,
+    ): ResponseEntity<MessageResponse> {
+        val response = orderService.buyProduct(user, productId)
+        return ResponseEntity.ok(MessageResponse("buy-product/${productId}"))
     }
 }
