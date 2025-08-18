@@ -26,18 +26,18 @@ class CartProductService(
     fun addToCart(
         user: User,
         request: CartProductRequest,
-    ) {
-        val dish = dishService.findById(request.dishId)
-        val dishOption = dishService.findByDishIdAndOptionId(request.dishId, request.dishOptionId)
-        cartProductRepository.save(
-            CartProduct(
-                user,
-                dish,
-                dishOption,
-            ).apply {
-                this.quantity = request.quantity
-            },
-        )
+    ) { // TODO uncomment the code out when dish service will be ready
+//        val dish = dishService.findById(request.dishId)
+//        val dishOption = dishService.findByDishIdAndOptionId(request.dishId, request.dishOptionId)
+//        cartProductRepository.save(
+//            CartProduct(
+//                user,
+//                dish,
+//                dishOption,
+//            ).apply {
+//                this.quantity = request.quantity
+//            }
+//        )
     }
 
     @Transactional
