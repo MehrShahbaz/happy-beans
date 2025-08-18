@@ -1,5 +1,5 @@
 # Development Documentation
-*Updated at 15 Aug 2025* 
+*Updated at 15 Aug 2025*
 
 ## Table of Contents
 1. [General Principles](#general-principles)
@@ -64,40 +64,41 @@ project-root/
 
 ### 1. Main Branches
 - **`main`** – Production-ready code. Always deployable.  
-  Only updated when the code is ready for release.  
-  - **Branch from:** `develop`
+  Only updated when the code is ready for release.
+    - **Branch from:** `develop`
 
-- **`develop`** – Integration branch for features; acts as the staging environment.  
-  - **Merge to:** `main`
+- **`develop`** – Integration branch for features; acts as the staging environment.
+    - **Merge to:** `main`
 
-- **`docs`** – For updating all documentation.  
-  - **Merge to:** `develop`
+- **`docs`** – For updating all documentation.
+    - **Merge to:** `develop`
 
 ---
 
 ### 2. Feature Branches
-- **Naming:** `feature/gitusername-short-description`  
-  - Example: `feature/codebrew42-user-authentication`
-- **Purpose:** For new features and enhancements.  
-- **Branch from:** `develop`  
+- **Naming:** `feature/gitusername-short-description`
+    - Example: `feature/codebrew42-user-authentication`
+- **Purpose:** For new features and enhancements.
+- **Branch from:** `develop`
 - **Merge to:** `develop`
 
+> Including member's GitHub username or `team` in the branch name helps indicate who is responsible for the feature.
 ---
 
 ### 3. Bugfix Branches
-- **Naming:** `bugfix/gitusername-short-description`  
-  - Example: `bugfix/codebrew42-login-validation-error`
-- **Purpose:** For fixing bugs in a specific feature branch.  
-- **Branch from:** corresponding **Feature Branch**  
-- **Merge to:** the same **Feature Branch**
+- **Naming:** `bugfix/gitusername-short-description`
+    - Example: `bugfix/codebrew42-login-validation-error`
+- **Purpose:** For fixing bugs in a specific feature branch.
+- **Branch from:** corresponding **Feature Branch** or **develop**
+- **Merge to:** the same **Feature Branch** or **develop**
 
 ---
 
 ### 4. Release Branches
-- **Naming:** `release/version-number`  
-  - Example: `release/1.2.0`
-- **Purpose:** For preparing new production releases.  
-- **Branch from:** `develop`  
+- **Naming:** `release/version-number`
+    - Example: `release/1.2.0`
+- **Purpose:** For preparing new production releases.
+- **Branch from:** `develop`
 - **Merge to:** `main` and `develop`
 
 ## Naming Conventions
@@ -190,7 +191,7 @@ git merge feature/new-feature-name
 # 3. Push updates to `develop`
 git push origin develop
 ```
-  
+
 ### Review Process
 1. Author creates **pull request** with clear description
 2. At least **2 team members review** the code
