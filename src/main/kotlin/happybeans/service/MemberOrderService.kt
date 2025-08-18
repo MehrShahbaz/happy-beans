@@ -4,6 +4,8 @@ import happybeans.dto.order.OrderIntentResponse
 import happybeans.dto.order.OrderProductResponse
 import happybeans.dto.order.OrderResponse
 import happybeans.enums.OrderStatus
+import happybeans.model.Dish
+import happybeans.model.DishOption
 import happybeans.model.Order
 import happybeans.model.OrderProduct
 import happybeans.model.User
@@ -55,17 +57,36 @@ class MemberOrderService(
 
     fun buyProduct(
         member: User,
+        dishId: Long,
         dishOptionId: Long,
     ) {
         // TODO find dish
-        val order = createProductOrder(member)
+        // TODO Create Order
         // TODO Buy Product via stripe
     }
 
-    private fun createProductOrder(member: User): Order {
+    private fun createOrderProduct(
+        dishOption: DishOption,
+        dish: Dish,
+        quantity: Int = 1,
+    ): OrderProduct {
+        return OrderProduct(
+            dishOption.id,
+            dishOption.name,
+            dish.id,
+            dishOption.price,
+            quantity,
+        )
+    }
+
+    private fun createProductOrder(
+        member: User,
+        dishOption: DishOption,
+        dish: Dish,
+    ): Order {
+        val orderProduct = listOf(createOrderProduct(dishOption, dish))
         return Order(
-            // TODO add product here
-            listOf(),
+            orderProduct,
             member.id,
             member.email,
             "paymentId",
@@ -74,6 +95,7 @@ class MemberOrderService(
     }
 
     private fun createCartOrder(member: User): Order {
+        // TODO list of OrderProducts from cart products
         return Order(
             listOf(),
             member.id,
