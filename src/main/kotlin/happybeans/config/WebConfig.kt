@@ -18,7 +18,7 @@ class WebConfig(
     private val adminInterceptor: AdminInterceptor,
     private val authInterceptor: MemberInterceptor,
     private val userRepository: UserRepository,
-    private val restaurantOwnerInterceptor: RestaurantOwnerInterceptor
+    private val restaurantOwnerInterceptor: RestaurantOwnerInterceptor,
 ) : WebMvcConfigurer {
     override fun addInterceptors(registry: InterceptorRegistry) {
         registry.addInterceptor(authInterceptor)
@@ -34,7 +34,7 @@ class WebConfig(
         val additionalResolvers =
             listOf(
                 LoginMemberArgumentResolver(userRepository),
-                RestaurantOwnerArgumentResolver(userRepository)
+                RestaurantOwnerArgumentResolver(userRepository),
             )
         resolvers.addAll(additionalResolvers)
         super.addArgumentResolvers(resolvers)
