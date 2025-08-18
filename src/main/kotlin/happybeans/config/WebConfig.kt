@@ -3,6 +3,7 @@ package happybeans.config
 import happybeans.config.argumentResolver.LoginMemberArgumentResolver
 import happybeans.config.interceptor.AdminInterceptor
 import happybeans.config.interceptor.MemberInterceptor
+import happybeans.config.interceptor.RestaurantOwnerInterceptor
 import happybeans.repository.UserRepository
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpHeaders
@@ -14,13 +15,16 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 @Configuration
 class WebConfig(
     private val adminInterceptor: AdminInterceptor,
-    private val authInterceptor: MemberInterceptor,
+    private val memberInterceptor: MemberInterceptor,
     private val userRepository: UserRepository,
+    private val restaurantOwnerInterceptor: RestaurantOwnerInterceptor,
 ) : WebMvcConfigurer {
     override fun addInterceptors(registry: InterceptorRegistry) {
-        registry.addInterceptor(authInterceptor)
-            .addPathPatterns("")
+        registry.addInterceptor(memberInterceptor)
+            .addPathPatterns("/api/member/orders/**", "/api/payment/webhook/**")
         registry.addInterceptor(adminInterceptor)
+            .addPathPatterns("")
+        registry.addInterceptor(restaurantOwnerInterceptor)
             .addPathPatterns("")
         super.addInterceptors(registry)
     }
