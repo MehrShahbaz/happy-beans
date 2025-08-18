@@ -1,6 +1,5 @@
 package happybeans.controller.member
 
-import happybeans.controller.BaseApiTest
 import happybeans.dto.user.UserCreateRequestDto
 import io.restassured.RestAssured
 import io.restassured.http.ContentType
@@ -10,7 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpStatus
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
-class MemberAuthControllerTest : BaseApiTest() {
+class MemberAuthControllerTest {
     @Test
     fun `sign-up User`() {
         val user =
