@@ -14,7 +14,7 @@ class MemberAuthControllerTest {
     fun `sign-up User`() {
         val user =
             UserCreateRequestDto(
-                "temp@temp.com",
+                "temp-controlller@temp.com",
                 "test-456",
                 "First",
                 "Last",
