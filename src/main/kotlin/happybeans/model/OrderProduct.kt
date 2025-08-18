@@ -11,7 +11,7 @@ import java.time.LocalDateTime
 
 @Entity
 class OrderProduct(
-    @Column(name = "dish_id")
+    @Column(name = "dish_option_id")
     var dishId: Long,
     @Column(name = "dish_name")
     var dishName: String,

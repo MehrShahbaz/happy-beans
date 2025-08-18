@@ -55,7 +55,7 @@ class MemberOrderService(
 
     fun buyProduct(
         member: User,
-        dishId: Long,
+        dishOptionId: Long,
     ) {
         // TODO find dish
         val order = createProductOrder(member)
