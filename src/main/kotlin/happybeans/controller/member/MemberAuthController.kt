@@ -1,5 +1,6 @@
 package happybeans.controller.member
 
+import happybeans.dto.auth.LoginRequestDto
 import happybeans.dto.response.TokenResponse
 import happybeans.dto.user.UserCreateRequestDto
 import happybeans.service.MemberAuthService
@@ -22,5 +23,13 @@ class MemberAuthController(
         val userCreateResponse = memberAuthService.signUp(userCreateRequestDto)
         return ResponseEntity.created(userCreateResponse.uri)
             .body(TokenResponse(userCreateResponse.token))
+    }
+
+    @PostMapping("/login")
+    fun login(
+        @RequestBody @Valid loginRequestDto: LoginRequestDto,
+    ): ResponseEntity<TokenResponse> {
+        val token = memberAuthService.login(loginRequestDto)
+        return ResponseEntity.ok().body(TokenResponse(token))
     }
 }

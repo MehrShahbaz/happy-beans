@@ -11,6 +11,7 @@ import java.nio.charset.StandardCharsets
 import java.util.Date
 import javax.crypto.SecretKey
 import kotlin.jvm.java
+import kotlin.text.removePrefix
 import kotlin.text.toByteArray
 
 @Component
@@ -48,6 +49,7 @@ class JwtProvider(
 
     fun validateToken(token: String) {
         try {
+            token.removePrefix("Bearer ").trim()
             val claims =
                 Jwts.parser()
                     .verifyWith(secretKey)

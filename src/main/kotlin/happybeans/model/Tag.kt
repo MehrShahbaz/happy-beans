@@ -1,31 +1,22 @@
 package happybeans.model
 
-import jakarta.persistence.*
+import jakarta.persistence.Column
+import jakarta.persistence.Entity
+import jakarta.persistence.GeneratedValue
+import jakarta.persistence.GenerationType
+import jakarta.persistence.Id
+import jakarta.persistence.Table
+import org.hibernate.annotations.CreationTimestamp
+import java.time.LocalDateTime
 
-//ver1
 @Entity
-@Table(name = "tags")  // recommended: be explicit about table name
+@Table(name = "tags")
 class Tag(
+    @Column(name = "name", unique = true, nullable = false)
+    val name: String,
+    @CreationTimestamp
+    var createdAt: LocalDateTime? = null,
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0L,
-
-    val name: String
 )
-
-//ver2
-//@Entity
-//@Table(name = "tags")
-//data class Tag(
-//    @Id
-//    @GeneratedValue(strategy = GenerationType.IDENTITY)
-//    val id: Long = 0L,
-//
-//    @Column(name = "name", nullable = false) //, unique = true)
-//    val name: String,
-//
-//    @Column(name = "category", nullable = false)
-//    @Enumerated(EnumType.STRING)
-//    val category: TagCategory,
-//)
-//
