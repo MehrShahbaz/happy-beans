@@ -1,3 +1,3 @@
 package happybeans.utils.exception
 
-class UnauthorisedUserException(message: String? = null) : RuntimeException(message)
+class UnauthorisedUserException(message: String = "Unauthorised route") : RuntimeException(message)
