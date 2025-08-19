@@ -32,6 +32,8 @@ class DishOption(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "tag_containers_id")
     var ingredients: TagContainer,
+    @Column(name = "prep_time_minute")
+    var prepTimeMinutes: Int = 0,
     @Column(name = "rating", nullable = false)
     var rating: Double,
     @CreationTimestamp
