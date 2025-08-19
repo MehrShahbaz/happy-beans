@@ -1,7 +1,8 @@
 #!/bin/bash
-APP_NAME=happy-beans
-IMAGE_NAME=happy-beans-image:1.0
-APP_DIR=/home/ubuntu/app
 
-echo ">>> Building Docker image..."
-docker build -t $IMAGE_NAME $APP_DIR
+echo ">>> [BeforeInstall] Fixing ownership..."
+sudo chown -R ubuntu:ubuntu /home/ubuntu/app
+
+echo ">>> [AfterInstall] Setting permissions for jar..."
+chmod +x /home/ubuntu/app/build/libs/*.jar
+
