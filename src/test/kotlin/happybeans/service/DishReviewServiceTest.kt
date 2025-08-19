@@ -1,11 +1,20 @@
 package happybeans.service
 
 import happybeans.dto.review.ReviewCreateRequestDto
+import happybeans.enums.TagContainerType
+import happybeans.model.Dish
+import happybeans.model.DishOption
 import happybeans.model.DishReview
+import happybeans.model.Tag
+import happybeans.model.TagContainer
 import happybeans.model.User
+import happybeans.repository.DishOptionRepository
+import happybeans.repository.DishRepository
 import happybeans.repository.DishReviewRepository
+import happybeans.repository.TagContainerRepository
+import happybeans.repository.TagRepository
 import happybeans.repository.UserRepository
-import happybeans.utils.exception.EntityNotFoundException
+import jakarta.persistence.EntityNotFoundException
 import jakarta.transaction.Transactional
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -26,11 +35,21 @@ class DishReviewServiceTest {
     @Autowired
     private lateinit var dishReviewRepository: DishReviewRepository
 
-//        @Autowired
-//        private lateinit var dishOptionRepository: DishOptionRepository
+    @Autowired
+    private lateinit var dishOptionRepository: DishOptionRepository
+
+    @Autowired
+    private lateinit var tagContainerRepository: TagContainerRepository
+
+    @Autowired
+    private lateinit var tagRepository: TagRepository
+
+    @Autowired
+    private lateinit var dishRepository: DishRepository
 
     private lateinit var member: User
-//        private lateinit var dishOption: DishOption
+    private lateinit var dishOption: DishOption
+    private lateinit var dish: Dish
 
     @BeforeEach
     fun setUp() {
@@ -43,14 +62,41 @@ class DishReviewServiceTest {
                     lastName = "User",
                 ),
             )
-//
-//            dishOption = dishOptionRepository.save(
-//                DishOption(
-//                    name = "Pasta Carbonara",
-//                    price = 12.99,
-//                    restaurantId = 1L
-//                )
-//            )
+
+        dish =
+            Dish(
+                name = "Pasta Primavera",
+                description = "Fresh pasta with seasonal vegetables",
+                image = "https://example.com/pasta-primavera.jpg",
+            )
+        dish = dishRepository.save(dish)
+
+        val tag = Tag(name = "Tomato")
+        val savedTag = tagRepository.save(tag)
+
+        val tagContainer =
+            TagContainer(
+                tags = mutableListOf(savedTag),
+                type = TagContainerType.INGREDIENTS,
+                user = null,
+                dish = dish,
+            )
+        val savedTagContainer = tagContainerRepository.save(tagContainer)
+
+        dishOption =
+            DishOption(
+                dish = dish,
+                name = "Regular Portion",
+                description = "Standard serving size",
+                price = 12.99,
+                image = "https://example.com/regular-portion.jpg",
+                available = true,
+                ingredients = savedTagContainer,
+                rating = 4.0,
+                prepTimeMinutes = 15,
+            )
+        dish.dishOption.add(dishOption)
+        dishOption = dishOptionRepository.save(dishOption)
     }
 
     @Test
@@ -59,17 +105,13 @@ class DishReviewServiceTest {
             ReviewCreateRequestDto(
                 rating = 3.0,
                 message = "perfectly cooked pasta",
-                entityId = 1L,
-                // dishOption.id
+                entityId = dishOption.id,
             )
 
         val response = dishReviewService.createDishReview(member, request)
 
         assertThat(response).isNotNull
-        assertThat(response.id).isGreaterThan(0)
-        assertThat(response.rating).isEqualTo(3.0)
-        assertThat(response.message).isEqualTo("perfectly cooked pasta")
-//            assertThat(response.dishOptionId).isEqualTo(dishOption.id)
+        assertThat(response).isGreaterThan(0)
     }
 
     @Test
@@ -88,22 +130,6 @@ class DishReviewServiceTest {
     }
 
     @Test
-    fun `throw EntityNotFoundException for dish review with invalid user ID`() {
-        val invalidUserId = 1000L
-        val request =
-            ReviewCreateRequestDto(
-                rating = 3.0,
-                message = "perfectly cooked pasta",
-                entityId = 1L,
-                // dishOption.id
-            )
-
-        assertThrows<EntityNotFoundException> {
-            dishReviewService.createDishReview(member, request)
-        }
-    }
-
-    @Test
     fun `get all reviews returns correct number of reviews`() {
         dishReviewRepository.save(
             DishReview(
@@ -111,8 +137,7 @@ class DishReviewServiceTest {
                 userName = member.firstName,
                 rating = 4.0,
                 message = "great",
-                dishOptionId = 1L,
-                // dishOption.id
+                dishOptionId = dishOption.id,
             ),
         )
         dishReviewRepository.save(
@@ -121,8 +146,7 @@ class DishReviewServiceTest {
                 userName = member.firstName,
                 rating = 5.0,
                 message = "amazing",
-                dishOptionId = 2L,
-                // dishOption.id
+                dishOptionId = dishOption.id,
             ),
         )
 
@@ -130,43 +154,43 @@ class DishReviewServiceTest {
         assertThat(reviews).hasSize(2)
     }
 
-//    @Test
-//    fun `get average rating for dish option returns correct average`() {
-//        dishReviewRepository.save(
-//            DishReview(
-//                userId = member.id,
-//                userName = member.firstName,
-//                rating = 5.0,
-//                message = "tasty",
-//                dishOptionId = 1L//dishOption.id
-//            )
-//        )
-//        dishReviewRepository.save(
-//            DishReview(
-//                userId = member.id,
-//                userName = member.firstName,
-//                rating = 3.0,
-//                message = "okay",
-//                dishOptionId = 1L//dishOption.id
-//            )
-//        )
-//        dishReviewRepository.save(
-//            DishReview(
-//                userId = member.id,
-//                userName = member.firstName,
-//                rating = 4.0,
-//                message = "good",
-//                dishOptionId = 2L//dishOption.id
-//            )
-//        )
-//
-//        val averageRating = dishReviewService.getAverageRatingForDishOption(dishOption.id)
-//        assertThat(averageRating).isEqualTo(4.0)
-//    }
-//
-//    @Test
-//    fun `get average rating for dish option with no reviews returns 0`() {
-//        val averageRating = dishReviewService.getAverageRatingForDishOption(dishOption.id)
-//        assertThat(averageRating).isEqualTo(0.0)
-//    }
+    @Test
+    fun `get average rating for dish option returns correct average`() {
+        dishReviewRepository.save(
+            DishReview(
+                userId = member.id,
+                userName = member.firstName,
+                rating = 5.0,
+                message = "tasty",
+                dishOptionId = dishOption.id,
+            ),
+        )
+        dishReviewRepository.save(
+            DishReview(
+                userId = member.id,
+                userName = member.firstName,
+                rating = 3.0,
+                message = "okay",
+                dishOptionId = dishOption.id,
+            ),
+        )
+        dishReviewRepository.save(
+            DishReview(
+                userId = member.id,
+                userName = member.firstName,
+                rating = 4.0,
+                message = "good",
+                dishOptionId = dishOption.id,
+            ),
+        )
+
+        val averageRating = dishReviewService.getAverageRatingForDishOption(dishOption.id)
+        assertThat(averageRating).isEqualTo(4.0)
+    }
+
+    @Test
+    fun `get average rating for dish option with no reviews returns 0`() {
+        val averageRating = dishReviewService.getAverageRatingForDishOption(dishOption.id)
+        assertThat(averageRating).isEqualTo(0.0)
+    }
 }

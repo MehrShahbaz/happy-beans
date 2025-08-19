@@ -32,7 +32,7 @@ class ReviewController(
         @LoginMember member: User,
     ): ResponseEntity<MessageResponse> {
         val dishReviewId = dishReviewService.createDishReview(member, dto)
-        return ResponseEntity.created(URI.create("/dish/${dishReviewId}")).body(MessageResponse("Dish review created"))
+        return ResponseEntity.created(URI.create("/dish/$dishReviewId")).body(MessageResponse("Dish review created"))
     }
 
     @PatchMapping("/dish/{id}")
@@ -78,7 +78,9 @@ class ReviewController(
         @LoginMember member: User,
     ): ResponseEntity<MessageResponse> {
         val restaurantReviewId = restaurantReviewService.createRestaurantReview(member, dto)
-        return ResponseEntity.created(URI.create("/dish/${restaurantReviewId}")).body(MessageResponse("Restaurant review created"))
+        return ResponseEntity.created(
+            URI.create("/dish/$restaurantReviewId"),
+        ).body(MessageResponse("Restaurant review created successfully"))
     }
 
     @PatchMapping("/restaurant/{id}")

@@ -12,7 +12,7 @@ interface DishReviewRepository : JpaRepository<DishReview, Long> {
 
     @Query(
         """
-        SELECT new happybeans.dto.review.RecommendedDishDto(
+        SELECT new happybeans.dto.dish.RecommendedDishDto(
             d.dishOptionId,
             d.dishOptionName,
             d.dishOptionPrice,

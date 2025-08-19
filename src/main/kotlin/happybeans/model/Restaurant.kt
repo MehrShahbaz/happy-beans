@@ -34,7 +34,8 @@ class Restaurant(
         joinColumns = [JoinColumn(name = "restaurant_id")],
     )
     var workingDateHours: MutableList<WorkingDateHour> = mutableListOf(),
-    @OneToMany(cascade = [(CascadeType.ALL)], mappedBy = "restaurant", fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(cascade = arrayOf(CascadeType.ALL), fetch = FetchType.LAZY, orphanRemoval = true)
+    @JoinColumn(name = "restaurant_id")
     val dishes: MutableList<Dish> = mutableListOf(),
     @CreationTimestamp
     var createdAt: LocalDateTime? = null,

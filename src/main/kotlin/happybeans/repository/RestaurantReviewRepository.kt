@@ -14,7 +14,7 @@ interface RestaurantReviewRepository : JpaRepository<RestaurantReview, Long> {
 
     @Query(
         """
-        SELECT new happybeans.dto.review.RecommendedRestaurantDto(
+        SELECT new happybeans.dto.restaurant.RecommendedRestaurantDto(
             r.restaurantId,
             r.restaurantName,
             AVG(r.rating)

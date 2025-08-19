@@ -1,12 +1,22 @@
 package happybeans.service
 
 import happybeans.dto.review.ReviewCreateRequestDto
-import happybeans.dto.review.ReviewUpdateRequestDto
+import happybeans.enums.TagContainerType
+import happybeans.model.Dish
+import happybeans.model.DishOption
+import happybeans.model.Restaurant
 import happybeans.model.RestaurantReview
+import happybeans.model.Tag
+import happybeans.model.TagContainer
 import happybeans.model.User
+import happybeans.model.WorkingDateHour
+import happybeans.repository.DishOptionRepository
+import happybeans.repository.DishRepository
+import happybeans.repository.RestaurantRepository
 import happybeans.repository.RestaurantReviewRepository
+import happybeans.repository.TagContainerRepository
+import happybeans.repository.TagRepository
 import happybeans.repository.UserRepository
-import happybeans.utils.exception.EntityNotFoundException
 import jakarta.transaction.Transactional
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.BeforeEach
@@ -14,6 +24,8 @@ import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import java.time.DayOfWeek
+import java.time.LocalTime
 
 @SpringBootTest
 @Transactional
@@ -26,12 +38,26 @@ class RestaurantReviewServiceTest {
 
     @Autowired
     private lateinit var userRepository: UserRepository
-//
-//    @Autowired
-//    private lateinit var restaurantRepository: RestaurantRepository
+
+    @Autowired
+    private lateinit var restaurantRepository: RestaurantRepository
+
+    @Autowired
+    private lateinit var dishOptionRepository: DishOptionRepository
+
+    @Autowired
+    private lateinit var tagContainerRepository: TagContainerRepository
+
+    @Autowired
+    private lateinit var tagRepository: TagRepository
+
+    @Autowired
+    private lateinit var dishRepository: DishRepository
 
     private lateinit var member: User
-//    private lateinit var restaurant: Restaurant
+    private lateinit var restaurant: Restaurant
+    private lateinit var dishOption: DishOption
+    private lateinit var dish: Dish
 
     @BeforeEach
     fun setUp() {
@@ -44,12 +70,64 @@ class RestaurantReviewServiceTest {
                     lastName = "User",
                 ),
             )
-        //        restaurant = restaurantRepository.save(
-//            Restaurant(
-//                name = "Cozy Bistro",
-//                address = "123 Main St"
-//            )
-//        )
+
+        restaurant =
+            Restaurant(
+                name = "Cozy Bistro",
+                description = "A charming bistro with a warm atmosphere",
+                image = "https://example.com/cozy-bistro.jpg",
+                addressUrl = "https://maps.example.com/cozy-bistro",
+                workingDateHours =
+                    mutableListOf(
+                        WorkingDateHour(
+                            dayOfWeek = DayOfWeek.MONDAY,
+                            openTime = LocalTime.of(9, 0),
+                            closeTime = LocalTime.of(22, 0),
+                        ),
+                        WorkingDateHour(
+                            dayOfWeek = DayOfWeek.TUESDAY,
+                            openTime = LocalTime.of(9, 0),
+                            closeTime = LocalTime.of(22, 0),
+                        ),
+                    ),
+            )
+        restaurant = restaurantRepository.save(restaurant)
+
+        dish =
+            Dish(
+                name = "Pasta Primavera",
+                description = "Fresh pasta with seasonal vegetables",
+                image = "https://example.com/pasta-primavera.jpg",
+            )
+        restaurant.addDish(dish)
+        dish = dishRepository.save(dish)
+
+        val tag = Tag(name = "Tomato")
+        val savedTag = tagRepository.save(tag)
+
+        val tagContainer =
+            TagContainer(
+                tags = mutableListOf(savedTag),
+                type = TagContainerType.INGREDIENTS,
+                user = null,
+                dish = dish,
+            )
+        val savedTagContainer = tagContainerRepository.save(tagContainer)
+
+        dishOption =
+            DishOption(
+                dish = dish,
+                name = "Regular Portion",
+                description = "Standard serving size",
+                price = 12.99,
+                image = "https://example.com/regular-portion.jpg",
+                available = true,
+                ingredients = savedTagContainer,
+                rating = 4.0,
+                prepTimeMinutes = 15,
+            )
+        dish.dishOption.add(dishOption)
+        dishOption = dishOptionRepository.save(dishOption)
     }
 
     @Test
@@ -58,16 +136,12 @@ class RestaurantReviewServiceTest {
             ReviewCreateRequestDto(
                 rating = 4.0,
                 message = "cozy ambience and polite staff",
-                entityId = 1L,
-                // restaurant.id,
+                entityId = restaurant.id,
             )
 
         val response = restaurantReviewService.createRestaurantReview(member, request)
         assertThat(response).isNotNull
-        assertThat(response.id).isGreaterThan(0)
-        assertThat(response.rating).isEqualTo(4.0)
-        assertThat(response.message).contains("cozy ambience and polite staff")
-//        assertThat(response.entityId).isEqualTo(restaurant.id)
+        assertThat(response).isGreaterThan(0)
     }
 
     @Test
@@ -80,32 +154,9 @@ class RestaurantReviewServiceTest {
                 entityId = invalidRestaurantId,
             )
 
-        assertThrows<EntityNotFoundException> {
+        assertThrows<IllegalArgumentException> {
             restaurantReviewService.createRestaurantReview(member, request)
         }
-    }
-
-    @Test
-    fun `update restaurant review message`() {
-        val review =
-            restaurantReviewRepository.save(
-                RestaurantReview(
-                    userId = member.id,
-                    userName = "Test User",
-                    rating = 3.0,
-                    message = "Original message",
-                    restaurantId = 1L,
-                    // restaurant.id
-                ),
-            )
-        val updateDto = ReviewUpdateRequestDto(message = "Updated message")
-
-        val response = restaurantReviewService.updateRestaurantReview(review.id, updateDto, member)
-
-        assertThat(response).isNotNull
-        assertThat(response.id).isEqualTo(review.id)
-        assertThat(response.message).isEqualTo("Updated message")
-        assertThat(response.updatedAt).isNotNull()
     }
 
     @Test
@@ -116,8 +167,7 @@ class RestaurantReviewServiceTest {
                 userName = "Test User",
                 rating = 4.0,
                 message = "Review 1",
-                restaurantId = 1L,
-                // restaurant.id
+                restaurantId = restaurant.id,
             ),
         )
         restaurantReviewRepository.save(
@@ -126,8 +176,7 @@ class RestaurantReviewServiceTest {
                 userName = "Test User",
                 rating = 5.0,
                 message = "Review 2",
-                restaurantId = 1L,
-                // restaurant.id
+                restaurantId = restaurant.id,
             ),
         )
 
@@ -137,16 +186,35 @@ class RestaurantReviewServiceTest {
 
     @Test
     fun `get reviews by restaurantId returns correct reviews`() {
-//            val otherRestaurant = restaurantRepository.save(Restaurant(name = "Rise and Shine Berlin", address = "Oranienburger Str. 27"))
-
+        val restaurant2 =
+            restaurantRepository.save(
+                Restaurant(
+                    name = "Cozy Cafe",
+                    description = "A charming bistro with a warm atmosphere",
+                    image = "https://example.com/cozy-cafe.jpg",
+                    addressUrl = "https://maps.example.com/cozy-cafe",
+                    workingDateHours =
+                        mutableListOf(
+                            WorkingDateHour(
+                                dayOfWeek = DayOfWeek.MONDAY,
+                                openTime = LocalTime.of(9, 0),
+                                closeTime = LocalTime.of(22, 0),
+                            ),
+                            WorkingDateHour(
+                                dayOfWeek = DayOfWeek.SUNDAY,
+                                openTime = LocalTime.of(9, 0),
+                                closeTime = LocalTime.of(17, 0),
+                            ),
+                        ),
+                ),
+            )
         restaurantReviewRepository.save(
             RestaurantReview(
                 userId = member.id,
                 userName = "Test User",
                 rating = 4.0,
                 message = "Review 1",
-                restaurantId = 2L,
-                // restaurant.id
+                restaurantId = restaurant.id,
             ),
         )
         restaurantReviewRepository.save(
@@ -155,8 +223,7 @@ class RestaurantReviewServiceTest {
                 userName = "Test User",
                 rating = 5.0,
                 message = "Review 2",
-                restaurantId = 2L,
-                // restaurant.id
+                restaurantId = restaurant.id,
             ),
         )
         restaurantReviewRepository.save(
@@ -165,21 +232,20 @@ class RestaurantReviewServiceTest {
                 userName = "Test User",
                 rating = 3.0,
                 message = "Review on other restaurant",
-                restaurantId = 2L,
-                // otherRestaurant.id
+                restaurantId = restaurant2.id,
             ),
         )
 
-//            val reviews = restaurantReviewService.getReviewsByRestaurantId(restaurant.id)
-//            assertThat(reviews).hasSize(2)
-//            reviews.forEach {
-//                assertThat(it.restaurantId).isEqualTo(restaurant.id)
-//            }
+        val reviews = restaurantReviewService.getReviewsByRestaurantId(restaurant.id)
+        assertThat(reviews).hasSize(2)
+        reviews.forEach {
+            assertThat(it.restaurantId).isEqualTo(restaurant.id)
+        }
     }
 
     @Test
     fun `get reviews by user ID returns correct reviews`() {
-        val otherUser =
+        val otherMember =
             userRepository.save(
                 User(
                     email = "other@test.com",
@@ -189,27 +255,75 @@ class RestaurantReviewServiceTest {
                 ),
             )
 
-//            restaurantReviewRepository.save(RestaurantReview(userId = user.id, userName = "Test User", rating = 4.0, message = "Review 1", restaurantId = restaurant.id))
-//            restaurantReviewRepository.save(RestaurantReview(userId = user.id, userName = "Test User", rating = 5.0, message = "Review 2", restaurantId = restaurant.id))
-//            restaurantReviewRepository.save(RestaurantReview(userId = otherUser.id, userName = "Other User", rating = 3.0, message = "Review from other user", restaurantId = restaurant.id))
+        restaurantReviewRepository.save(
+            RestaurantReview(
+                userId = member.id,
+                userName = "Test User",
+                rating = 4.0,
+                message = "Review 1",
+                restaurantId = restaurant.id,
+            ),
+        )
+        restaurantReviewRepository.save(
+            RestaurantReview(
+                userId = member.id,
+                userName = "Test User",
+                rating = 5.0,
+                message = "Review 2",
+                restaurantId = restaurant.id,
+            ),
+        )
+        restaurantReviewRepository.save(
+            RestaurantReview(
+                userId = otherMember.id,
+                userName = "Other User",
+                rating = 3.0,
+                message = "Review from other user",
+                restaurantId = restaurant.id,
+            ),
+        )
 
         val reviews = restaurantReviewService.getReviewsByUserId(member.id)
         assertThat(reviews).hasSize(2)
     }
 
-//        @Test
-//        fun `get average rating for restaurant returns correct average`() {
-//            restaurantReviewRepository.save(RestaurantReview(userId = user.id, userName = "Test User", rating = 5.0, message = "Review 1", restaurantId = restaurant.id))
-//            restaurantReviewRepository.save(RestaurantReview(userId = user.id, userName = "Test User", rating = 3.0, message = "Review 2", restaurantId = restaurant.id))
-//            restaurantReviewRepository.save(RestaurantReview(userId = user.id, userName = "Test User", rating = 4.0, message = "Review 3", restaurantId = restaurant.id))
-//
-//            val averageRating = restaurantReviewService.getAverageRatingForRestaurant(restaurant.id)
-//            assertThat(averageRating).isEqualTo(4.0)
-//        }
-//
-//        @Test
-//        fun `get average rating for restaurant with no reviews returns 0`() {
-//            val averageRating = restaurantReviewService.getAverageRatingForRestaurant(restaurant.id)
-//            assertThat(averageRating).isEqualTo(0.0)
-//        }
+    @Test
+    fun `get average rating for restaurant returns correct average`() {
+        restaurantReviewRepository.save(
+            RestaurantReview(
+                userId = member.id,
+                userName = "Test User",
+                rating = 5.0,
+                message = "Review 1",
+                restaurantId = restaurant.id,
+            ),
+        )
+        restaurantReviewRepository.save(
+            RestaurantReview(
+                userId = member.id,
+                userName = "Test User",
+                rating = 3.0,
+                message = "Review 2",
+                restaurantId = restaurant.id,
+            ),
+        )
+        restaurantReviewRepository.save(
+            RestaurantReview(
+                userId = member.id,
+                userName = "Test User",
+                rating = 4.0,
+                message = "Review 3",
+                restaurantId = restaurant.id,
+            ),
+        )
+
+        val averageRating = restaurantReviewService.getAverageRatingForRestaurant(restaurant.id)
+        assertThat(averageRating).isEqualTo(4.0)
+    }
+
+    @Test
+    fun `get average rating for restaurant with no reviews returns 0`() {
+        val averageRating = restaurantReviewService.getAverageRatingForRestaurant(restaurant.id)
+        assertThat(averageRating).isEqualTo(0.0)
+    }
 }

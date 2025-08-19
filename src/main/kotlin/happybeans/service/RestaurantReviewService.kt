@@ -3,29 +3,30 @@ package happybeans.service
 import happybeans.dto.restaurant.RecommendedRestaurantDto
 import happybeans.dto.review.RestaurantReviewDto
 import happybeans.dto.review.ReviewCreateRequestDto
-import happybeans.dto.review.ReviewCreateResponse
 import happybeans.dto.review.ReviewUpdateRequestDto
-import happybeans.dto.review.ReviewUpdateResponse
 import happybeans.model.RestaurantReview
 import happybeans.model.User
+import happybeans.repository.RestaurantRepository
 import happybeans.repository.RestaurantReviewRepository
-import happybeans.repository.UserRepository
 import jakarta.persistence.EntityNotFoundException
-import org.hibernate.query.Page
+import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
+import org.springframework.stereotype.Service
 import java.math.RoundingMode
 
+@Service
 class RestaurantReviewService(
     private val restaurantReviewRepository: RestaurantReviewRepository,
-    private val userRepository: UserRepository,
-//    private val restaurantRepository : RestaurantRepository
+    private val restaurantRepository: RestaurantRepository,
 ) {
     fun createRestaurantReview(
         member: User,
         dto: ReviewCreateRequestDto,
     ): Long {
-//     val restaurant = RestaurantRepository.findByIdOrNull(dto.entityId)) throw IllegalArgumentException("Restaurant with ID ${dto.entityId} not found")
+        val restaurant =
+            restaurantRepository.findByIdOrNull(dto.entityId)
+                ?: throw IllegalArgumentException("Restaurant with ID ${dto.entityId} not found")
 
         val review =
             RestaurantReview(
@@ -33,11 +34,11 @@ class RestaurantReviewService(
                 userName = member.firstName,
                 rating = dto.rating,
                 message = dto.message,
-//          restaurantId = restaurant.id,
-//          restaurantName = restaurant.name,
+                restaurantId = restaurant.id,
+                restaurantName = restaurant.name,
             )
 
-        return restaurantReviewRepository.save(review).id//.toReviewCreateResponse()
+        return restaurantReviewRepository.save(review).id
     }
 
     fun updateRestaurantReview(
@@ -51,7 +52,7 @@ class RestaurantReviewService(
 
         review.message = dto.message
 
-        restaurantReviewRepository.save(review)//.toReviewUpdateResponse()
+        restaurantReviewRepository.save(review)
     }
 
     fun getAllReviews(): List<RestaurantReviewDto> {
@@ -78,24 +79,6 @@ class RestaurantReviewService(
     fun recommendHighestRatedRestaurants(pageable: Pageable): Page<RecommendedRestaurantDto> {
         return restaurantReviewRepository.findHighestRatedRestaurants(pageable)
     }
-
-//    private fun RestaurantReview.toReviewCreateResponse(): ReviewCreateResponse {
-//        return ReviewCreateResponse(
-//            id = this.id,
-//            rating = this.rating,
-//            message = this.message,
-//            entityId = this.restaurantId!!,
-//            createdAt = this.createdAt!!,
-//        )
-//    }
-//
-//    private fun RestaurantReview.toReviewUpdateResponse(): ReviewUpdateResponse {
-//        return ReviewUpdateResponse(
-//            id = this.id,
-//            message = this.message,
-//            updatedAt = this.updatedAt!!,
-//        )
-//    }
 
     private fun RestaurantReview.toReviewDto(): RestaurantReviewDto {
         return RestaurantReviewDto(

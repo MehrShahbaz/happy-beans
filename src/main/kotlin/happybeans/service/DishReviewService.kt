@@ -6,36 +6,38 @@ import happybeans.dto.review.ReviewCreateRequestDto
 import happybeans.dto.review.ReviewUpdateRequestDto
 import happybeans.model.DishReview
 import happybeans.model.User
+import happybeans.repository.DishOptionRepository
 import happybeans.repository.DishReviewRepository
-import happybeans.repository.UserRepository
 import jakarta.persistence.EntityNotFoundException
+import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import java.math.RoundingMode
 
 @Service
 class DishReviewService(
     private val dishReviewRepository: DishReviewRepository,
-    private val userRepository: UserRepository,
-//    private val dishOptionRepository: DishOptionRepository
+    private val dishOptionRepository: DishOptionRepository,
 ) {
     fun createDishReview(
         member: User,
         dto: ReviewCreateRequestDto,
     ): Long {
-//        val dishOption = dishOptionRepository.findByIdOrNull(dto.entityId) ?: throw EntityNotFoundException("Dish option with ID ${dto.entityId} not found")
-//
+        val dishOption =
+            dishOptionRepository.findByIdOrNull(dto.entityId)
+                ?: throw EntityNotFoundException("Dish option with ID ${dto.entityId} not found")
+
         val review =
             DishReview(
                 userId = member.id,
                 userName = member.firstName,
                 rating = dto.rating,
                 message = dto.message,
-//            dishOptionId = dishOption.id,
-//            dishOptionName = dishOption.name,
-//            dishOptionPrice = dishOption.price
+                dishOptionId = dishOption.id,
+                dishOptionName = dishOption.name,
+                dishOptionPrice = dishOption.price,
             )
 
-        return dishReviewRepository.save(review).id//.toReviewCreateResponse()
+        return dishReviewRepository.save(review).id
     }
 
     fun updateDishReview(
@@ -75,24 +77,6 @@ class DishReviewService(
     fun recommendHighestRatedDishes(): List<RecommendedDishDto> {
         return dishReviewRepository.findHighestRatedDishes()
     }
-
-//    private fun DishReview.toReviewCreateResponse(): ReviewCreateResponse {
-//        return ReviewCreateResponse(
-//            id = this.id,
-//            rating = this.rating,
-//            message = this.message,
-//            entityId = this.dishOptionId!!,
-//            createdAt = this.createdAt!!,
-//        )
-//    }
-//
-//    private fun DishReview.toReviewUpdateResponse(): ReviewUpdateResponse {
-//        return ReviewUpdateResponse(
-//            id = this.id,
-//            message = this.message,
-//            updatedAt = this.updatedAt!!,
-//        )
-//    }
 
     private fun DishReview.toReviewDto(): DishReviewDto {
         return DishReviewDto(

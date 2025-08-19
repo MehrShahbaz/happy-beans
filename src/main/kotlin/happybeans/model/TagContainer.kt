@@ -10,6 +10,7 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
+import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
 import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
@@ -25,10 +26,10 @@ class TagContainer(
     val tags: MutableList<Tag> = mutableListOf(),
     @Enumerated(EnumType.STRING)
     var type: TagContainerType,
-    @OneToOne(cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
-    @JoinColumn(name = "user_id")
+    @ManyToOne
+    @JoinColumn(name = "users_id")
     var user: User? = null,
-    @OneToOne(cascade = [CascadeType.ALL], fetch = FetchType.LAZY)
+    @OneToOne
     @JoinColumn(name = "dish_id")
     var dish: Dish? = null,
     @CreationTimestamp
