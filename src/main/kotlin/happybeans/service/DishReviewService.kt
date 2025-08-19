@@ -9,10 +9,12 @@ import happybeans.model.User
 import happybeans.repository.DishOptionRepository
 import happybeans.repository.DishReviewRepository
 import jakarta.persistence.EntityNotFoundException
+import jakarta.transaction.Transactional
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import java.math.RoundingMode
 
+@Transactional
 @Service
 class DishReviewService(
     private val dishReviewRepository: DishReviewRepository,
@@ -63,6 +65,10 @@ class DishReviewService(
 
     fun getReviewsByUserId(userId: Long): List<DishReviewDto> {
         return dishReviewRepository.findByUserId(userId).map { it.toReviewDto() }
+    }
+
+    fun getReviewsByDishId(dishId: Long): List<DishReviewDto> {
+        return dishReviewRepository.findByDishId(dishId).map { it.toReviewDto() }
     }
 
     fun getAverageRatingForDishOption(dishOptionId: Long): Double {

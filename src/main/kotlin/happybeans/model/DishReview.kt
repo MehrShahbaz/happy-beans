@@ -20,7 +20,7 @@ class DishReview(
     @Column(name = "message", nullable = true)
     var message: String,
     @Column(name = "dish_option_id")
-    var dishOptionId: Long? = null,
+    var dishOptionId: Long,
     @Column(name = "dish_option_name")
     var dishOptionName: String? = null,
     @Column(name = "dish_option_price")

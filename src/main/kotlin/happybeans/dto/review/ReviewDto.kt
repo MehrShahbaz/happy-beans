@@ -22,20 +22,6 @@ class ReviewUpdateRequestDto(
     val message: String,
 )
 
-// class ReviewCreateResponse(
-//    val id: Long,
-//    val rating: Double,
-//    val message: String?,
-//    val entityId: Long,
-//    val createdAt: LocalDateTime,
-// )
-
-// class ReviewUpdateResponse(
-//    val id: Long,
-//    val message: String,
-//    val updatedAt: LocalDateTime,
-// )
-
 class DishReviewDto(
     val id: Long,
     val userName: String,
