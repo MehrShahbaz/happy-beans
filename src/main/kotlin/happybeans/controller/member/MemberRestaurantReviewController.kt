@@ -1,0 +1,61 @@
+package happybeans.controller.member
+
+import happybeans.dto.response.MessageResponse
+import happybeans.dto.review.RestaurantReviewDto
+import happybeans.dto.review.ReviewCreateRequestDto
+import happybeans.dto.review.ReviewUpdateRequestDto
+import happybeans.model.User
+import happybeans.service.RestaurantReviewService
+import happybeans.utils.annotations.LoginMember
+import jakarta.validation.Valid
+import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.GetMapping
+import org.springframework.web.bind.annotation.PatchMapping
+import org.springframework.web.bind.annotation.PathVariable
+import org.springframework.web.bind.annotation.PostMapping
+import org.springframework.web.bind.annotation.RequestBody
+import org.springframework.web.bind.annotation.RequestMapping
+import org.springframework.web.bind.annotation.RestController
+import java.net.URI
+
+@RestController
+@RequestMapping("/api/restaurant-review")
+class MemberRestaurantReviewController(
+    private val restaurantReviewService: RestaurantReviewService,
+) {
+    @PostMapping("")
+    fun createRestaurantReview(
+        @Valid @RequestBody dto: ReviewCreateRequestDto,
+        @LoginMember member: User,
+    ): ResponseEntity<MessageResponse> {
+        val restaurantReviewId = restaurantReviewService.createRestaurantReview(member, dto)
+        return ResponseEntity.created(
+            URI.create("$restaurantReviewId"),
+        ).body(MessageResponse("Restaurant review created successfully"))
+    }
+
+    @PatchMapping("/{restaurantReviewId}")
+    fun updateRestaurantReview(
+        @PathVariable restaurantReviewId: Long,
+        @Valid @RequestBody dto: ReviewUpdateRequestDto,
+        @LoginMember member: User,
+    ): ResponseEntity<MessageResponse> {
+        restaurantReviewService.updateRestaurantReview(restaurantReviewId, dto, member)
+        return ResponseEntity.ok(MessageResponse("Updated Restaurant Review"))
+    }
+
+    @GetMapping("/{restaurantId}")
+    fun getRestaurantReviewsByRestaurantId(
+        @PathVariable restaurantId: Long,
+    ): List<RestaurantReviewDto> {
+        return restaurantReviewService.getReviewsByRestaurantId(restaurantId)
+    }
+
+    @GetMapping("/{userId}")
+    fun getRestaurantReviewsByUserId(
+        @PathVariable userId: Long,
+        @LoginMember member: User,
+    ): List<RestaurantReviewDto> {
+        return restaurantReviewService.getReviewsByUserId(member.id)
+    }
+}
