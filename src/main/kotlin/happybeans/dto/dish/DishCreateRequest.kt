@@ -1,5 +1,6 @@
 package happybeans.dto.dish
 
+import jakarta.validation.Valid
 import jakarta.validation.constraints.NotNull
 
 data class DishCreateRequest(
@@ -9,6 +10,7 @@ data class DishCreateRequest(
     val description: String,
     @field:NotNull(message = "Image URL is required")
     val image: String,
+    @field:Valid
     @field:NotNull(message = "Working date and hours is required")
     val dishOptionRequests: MutableSet<DishOptionCreateRequest>,
 )

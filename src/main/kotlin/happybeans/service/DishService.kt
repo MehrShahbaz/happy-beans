@@ -67,7 +67,6 @@ class DishService(
                 description = dishRequest.description,
                 image = dishRequest.image,
                 dishOption = mutableSetOf(),
-                prepTimeMinutes = 0,
                 averageRating = 0.0,
             )
         val createdDishOptions = createAndLinkDishOptions(dish, dishRequest.dishOptionRequests)
@@ -99,6 +98,7 @@ class DishService(
                     price = optionRequest.price,
                     image = optionRequest.image,
                     ingredients = ingredientsContainer,
+                    prepTimeMinutes = optionRequest.prepTimeMinutes,
                     rating = optionRequest.rating,
                 )
             dish.dishOption.add(dishOption)
