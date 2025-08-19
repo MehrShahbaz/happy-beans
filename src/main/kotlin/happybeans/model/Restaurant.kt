@@ -26,7 +26,7 @@ class Restaurant(
     @Column(name = "image")
     var image: String,
     @Column(name = "address_url")
-    var addressUrl: String?,
+    var addressUrl: String,
     @Column(name = "address_ulr")
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(

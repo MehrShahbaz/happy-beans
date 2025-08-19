@@ -1,5 +1,6 @@
 package happybeans.repository
 
+import happybeans.model.Dish
 import happybeans.model.Restaurant
 import org.springframework.data.domain.Pageable
 import org.springframework.data.jpa.repository.JpaRepository
@@ -11,6 +12,13 @@ interface RestaurantRepository : JpaRepository<Restaurant, Long> {
         restaurantId: Long,
         pageable: Pageable,
     ): List<Restaurant>?
+
+    fun findByName(name: String): Restaurant?
+
+    fun findDishesByRestaurant(
+        id: Long,
+        pageable: Pageable,
+    ): List<Dish>
 
     fun findByIdOrNull(restaurantId: Long): Restaurant?
 
