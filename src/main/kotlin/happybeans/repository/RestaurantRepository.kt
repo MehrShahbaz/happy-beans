@@ -8,19 +8,19 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface RestaurantRepository : JpaRepository<Restaurant, Long> {
-    fun findByRestaurantId(
+    fun findById(
         restaurantId: Long,
         pageable: Pageable,
-    ): List<Restaurant>?
+    ): List<Restaurant>
 
     fun findByName(name: String): Restaurant?
 
-    fun findDishesByRestaurant(
-        id: Long,
-        pageable: Pageable,
-    ): List<Dish>
+//    fun findDishesByRestaurant(
+//        id: Long,
+//        pageable: Pageable,
+//    ): List<Dish>
 
-    fun findByIdOrNull(restaurantId: Long): Restaurant?
+//    fun findByIdOrNull(restaurantId: Long): Restaurant?
 
-    fun findAllOrNull(pageable: Pageable): List<Restaurant>?
+//    fun findAllOrNull(pageable: Pageable): List<Restaurant>?
 }

@@ -13,6 +13,7 @@ import org.mockito.BDDMockito.given
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
+import org.springframework.data.repository.findByIdOrNull
 
 @ExtendWith(MockitoExtension::class)
 class DishTest {
@@ -33,8 +34,8 @@ class DishTest {
         val dishFromFixture = TestFixture.createMargheritaPizza()
         given(dishRepository.findByIdOrNull(1L)).willReturn(dishFromFixture)
 
-        val result = dishService.findById(1L)
-        assertThat(result.name).isEqualTo(dishFromFixture.name)
+        val result = dishService.findDishById(1L)
+        assertThat(result?.name).isEqualTo(dishFromFixture.name)
     }
 
     @Test
@@ -72,7 +73,7 @@ class DishTest {
         // Given
         val dishName = "Margherita Pizza"
         val dish = TestFixture.createMargheritaPizza()
-        given(dishRepository.findByNameOrNull(dishName)).willReturn(dish)
+        given(dishRepository.findByName(dishName)).willReturn(dish)
 
         // When
         val result = dishService.findByName(dishName)
@@ -85,7 +86,7 @@ class DishTest {
     fun `findByName should return null when dish not found`() {
         // Given
         val dishName = "Non-existent Dish"
-        given(dishRepository.findByNameOrNull(dishName)).willReturn(null)
+        given(dishRepository.findByName(dishName)).willReturn(null)
 
         // When
         val result = dishService.findByName(dishName)

@@ -12,6 +12,7 @@ import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import kotlin.collections.map
+import org.springframework.data.repository.findByIdOrNull
 
 @Service
 class RestaurantService(
@@ -39,12 +40,12 @@ class RestaurantService(
             ?: throw EntityNotFoundException("Restaurant with id $id not found")
     }
 
-    fun findDishesByRestaurant(
-        id: Long,
-        pageable: Pageable,
-    ): List<Dish>? {
-        return dishRepository.findDishesByRestaurantId(id, pageable)
-    }
+//    fun findDishesByRestaurant(
+//        id: Long,
+//        pageable: Pageable,
+//    ): List<Dish>? {
+//        return dishRepository.findDishesByRestaurantId(id, pageable)
+//    }
 
     private fun createWorkingHours(dtos: List<WorkingDateHourRequest>): List<WorkingDateHour> {
         return dtos.map { dto ->

@@ -11,10 +11,10 @@ import happybeans.repository.RestaurantRepository
 import happybeans.repository.TagContainerRepository
 import happybeans.utils.exception.EntityNotFoundException
 import org.springframework.data.domain.Pageable
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import kotlin.collections.map
+import org.springframework.data.repository.findByIdOrNull
 
 @Service
 class DishService(
@@ -24,17 +24,18 @@ class DishService(
 ) {
     // TODO While creating first create a TagContainer with type INGRIDIENT and add it to the dish option
     fun findByName(name: String): Dish? {
-        return dishRepository.findByNameOrNull(name)
+        return dishRepository.findByName(name)
     }
+
 
     fun findAll(pageable: Pageable): List<Dish> {
         return dishRepository.findAll(pageable).content
     }
 
-    fun findById(dishId: Long): Dish {
-        return dishRepository.findByIdOrNull(dishId)
-            ?: throw EntityNotFoundException("Dish with id $dishId not found")
-    }
+//    fun findDishById(dishId: Long): Dish? {
+//        // val dish = findById(dishId)
+//        return dishRepository.findByIdOrNull(dishId)
+//    }
 
     fun findByIdAndDishOptionId(
         dishId: Long,
