@@ -22,15 +22,15 @@ import java.time.LocalDateTime
     uniqueConstraints = [UniqueConstraint(columnNames = ["user_id", "dish_option_id"])],
 )
 open class CartProduct protected constructor() {
-    @ManyToOne(cascade = [(CascadeType.ALL)])
+    @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     lateinit var user: User
 
-    @OneToOne(cascade = [(CascadeType.ALL)], fetch = FetchType.EAGER)
+    @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "dish_option_id", nullable = false)
     lateinit var dishOption: DishOption
 
-    @ManyToOne(cascade = [(CascadeType.ALL)], fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "dish_id", nullable = false)
     lateinit var dish: Dish
 
