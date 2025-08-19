@@ -31,13 +31,13 @@ class MemberDishReviewController
         return ResponseEntity.created(URI.create("$dishReviewId")).body(MessageResponse("Dish review created"))
     }
 
-    @PatchMapping("/{id}")
+    @PatchMapping("/{dishReviewId}")
     fun updateDishReview(
-        @PathVariable id: Long,
+        @PathVariable dishReviewId: Long,
         @Valid @RequestBody dto: ReviewUpdateRequestDto,
         @LoginMember member: User,
     ): ResponseEntity<MessageResponse> {
-        dishReviewService.updateDishReview(id, dto, member)
+        dishReviewService.updateDishReview(dishReviewId, dto, member)
         return ResponseEntity.ok(MessageResponse("Updated dish Review"))
     }
 

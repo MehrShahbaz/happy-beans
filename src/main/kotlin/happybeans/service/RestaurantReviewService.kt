@@ -9,11 +9,11 @@ import happybeans.model.User
 import happybeans.repository.RestaurantRepository
 import happybeans.repository.RestaurantReviewRepository
 import jakarta.persistence.EntityNotFoundException
-import jakarta.transaction.Transactional
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.math.RoundingMode
 
 @Transactional

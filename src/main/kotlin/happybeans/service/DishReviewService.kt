@@ -9,9 +9,9 @@ import happybeans.model.User
 import happybeans.repository.DishOptionRepository
 import happybeans.repository.DishReviewRepository
 import jakarta.persistence.EntityNotFoundException
-import jakarta.transaction.Transactional
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 import java.math.RoundingMode
 
 @Transactional
