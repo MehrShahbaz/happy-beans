@@ -23,6 +23,9 @@ class DishService(
     private val tagContainerRepository: TagContainerRepository,
 ) {
     // TODO While creating first create a TagContainer with type INGRIDIENT and add it to the dish option
+    fun findByName(name: String): Dish? {
+        return dishRepository.findByNameOrNull(name)
+    }
 
     fun findByRestaurantId(
         restaurantId: Long,
@@ -34,7 +37,6 @@ class DishService(
 
     fun findAll(pageable: Pageable): List<Dish> {
         return dishRepository.findAll(pageable).content
-            ?: throw EntityNotFoundException("Dish not found")
     }
 
     fun findById(dishId: Long): Dish {
@@ -48,7 +50,7 @@ class DishService(
     ): DishOption {
         val dish = findById(dishId)
 
-        return dish.dishOption.firstOrNull { it.id == dishOptionId }
+        return dish.dishOptions.firstOrNull { it.id == dishOptionId }
             ?: throw EntityNotFoundException("Dish with id $dishId and dish option id $dishOptionId not found")
     }
 
@@ -66,7 +68,7 @@ class DishService(
                 name = dishRequest.name,
                 description = dishRequest.description,
                 image = dishRequest.image,
-                dishOption = mutableSetOf(),
+                dishOptions = mutableSetOf(),
                 averageRating = 0.0,
             )
         val createdDishOptions = createAndLinkDishOptions(dish, dishRequest.dishOptionRequests)
@@ -101,7 +103,7 @@ class DishService(
                     prepTimeMinutes = optionRequest.prepTimeMinutes,
                     rating = optionRequest.rating,
                 )
-            dish.dishOption.add(dishOption)
+            dish.dishOptions.add(dishOption)
 
             dishOption
         }.toSet()
@@ -112,7 +114,7 @@ class DishService(
         val dish =
             dishRepository.findByIdOrNull(dishId)
                 ?: throw EntityNotFoundException("Dish with id $dishId not found")
-        val averageRating = dish.dishOption.map { it.rating }.average()
+        val averageRating = dish.dishOptions.map { it.rating }.average()
         dish.averageRating = averageRating
     }
 }

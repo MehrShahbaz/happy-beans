@@ -23,7 +23,7 @@ class Dish(
     @Column(name = "image", nullable = false)
     var image: String,
     @OneToMany(mappedBy = "dish", cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.LAZY)
-    var dishOption: MutableSet<DishOption> = mutableSetOf(),
+    var dishOptions: MutableSet<DishOption> = mutableSetOf(),
     @Column(name = "average_rating")
     var averageRating: Double? = null,
     @CreationTimestamp
@@ -34,6 +34,21 @@ class Dish(
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0L,
 ) {
+    fun addDishOption(option: DishOption) {
+        option.dish = this
+        dishOptions.add(option)
+    }
+
+    fun addDishOptions(dishOptions: List<DishOption>) {
+        dishOptions.forEach { option ->
+            addDishOption(option)
+        }
+    }
+
+    fun removeDishOption(option: DishOption) {
+        dishOptions.remove(option)
+    }
+
     // if not used, can remove later : equals, hashCode, toString
     override fun equals(other: Any?): Boolean {
         if (this === other) return true

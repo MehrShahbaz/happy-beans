@@ -38,7 +38,6 @@ class DishController(
         return ResponseEntity.ok(dishes)
     }
 
-    // TODO check it
     @PostMapping("/restaurant/{restaurantId}")
     fun createDish(
         @PathVariable restaurantId: Long,
