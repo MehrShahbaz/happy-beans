@@ -20,7 +20,7 @@ class RestaurantReview(
     @Column(name = "message", nullable = true)
     var message: String,
     @Column(name = "restaurant_id")
-    var restaurantId: Long? = null,
+    var restaurantId: Long,
     @Column(name = "restaurant_name")
     var restaurantName: String? = null,
     @CreationTimestamp
