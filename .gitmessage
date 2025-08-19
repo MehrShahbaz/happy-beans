@@ -1,0 +1,26 @@
+# Start title with capital letter
+# Body and footer are optional
+#######TITLE#######
+
+#######BODY#######
+
+#######FOOTER#######
+
+# --- COMMIT END ---
+#   <Type> List
+#   feat        : Feature (a new feature)
+#   fix         : Bug (bug fix)
+#   refactor    : Refactor
+#   design      : Changes to CSS or user UI design
+#   comment     : Add or modify necessary comments
+#   style       : Style (code formatting, adding semicolons: no change in business logic)
+#   docs        : Documentation changes (add, modify, delete docs, README)
+#   test        : Add, modify, delete test code
+#   chore       : Other changes (e.g., modifying build scripts)
+#   init        : Initial creation
+#   rename      : Rename
+#   remove      : Delete
+#
+#   Title: First letter capitalized, imperative mood, no period
+#   Body: Focus on what and why
+#   Footer example: Fixes: #47, Related to: #32
