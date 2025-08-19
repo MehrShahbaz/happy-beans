@@ -56,7 +56,7 @@ class MemberOrderController(
         @PathVariable dishId: Long,
         @PathVariable dishOptionId: Long,
     ): ResponseEntity<MessageResponse> {
-        val response = orderService.buyProduct(user, dishOptionId)
+        val response = orderService.buyProduct(user, dishId, dishOptionId)
         return ResponseEntity.ok(MessageResponse("buy-product/$dishOptionId"))
     }
 }
