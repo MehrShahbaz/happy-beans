@@ -69,13 +69,9 @@ class DishService(
                 description = dishRequest.description,
                 image = dishRequest.image,
                 dishOptions = mutableSetOf(),
-                averageRating = 0.0,
             )
         val createdDishOptions = createAndLinkDishOptions(dish, dishRequest.dishOptionRequests)
 
-        if (createdDishOptions.isNotEmpty()) {
-            dish.averageRating = createdDishOptions.map { it.rating }.average()
-        }
         restaurant.addDish(dish)
         val savedDish = dishRepository.save(dish)
         return savedDish
@@ -115,6 +111,5 @@ class DishService(
             dishRepository.findByIdOrNull(dishId)
                 ?: throw EntityNotFoundException("Dish with id $dishId not found")
         val averageRating = dish.dishOptions.map { it.rating }.average()
-        dish.averageRating = averageRating
     }
 }

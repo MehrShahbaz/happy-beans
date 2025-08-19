@@ -24,8 +24,6 @@ class Dish(
     var image: String,
     @OneToMany(mappedBy = "dish", cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.LAZY)
     var dishOptions: MutableSet<DishOption> = mutableSetOf(),
-    @Column(name = "average_rating")
-    var averageRating: Double? = null,
     @CreationTimestamp
     val createdAt: LocalDateTime? = null,
     @UpdateTimestamp
