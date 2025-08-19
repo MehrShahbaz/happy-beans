@@ -27,14 +27,6 @@ class DishService(
         return dishRepository.findByNameOrNull(name)
     }
 
-    fun findByRestaurantId(
-        restaurantId: Long,
-        pageable: Pageable,
-    ): List<Dish> {
-        return dishRepository.findByRestaurantId(restaurantId, pageable)
-            ?: throw EntityNotFoundException("Restaurant with id $restaurantId not found")
-    }
-
     fun findAll(pageable: Pageable): List<Dish> {
         return dishRepository.findAll(pageable).content
     }

@@ -13,8 +13,6 @@ import org.mockito.BDDMockito.given
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
-import org.springframework.data.domain.PageRequest
-import org.springframework.data.repository.findByIdOrNull
 
 @ExtendWith(MockitoExtension::class)
 class DishTest {
@@ -70,30 +68,6 @@ class DishTest {
     }
 
     @Test
-    fun `findByRestaurantId should return list of dishes for valid restaurant`() {
-        // Given
-        val restaurantId = 1L
-        val pageable = PageRequest.of(0, 10)
-        val dishes =
-            listOf(
-                TestFixture.createMargheritaPizza(),
-                TestFixture.createClassicBeefBurger(),
-                TestFixture.createCaesarSalad(),
-            )
-
-        given(dishRepository.findByRestaurantId(restaurantId, pageable)).willReturn(dishes)
-
-        val result = dishService.findByRestaurantId(restaurantId, pageable)
-
-        assertThat(result).hasSize(3)
-        assertThat(result.map { it.name }).containsExactlyInAnyOrder(
-            "Margherita Pizza",
-            "Classic Beef Burger",
-            "Caesar Salad",
-        )
-    }
-
-    @Test
     fun `findByName should return dish when name matches`() {
         // Given
         val dishName = "Margherita Pizza"
@@ -105,19 +79,6 @@ class DishTest {
 
         // Then
         assertThat(result).isNotNull
-    }
-
-    @Test
-    fun `findByRestaurantId should return empty list when restaurant has no dishes`() {
-        // Given
-        val restaurantId = 1L
-        val pageable = PageRequest.of(0, 10)
-
-        given(dishRepository.findByRestaurantId(restaurantId, pageable)).willReturn(emptyList())
-
-        val result = dishService.findByRestaurantId(restaurantId, pageable)
-
-        assertThat(result).isEmpty()
     }
 
     @Test

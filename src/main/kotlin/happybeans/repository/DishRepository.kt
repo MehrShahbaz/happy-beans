@@ -13,12 +13,10 @@ interface DishRepository : JpaRepository<Dish, Long> {
 
     fun findByIdOrNull(id: Long): Dish?
 
-    fun findByRestaurantId(
+    fun findAllOrNull(pageable: Pageable): List<Dish>?
+
+    fun findDishesByRestaurantId(
         restaurantId: Long,
         pageable: Pageable,
     ): List<Dish>?
-
-    fun findByRestaurantId(restaurantId: Long): List<Dish>
-
-    fun findAllOrNull(pageable: Pageable): List<Dish>?
 }
