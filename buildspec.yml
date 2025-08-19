@@ -4,12 +4,16 @@ phases:
   install:
     runtime-versions:
       java: corretto21
+    commands:
+      - chmod +x ./gradlew
   pre_build:
     commands:
       - echo ">>> Cleaning project..."
       - ./gradlew clean
   build:
     commands:
+      - echo ">>> Running tests..."
+      - ./gradlew test
       - echo ">>> Building jar..."
       - ./gradlew bootJar --no-daemon
   post_build:
@@ -22,3 +26,9 @@ artifacts:
     - appspec.yml
     - scripts/**/*
   discard-paths: no
+
+cache:
+  paths:
+    - '~/.gradle/caches/**'
+    - '~/.gradle/wrapper/**'
+    - 'build/**'

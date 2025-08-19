@@ -1,0 +1,10 @@
+version: '3.8'
+
+services:
+  spring-app:
+    image: happy-beans-image:1.0
+    container_name: spring-ecommerce
+    ports:
+      - "80:80"
+    env_file:
+      - .env
