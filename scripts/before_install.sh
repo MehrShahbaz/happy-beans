@@ -1,10 +1,11 @@
 #!/bin/bash
-echo ">>> [BeforeInstall] Stopping current application if running..."
-pkill -f 'java -jar' || true
+APP_NAME=happy-beans
+CONTAINER_NAME=happy-beans-container
+IMAGE_NAME=happy-beans-image:1.0
 
-echo ">>> [BeforeInstall] Fixing ownership..."
-sudo chown -R ubuntu:ubuntu /home/ubuntu/app
+echo ">>> Stopping old container (if exists)..."
+docker stop $CONTAINER_NAME || true
+docker rm $CONTAINER_NAME || true
 
-echo ">>> [BeforeInstall] Cleaning old files..."
-rm -rf /home/ubuntu/app/*
-
+echo ">>> Removing old Docker image (optional)..."
+docker rmi $IMAGE_NAME || true

@@ -1,12 +1,8 @@
 #!/bin/bash
-JAR_FILE=$(ls /home/ubuntu/app/build/libs/*.jar | head -n 1)
+CONTAINER_NAME=happy-beans-container
+IMAGE_NAME=happy-beans-image:1.0
+HOST_PORT=80
+CONTAINER_PORT=80
 
-if [ -z "$JAR_FILE" ]; then
-  echo ">>> [ApplicationStart] No JAR file found!"
-  exit 1
-fi
-
-echo ">>> ####### Test #######"
-echo ">>> [ApplicationStart] Starting application: $JAR_FILE"
-nohup sudo java -jar $JAR_FILE > /home/ubuntu/app/app.log 2>&1 &
-
+echo ">>> Starting Docker container..."
+docker run -d --name $CONTAINER_NAME -p $HOST_PORT:$CONTAINER_PORT $IMAGE_NAME

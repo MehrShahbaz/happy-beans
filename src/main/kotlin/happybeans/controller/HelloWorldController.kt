@@ -8,6 +8,6 @@ import org.springframework.web.bind.annotation.RestController
 class HelloWorldController {
     @GetMapping("/api/hello-world")
     fun helloWorld(): ResponseEntity<String> {
-        return ResponseEntity.ok("Hello, World! V2")
+        return ResponseEntity.ok("Hello, World!")
     }
 }
