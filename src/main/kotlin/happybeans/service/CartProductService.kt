@@ -25,24 +25,34 @@ class CartProductService(
     @Transactional
     fun addToCart(
         user: User,
+        cartProduct: Pair<Long, Long>,
         request: CartProductRequest,
-    ) { // TODO uncomment the code out when dish service will be ready
-//        val dish = dishService.findById(request.dishId)
-//        val dishOption = dishService.findByDishIdAndOptionId(request.dishId, request.dishOptionId)
-//        cartProductRepository.save(
-//            CartProduct(
-//                user,
-//                dish,
-//                dishOption,
-//            ).apply {
-//                this.quantity = request.quantity
-//            }
-//        )
+    ) {
+        val dish = dishService.findById(cartProduct.first)
+        val dishOption = dishService.findByIdAndDishOptionId(cartProduct.first, cartProduct.second)
+        cartProductRepository.save(
+            CartProduct(
+                user,
+                dish,
+                dishOption,
+            ).apply {
+                this.quantity = request.quantity
+            },
+        )
+    }
+
+    @Transactional
+    fun deleteFromCart(
+        user: User,
+        dishOptionId: Long,
+    ) {
+        cartProductRepository.deleteByUserIdAndDishOptionId(user.id, dishOptionId)
     }
 
     @Transactional
     fun updateQuantity(
         user: User,
+        dishOptionId: Long,
         request: CartProductRequest,
     ) {
         require(request.quantity > 0) { "Quantity must be greater than zero" }
@@ -50,7 +60,7 @@ class CartProductService(
         val cartProduct =
             cartProductRepository.findByUserIdAndDishOptionId(
                 user.id,
-                request.dishOptionId,
+                dishOptionId,
             ) ?: throw NoSuchElementException("Product not found")
 
         cartProduct.quantity = request.quantity

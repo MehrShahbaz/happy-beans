@@ -7,12 +7,6 @@ import jakarta.validation.constraints.Positive
 class CartProductRequest(
     @field:NotNull
     @field:Positive
-    val dishId: Long,
-    @field:NotNull
-    @field:Positive
-    val dishOptionId: Long,
-    @field:NotNull
-    @field:Positive
     @field:Min(1)
     val quantity: Int = 1,
 )

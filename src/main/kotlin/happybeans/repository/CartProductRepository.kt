@@ -8,6 +8,11 @@ interface CartProductRepository : JpaRepository<CartProduct, Long> {
 
     fun deleteAllByUserId(userId: Long)
 
+    fun deleteByUserIdAndDishOptionId(
+        userId: Long,
+        dishOptionId: Long,
+    )
+
     fun findByUserIdAndDishOptionId(
         userId: Long,
         dishOptionId: Long,
