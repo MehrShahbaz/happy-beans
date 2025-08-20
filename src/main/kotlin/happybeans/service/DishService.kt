@@ -14,7 +14,6 @@ import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import kotlin.collections.map
-import org.springframework.data.repository.findByIdOrNull
 
 @Service
 class DishService(
@@ -78,7 +77,7 @@ class DishService(
                 TagContainer(
                     type = TagContainerType.INGREDIENTS,
                     user = null,
-                    dish = null,
+                    dish = dish,
                 )
 
             val dishOption =
