@@ -49,8 +49,8 @@ class RestaurantService(
         userId: Long,
     ) {
         val restaurant = getRestaurantByIdAndOwnerId(restaurantId, userId)
-
         restaurant.patchFields(restaurantPatchRequest)
+        restaurantRepository.save(restaurant)
     }
 
     fun deleteRestaurant(

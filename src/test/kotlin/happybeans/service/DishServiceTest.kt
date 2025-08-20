@@ -304,7 +304,8 @@ class DishServiceTest {
         val dish = TestFixture.createMargheritaPizza().apply { id = dishId }
         val updateRequest =
             DishUpdateRequest(
-                name = dish.name, // Same name as current dish
+                // Same name as current dish
+                name = dish.name,
                 description = "Updated description",
                 image = "updated-image.jpg",
             )
@@ -356,9 +357,11 @@ class DishServiceTest {
         val originalDescription = dish.description
         val patchRequest =
             DishPatchRequest(
-                name = null, // Not updating name
+                // Not updating name
+                name = null,
                 description = "Updated description only",
-                image = null, // Not updating image
+                // Not updating image
+                image = null,
             )
         given(dishRepository.findById(dishId)).willReturn(Optional.of(dish))
         given(dishRepository.save(dish)).willReturn(dish)
@@ -579,10 +582,12 @@ class DishServiceTest {
         val originalImage = dishOption.image
         val patchRequest =
             DishOptionPatchRequest(
-                name = null, // Not updating
+                // Not updating
+                name = null,
                 description = "Patched description",
                 price = 15.99,
-                image = null, // Not updating
+                // Not updating
+                image = null,
                 prepTimeMinutes = null,
                 rating = null,
             )
