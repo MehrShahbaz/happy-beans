@@ -14,6 +14,7 @@ import org.mockito.BDDMockito.given
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
+import java.util.Optional
 
 @ExtendWith(MockitoExtension::class)
 class DishTest {
@@ -29,7 +30,7 @@ class DishTest {
     @Test
     fun `findById should return MargheritaPizza without option if exists`() {
         val dishFromFixture = TestFixture.createMargheritaPizza()
-        given(dishRepository.findByIdOrNull(1L)).willReturn(dishFromFixture)
+        given(dishRepository.findById(1L)).willReturn(Optional.of(dishFromFixture))
 
         val result = dishService.findById(1L)
         assertThat(result.name).isEqualTo(dishFromFixture.name)
@@ -38,7 +39,7 @@ class DishTest {
     @Test
     fun `findById should return MargheritaPizza with all options if exists`() {
         val dishFromFixture = TestFixture.createMargheritaPizzaWithAllOptions()
-        given(dishRepository.findByIdOrNull(1L)).willReturn(dishFromFixture)
+        given(dishRepository.findById(1L)).willReturn(Optional.of(dishFromFixture))
 
         val result = dishService.findById(1L)
 
@@ -57,7 +58,7 @@ class DishTest {
     @Test
     fun `findById should throw NotFoundException when dish does not exist`() {
         // Given
-        given(dishRepository.findByIdOrNull(999L)).willReturn(null)
+        given(dishRepository.findById(999L)).willReturn(null)
 
         // When && Then
         assertThrows<EntityNotFoundException> {
@@ -103,7 +104,7 @@ class DishTest {
                 description = "Updated description",
                 image = "updated-image.jpg",
             )
-        given(dishRepository.findByIdOrNull(dishId)).willReturn(dish)
+        given(dishRepository.findById(dishId)).willReturn(Optional.of(dish))
         given(dishRepository.findByName(updateRequest.name)).willReturn(null)
         given(dishRepository.save(dish)).willReturn(dish)
 
@@ -128,7 +129,7 @@ class DishTest {
                 description = "Updated description",
                 image = "updated-image.jpg",
             )
-        given(dishRepository.findByIdOrNull(dishId)).willReturn(dish)
+        given(dishRepository.findById(dishId)).willReturn(Optional.of(dish))
         given(dishRepository.findByName(updateRequest.name)).willReturn(existingDish)
 
         // When & Then
@@ -142,7 +143,7 @@ class DishTest {
         // Given
         val dishId = 1L
         val dish = TestFixture.createMargheritaPizza()
-        given(dishRepository.findByIdOrNull(dishId)).willReturn(dish)
+        given(dishRepository.findById(dishId)).willReturn(Optional.of(dish))
 
         // When
         dishService.deleteDishById(dishId)
@@ -154,7 +155,7 @@ class DishTest {
     fun `deleteDishById should throw EntityNotFoundException when dish does not exist`() {
         // Given
         val dishId = 999L
-        given(dishRepository.findByIdOrNull(dishId)).willReturn(null)
+        given(dishRepository.findById(dishId)).willReturn(null)
 
         // When & Then
         assertThrows<EntityNotFoundException> {

@@ -31,8 +31,7 @@ class DishService(
     }
 
     fun findById(dishId: Long): Dish {
-        return dishRepository.findByIdOrNull(dishId)
-            ?: throw EntityNotFoundException("Dish with id $dishId not found")
+        return dishRepository.findById(dishId).orElseThrow { EntityNotFoundException("Dish with id $dishId not found") }
     }
 
     fun findByIdAndDishOptionId(
