@@ -1,23 +1,15 @@
 package happybeans.controller.member
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
-import happybeans.config.argumentResolver.LoginMemberArgumentResolver
-import happybeans.config.interceptor.MemberInterceptor
 import happybeans.dto.cart.CartProductListResponse
 import happybeans.dto.cart.CartProductResponse
-import happybeans.model.User
 import happybeans.service.CartProductService
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.eq
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc
-import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.MediaType
 import org.springframework.restdocs.mockmvc.MockMvcRestDocumentation.document
 import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders
@@ -31,50 +23,18 @@ import org.springframework.restdocs.payload.PayloadDocumentation.relaxedRequestF
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
-import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.bean.override.mockito.MockitoBean
-import org.springframework.test.web.servlet.MockMvc
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-@ActiveProfiles("test")
-@SpringBootTest
-@AutoConfigureMockMvc
-@AutoConfigureRestDocs
-class CartProductControllerTest {
-
-    @Autowired
-    private lateinit var mockMvc: MockMvc
+class CartProductControllerTest : AbstractDocumentTest() {
 
     @MockitoBean
     private lateinit var cartProductService: CartProductService
 
-    @MockitoBean
-    private lateinit var loginMemberArgumentResolver: LoginMemberArgumentResolver
-
-    @MockitoBean
-    private lateinit var memberInterceptor: MemberInterceptor
-
-    private lateinit var testUser: User
     private val objectMapper = jacksonObjectMapper()
-
-    @BeforeEach
-    fun setUp() {
-        testUser = User(
-            id = 1L,
-            firstName = "Test User",
-            email = "test@example.com",
-            password = "password",
-            lastName = "Test User"
-        )
-
-        whenever(loginMemberArgumentResolver.supportsParameter(any())).thenReturn(true)
-        whenever(loginMemberArgumentResolver.resolveArgument(any(), any(), any(), any()))
-            .thenReturn(testUser)
-        whenever(memberInterceptor.preHandle(any(), any(), any())).thenReturn(true)
-    }
 
     @Test
     @DisplayName("GET /api/member/cart -> 200 and list of cart products")
@@ -234,8 +194,8 @@ class CartProductControllerTest {
             .andDo(
                 document(
                     "cart-clear",
-                    preprocessRequest(Preprocessors.prettyPrint()),
-                    preprocessResponse(Preprocessors.prettyPrint())
+                    preprocessRequest(prettyPrint()),
+                    preprocessResponse(prettyPrint())
                 )
             )
 
