@@ -4,7 +4,7 @@ import jakarta.validation.constraints.NotNull
 import java.time.DayOfWeek
 import java.time.LocalTime
 
-data class WorkingDateHourRequest(
+class WorkingDateHourRequest(
     @field:NotNull(message = "Day of week is required")
     val dayOfWeek: DayOfWeek,
     @field:NotNull(message = "Open time is required")

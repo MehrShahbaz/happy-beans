@@ -4,6 +4,7 @@ import happybeans.TestFixture
 import happybeans.dto.dish.DishCreateRequest
 import happybeans.dto.dish.DishOptionCreateRequest
 import happybeans.model.Dish
+import happybeans.model.Restaurant
 import happybeans.repository.DishRepository
 import happybeans.repository.RestaurantRepository
 import happybeans.utils.exception.DishAlreadyExistsException
@@ -17,6 +18,7 @@ import org.mockito.BDDMockito.verify
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
+import java.util.Optional
 
 @ExtendWith(MockitoExtension::class)
 class DishServiceTest {
@@ -86,7 +88,7 @@ class DishServiceTest {
     fun `createDish should create dish with options successfully`() {
         // Given
         val restaurantId = 1L
-        val restaurant = TestFixture.createHappyBeansCafe()
+        val restaurant: Restaurant = TestFixture.createHappyBeansCafe()
         val dishRequest =
             DishCreateRequest(
                 name = "Test Pizza",
@@ -105,7 +107,7 @@ class DishServiceTest {
                     ),
             )
 
-        given(restaurantRepository.findByIdOrNull(restaurantId)).willReturn(restaurant)
+        given(restaurantRepository.findById(restaurantId)).willReturn(Optional.of(restaurant))
         given(dishRepository.findByName("Test Pizza")).willReturn(null) // No existing dish
         given(dishRepository.save(org.mockito.ArgumentMatchers.any(Dish::class.java)))
             .willAnswer { it.arguments[0] as Dish }
@@ -138,7 +140,7 @@ class DishServiceTest {
                 dishOptionRequests = mutableSetOf(),
             )
 
-        given(restaurantRepository.findByIdOrNull(restaurantId)).willReturn(null)
+        given(restaurantRepository.findById(restaurantId)).willReturn(null)
 
         // When & Then
         assertThrows<EntityNotFoundException> {
@@ -159,7 +161,7 @@ class DishServiceTest {
                 dishOptionRequests = mutableSetOf(),
             )
 
-        given(restaurantRepository.findByIdOrNull(restaurantId)).willReturn(restaurant)
+        given(restaurantRepository.findById(restaurantId)).willReturn(Optional.of(restaurant))
         given(dishRepository.save(org.mockito.ArgumentMatchers.any(Dish::class.java)))
             .willAnswer { it.arguments[0] as Dish }
 
@@ -186,7 +188,7 @@ class DishServiceTest {
                 dishOptionRequests = mutableSetOf(),
             )
 
-        given(restaurantRepository.findByIdOrNull(restaurantId)).willReturn(restaurant)
+        given(restaurantRepository.findById(restaurantId)).willReturn(Optional.of(restaurant))
         given(dishRepository.save(org.mockito.ArgumentMatchers.any(Dish::class.java)))
             .willAnswer { it.arguments[0] as Dish }
 
@@ -212,7 +214,7 @@ class DishServiceTest {
                 dishOptionRequests = mutableSetOf(),
             )
 
-        given(restaurantRepository.findByIdOrNull(restaurantId)).willReturn(restaurant)
+        given(restaurantRepository.findById(restaurantId)).willReturn(Optional.of(restaurant))
         given(dishRepository.findByName("Margherita Pizza")).willReturn(existingDish) // Dish already exists
 
         // When & Then

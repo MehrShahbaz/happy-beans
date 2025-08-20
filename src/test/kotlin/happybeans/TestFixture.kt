@@ -6,6 +6,7 @@ import happybeans.model.DishOption
 import happybeans.model.Restaurant
 import happybeans.model.Tag
 import happybeans.model.TagContainer
+import happybeans.model.User
 import happybeans.model.WorkingDateHour
 import java.time.DayOfWeek
 import java.time.LocalTime
@@ -135,17 +136,34 @@ object TestFixture {
         )
     }
 
-    fun createHappyBeansCafe() =
-        Restaurant(
+    fun createHappyBeansCafe():Restaurant  {
+        val user = User(
+            email = "hello@world.com",
+            firstName = "John",
+            lastName = "Doe",
+            password = "password",
+        )
+        return Restaurant(
+            user = user,
             name = "Happy Beans Cafe",
             description = "A cozy neighborhood cafe serving fresh, locally-sourced meals and the best coffee in town.",
             image = "https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=800&q=80",
             addressUrl = "https://maps.google.com/?q=Happy+Beans+Cafe+Seoul",
             workingDateHours = (createWeekdaySchedule() + createWeekendSchedule()).toMutableList(),
         )
+    }
 
-    fun createMammaMiaPizzeria() =
-        Restaurant(
+
+    fun createMammaMiaPizzeria():Restaurant {
+        val user = User(
+            email = "hello@world.com",
+            firstName = "John",
+            lastName = "Doe",
+            password = "password",
+        )
+
+        return Restaurant(
+            user = user,
             name = "Mamma Mia Pizzeria",
             description = "Authentic Italian pizzeria with wood-fired ovens and traditional recipes passed down through generations.",
             image = "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=800&q=80",
@@ -157,6 +175,7 @@ object TestFixture {
                     *DayOfWeek.values(),
                 ).toMutableList(),
         )
+    }
 
     fun createMondayHours() =
         WorkingDateHour(

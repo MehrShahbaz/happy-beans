@@ -47,8 +47,8 @@ class DishService(
         dishRequest: DishCreateRequest,
     ): Dish {
         val restaurant =
-            restaurantRepository.findByIdOrNull(restaurantId)
-                ?: throw EntityNotFoundException("Restaurant with id $restaurantId not found")
+            restaurantRepository.findById(restaurantId)
+                .orElseThrow { EntityNotFoundException("Restaurant not found") }
 
         val existingDish = dishRepository.findByName(dishRequest.name)
         if (existingDish != null) {

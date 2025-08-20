@@ -2,6 +2,7 @@ package happybeans.service
 
 import happybeans.dto.review.ReviewCreateRequestDto
 import happybeans.enums.TagContainerType
+import happybeans.enums.UserRole
 import happybeans.model.Dish
 import happybeans.model.DishOption
 import happybeans.model.Restaurant
@@ -26,6 +27,7 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import java.time.DayOfWeek
 import java.time.LocalTime
+import javax.management.relation.Role
 
 @SpringBootTest
 @Transactional
@@ -55,6 +57,7 @@ class RestaurantReviewServiceTest {
     private lateinit var dishRepository: DishRepository
 
     private lateinit var member: User
+    private lateinit var owner: User
     private lateinit var restaurant: Restaurant
     private lateinit var dishOption: DishOption
     private lateinit var dish: Dish
@@ -71,8 +74,19 @@ class RestaurantReviewServiceTest {
                 ),
             )
 
+        owner = userRepository.save(
+            User(
+                email = "owner-login@test.com",
+                password = "12345678",
+                firstName = "Test",
+                lastName = "User",
+                role = UserRole.RESTAURANT_OWNER,
+            ),
+        )
+
         restaurant =
             Restaurant(
+                user = owner,
                 name = "Cozy Bistro",
                 description = "A charming bistro with a warm atmosphere",
                 image = "https://example.com/cozy-bistro.jpg",
@@ -188,6 +202,7 @@ class RestaurantReviewServiceTest {
         val restaurant2 =
             restaurantRepository.save(
                 Restaurant(
+                    user = owner,
                     name = "Cozy Cafe",
                     description = "A charming bistro with a warm atmosphere",
                     image = "https://example.com/cozy-cafe.jpg",
