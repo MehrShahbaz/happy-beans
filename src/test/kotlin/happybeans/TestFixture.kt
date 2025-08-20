@@ -136,13 +136,14 @@ object TestFixture {
         )
     }
 
-    fun createHappyBeansCafe():Restaurant  {
-        val user = User(
-            email = "hello@world.com",
-            firstName = "John",
-            lastName = "Doe",
-            password = "password",
-        )
+    fun createHappyBeansCafe(): Restaurant {
+        val user =
+            User(
+                email = "hello@world.com",
+                firstName = "John",
+                lastName = "Doe",
+                password = "password",
+            )
         return Restaurant(
             user = user,
             name = "Happy Beans Cafe",
@@ -153,14 +154,14 @@ object TestFixture {
         )
     }
 
-
-    fun createMammaMiaPizzeria():Restaurant {
-        val user = User(
-            email = "hello@world.com",
-            firstName = "John",
-            lastName = "Doe",
-            password = "password",
-        )
+    fun createMammaMiaPizzeria(): Restaurant {
+        val user =
+            User(
+                email = "hello@world.com",
+                firstName = "John",
+                lastName = "Doe",
+                password = "password",
+            )
 
         return Restaurant(
             user = user,

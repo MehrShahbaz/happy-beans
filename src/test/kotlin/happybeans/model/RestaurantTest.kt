@@ -38,13 +38,14 @@ class RestaurantTest {
                 "test",
             )
 
-        workingDateHours = DayOfWeek.entries.map {
-            WorkingDateHourRequest(
-                it,
-                LocalTime.now(),
-                LocalTime.now(),
-            )
-        }
+        workingDateHours =
+            DayOfWeek.entries.map {
+                WorkingDateHourRequest(
+                    it,
+                    LocalTime.now(),
+                    LocalTime.now(),
+                )
+            }
     }
 
     @Test
@@ -61,7 +62,7 @@ class RestaurantTest {
                 description = "change description",
                 image = "change test",
                 addressUrl = "change address url",
-                workingDateHours
+                workingDateHours,
             )
         restaurant.patchFields(patch)
 

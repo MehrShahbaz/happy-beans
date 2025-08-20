@@ -27,7 +27,6 @@ import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import java.time.DayOfWeek
 import java.time.LocalTime
-import javax.management.relation.Role
 
 @SpringBootTest
 @Transactional
@@ -74,15 +73,16 @@ class RestaurantReviewServiceTest {
                 ),
             )
 
-        owner = userRepository.save(
-            User(
-                email = "owner-login@test.com",
-                password = "12345678",
-                firstName = "Test",
-                lastName = "User",
-                role = UserRole.RESTAURANT_OWNER,
-            ),
-        )
+        owner =
+            userRepository.save(
+                User(
+                    email = "owner-login@test.com",
+                    password = "12345678",
+                    firstName = "Test",
+                    lastName = "User",
+                    role = UserRole.RESTAURANT_OWNER,
+                ),
+            )
 
         restaurant =
             Restaurant(
