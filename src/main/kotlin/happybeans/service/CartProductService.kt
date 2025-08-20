@@ -40,14 +40,15 @@ class CartProductService(
         val dish = dishService.findById(dishId)
         val dishOption = dishService.findByIdAndDishOptionId(dishId, optionId)
 
-        val product = cartProductRepository.findByUserIdAndDishOptionId(user.id, optionId)
-            ?.apply { quantity = req.quantity }
-            ?: CartProduct(
-                user = user,
-                dish = dish,
-                dishOption = dishOption,
-                quantity = req.quantity
-            )
+        val product =
+            cartProductRepository.findByUserIdAndDishOptionId(user.id, optionId)
+                ?.apply { quantity = req.quantity }
+                ?: CartProduct(
+                    user = user,
+                    dish = dish,
+                    dishOption = dishOption,
+                    quantity = req.quantity,
+                )
 
         cartProductRepository.save(product)
     }

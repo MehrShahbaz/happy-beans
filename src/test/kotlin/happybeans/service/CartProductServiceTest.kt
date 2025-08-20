@@ -101,7 +101,7 @@ class CartProductServiceTest {
 
         every { dishService.findById(dish.id) } returns dish
         every { dishService.findByIdAndDishOptionId(dish.id, dishOption.id) } returns dishOption
-        every { cartProductRepository.findByUserIdAndDishOptionId(user.id, dishOption.id)} returns null
+        every { cartProductRepository.findByUserIdAndDishOptionId(user.id, dishOption.id) } returns null
         every { cartProductRepository.save(capture(cartProductSlot)) } returns cartProduct
 
         cartProductService.addOrUpdateCartProduct(user, Pair(dish.id, dishOption.id), request)
@@ -122,7 +122,7 @@ class CartProductServiceTest {
 
         every { dishService.findById(dish.id) } returns dish
         every { dishService.findByIdAndDishOptionId(dish.id, dishOption.id) } returns dishOption
-        every { cartProductRepository.findByUserIdAndDishOptionId(user.id, dishOption.id)} returns cartProduct
+        every { cartProductRepository.findByUserIdAndDishOptionId(user.id, dishOption.id) } returns cartProduct
         every { cartProductRepository.save(capture(cartProductSlot)) } returns cartProduct
 
         cartProductService.addOrUpdateCartProduct(user, Pair(dish.id, dishOption.id), request)
