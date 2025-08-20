@@ -2,7 +2,7 @@ package happybeans.dto.cart
 
 import happybeans.model.CartProduct
 
-data class CartProductResponse(
+class CartProductResponse(
     val dishName: String,
     val dishOptionName: String,
     val dishPrice: Double,
