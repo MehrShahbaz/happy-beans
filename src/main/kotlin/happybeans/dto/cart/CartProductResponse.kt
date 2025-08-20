@@ -2,8 +2,14 @@ package happybeans.dto.cart
 
 import happybeans.model.CartProduct
 
-class CartProductResponse(cartProduct: CartProduct) {
-    val dishName = cartProduct.dish.name
-    val dishOptionName = cartProduct.dishOption.name
-    val dishPrice = cartProduct.dishOption.price
+data class CartProductResponse(
+    val dishName: String,
+    val dishOptionName: String,
+    val dishPrice: Double,
+) {
+    constructor(cartProduct: CartProduct) : this(
+        cartProduct.dish.name,
+        cartProduct.dishOption.name,
+        cartProduct.dishOption.price,
+    )
 }
