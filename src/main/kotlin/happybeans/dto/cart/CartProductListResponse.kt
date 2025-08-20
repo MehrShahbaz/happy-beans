@@ -1,3 +1,3 @@
 package happybeans.dto.cart
 
-class CartProductListResponse(val cartProducts: List<CartProductResponse>)
+data class CartProductListResponse(val cartProducts: List<CartProductResponse>)
