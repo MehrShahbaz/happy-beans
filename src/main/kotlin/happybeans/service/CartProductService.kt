@@ -60,9 +60,9 @@ class CartProductService(
     fun updateQuantity(
         user: User,
         dishOptionId: Long,
-        request: CartProductRequest,
+        newQuantity: Int,
     ) {
-        require(request.quantity > 0) { "Quantity must be greater than zero" }
+        require(newQuantity > 0) { "Quantity must be greater than zero" }
 
         val cartProduct =
             cartProductRepository.findByUserIdAndDishOptionId(
@@ -70,7 +70,7 @@ class CartProductService(
                 dishOptionId,
             ) ?: throw NoSuchElementException("Product not found")
 
-        cartProduct.quantity = request.quantity
+        cartProduct.quantity = newQuantity
         cartProductRepository.save(cartProduct)
     }
 }

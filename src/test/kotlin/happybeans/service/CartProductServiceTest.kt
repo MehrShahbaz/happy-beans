@@ -132,7 +132,7 @@ class CartProductServiceTest {
         every { cartProductRepository.findByUserIdAndDishOptionId(user.id, dishOption.id) } returns cartProduct
         every { cartProductRepository.save(capture(cartProductSlot)) } returns cartProduct
 
-        cartProductService.updateQuantity(user, dishOption.id, request)
+        cartProductService.updateQuantity(user, dishOption.id, request.quantity)
 
         verify(exactly = 1) { cartProductRepository.findByUserIdAndDishOptionId(user.id, dishOption.id) }
         verify(exactly = 1) { cartProductRepository.save(any()) }
@@ -147,7 +147,7 @@ class CartProductServiceTest {
         every { cartProductRepository.findByUserIdAndDishOptionId(user.id, nonExistentDishOptionId) } returns null
 
         assertThrows<NoSuchElementException> {
-            cartProductService.updateQuantity(user, nonExistentDishOptionId, request)
+            cartProductService.updateQuantity(user, nonExistentDishOptionId, request.quantity)
         }
         verify(exactly = 0) { cartProductRepository.save(any()) }
     }
@@ -157,7 +157,7 @@ class CartProductServiceTest {
         val request = CartProductRequest(quantity = 0)
 
         assertThrows<IllegalArgumentException> {
-            cartProductService.updateQuantity(user, dishOption.id, request)
+            cartProductService.updateQuantity(user, dishOption.id, request.quantity)
         }
         verify(exactly = 0) { cartProductRepository.findByUserIdAndDishOptionId(any(), any()) }
         verify(exactly = 0) { cartProductRepository.save(any()) }

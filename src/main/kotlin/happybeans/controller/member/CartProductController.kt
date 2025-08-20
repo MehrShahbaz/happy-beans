@@ -46,7 +46,7 @@ class CartProductController(
         @PathVariable("dishOptionId") dishOptionId: Long,
         @Valid @RequestBody request: CartProductRequest,
     ): ResponseEntity<MessageResponse> {
-        cartProductService.updateQuantity(user, dishOptionId, request)
+        cartProductService.updateQuantity(user, dishOptionId, request.quantity)
         return ResponseEntity.ok(MessageResponse("Option updated"))
     }
 
