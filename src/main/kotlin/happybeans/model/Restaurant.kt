@@ -27,7 +27,6 @@ class Restaurant(
     var image: String,
     @Column(name = "address_url")
     var addressUrl: String,
-    @Column(name = "address_url")
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(
         name = "restaurant_working_dates_hours",

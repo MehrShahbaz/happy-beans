@@ -45,12 +45,11 @@ class RestaurantController(
         return ResponseEntity.ok(restaurant)
     }
 
-//    @GetMapping("/{restaurantId}/dishes")
-//    fun getDishesByRestaurant(
-//        @PathVariable restaurantId: Long,
-//        pageable: Pageable,
-//    ): ResponseEntity<List<Dish>> {
-//        val dishes = restaurantService.findDishesByRestaurant(restaurantId, pageable)
-//        return ResponseEntity.ok(dishes)
-//    }
+    @GetMapping("/{restaurantId}/dishes")
+    fun getDishesByRestaurant(
+        @PathVariable restaurantId: Long,
+    ): ResponseEntity<List<Dish>> {
+        val restaurant = restaurantService.findById(restaurantId)
+        return ResponseEntity.ok(restaurant.dishes)
+    }
 }
