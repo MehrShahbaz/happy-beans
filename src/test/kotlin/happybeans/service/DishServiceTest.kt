@@ -4,11 +4,10 @@ import happybeans.TestFixture
 import happybeans.dto.dish.DishCreateRequest
 import happybeans.dto.dish.DishOptionCreateRequest
 import happybeans.model.Dish
-import happybeans.model.Restaurant
 import happybeans.repository.DishRepository
 import happybeans.repository.RestaurantRepository
-import happybeans.utils.exception.EntityNotFoundException
 import happybeans.utils.exception.DishAlreadyExistsException
+import happybeans.utils.exception.EntityNotFoundException
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -21,7 +20,6 @@ import org.mockito.junit.jupiter.MockitoExtension
 
 @ExtendWith(MockitoExtension::class)
 class DishServiceTest {
-
     @Mock
     private lateinit var dishRepository: DishRepository
 
@@ -89,21 +87,23 @@ class DishServiceTest {
         // Given
         val restaurantId = 1L
         val restaurant = TestFixture.createHappyBeansCafe()
-        val dishRequest = DishCreateRequest(
-            name = "Test Pizza",
-            description = "A delicious test pizza",
-            image = "https://example.com/pizza.jpg",
-            dishOptionRequests = mutableSetOf(
-                DishOptionCreateRequest(
-                    name = "Small Pizza",
-                    description = "Perfect for one person",
-                    price = 15.99,
-                    image = "https://example.com/small-pizza.jpg",
-                    prepTimeMinutes = 20,
-                    rating = 4.5
-                )
+        val dishRequest =
+            DishCreateRequest(
+                name = "Test Pizza",
+                description = "A delicious test pizza",
+                image = "https://example.com/pizza.jpg",
+                dishOptionRequests =
+                    mutableSetOf(
+                        DishOptionCreateRequest(
+                            name = "Small Pizza",
+                            description = "Perfect for one person",
+                            price = 15.99,
+                            image = "https://example.com/small-pizza.jpg",
+                            prepTimeMinutes = 20,
+                            rating = 4.5,
+                        ),
+                    ),
             )
-        )
 
         given(restaurantRepository.findByIdOrNull(restaurantId)).willReturn(restaurant)
         given(dishRepository.findByName("Test Pizza")).willReturn(null) // No existing dish
@@ -117,7 +117,7 @@ class DishServiceTest {
         assertThat(result.name).isEqualTo("Test Pizza")
         assertThat(result.description).isEqualTo("A delicious test pizza")
         assertThat(result.dishOptions).hasSize(1)
-        
+
         val dishOption = result.dishOptions.first()
         assertThat(dishOption.name).isEqualTo("Small Pizza")
         assertThat(dishOption.price).isEqualTo(15.99)
@@ -130,12 +130,13 @@ class DishServiceTest {
     fun `createDish should throw EntityNotFoundException when restaurant not found`() {
         // Given
         val restaurantId = 999L
-        val dishRequest = DishCreateRequest(
-            name = "Test Pizza",
-            description = "A delicious test pizza",
-            image = "https://example.com/pizza.jpg",
-            dishOptionRequests = mutableSetOf()
-        )
+        val dishRequest =
+            DishCreateRequest(
+                name = "Test Pizza",
+                description = "A delicious test pizza",
+                image = "https://example.com/pizza.jpg",
+                dishOptionRequests = mutableSetOf(),
+            )
 
         given(restaurantRepository.findByIdOrNull(restaurantId)).willReturn(null)
 
@@ -150,12 +151,13 @@ class DishServiceTest {
         // Given
         val restaurantId = 1L
         val restaurant = TestFixture.createHappyBeansCafe()
-        val dishRequest = DishCreateRequest(
-            name = "Simple Dish",
-            description = "A simple dish",
-            image = "https://example.com/dish.jpg",
-            dishOptionRequests = mutableSetOf()
-        )
+        val dishRequest =
+            DishCreateRequest(
+                name = "Simple Dish",
+                description = "A simple dish",
+                image = "https://example.com/dish.jpg",
+                dishOptionRequests = mutableSetOf(),
+            )
 
         given(restaurantRepository.findByIdOrNull(restaurantId)).willReturn(restaurant)
         given(dishRepository.save(org.mockito.ArgumentMatchers.any(Dish::class.java)))
@@ -176,12 +178,13 @@ class DishServiceTest {
         val restaurantId = 1L
         val restaurant = TestFixture.createHappyBeansCafe()
         val initialDishCount = restaurant.dishes.size
-        val dishRequest = DishCreateRequest(
-            name = "New Dish",
-            description = "A new dish",
-            image = "https://example.com/new-dish.jpg",
-            dishOptionRequests = mutableSetOf()
-        )
+        val dishRequest =
+            DishCreateRequest(
+                name = "New Dish",
+                description = "A new dish",
+                image = "https://example.com/new-dish.jpg",
+                dishOptionRequests = mutableSetOf(),
+            )
 
         given(restaurantRepository.findByIdOrNull(restaurantId)).willReturn(restaurant)
         given(dishRepository.save(org.mockito.ArgumentMatchers.any(Dish::class.java)))
@@ -201,23 +204,25 @@ class DishServiceTest {
         val restaurantId = 1L
         val restaurant = TestFixture.createHappyBeansCafe()
         val existingDish = TestFixture.createMargheritaPizza()
-        val dishRequest = DishCreateRequest(
-            name = "Margherita Pizza", // Same name as existing dish
-            description = "Another pizza with the same name",
-            image = "https://example.com/another-pizza.jpg",
-            dishOptionRequests = mutableSetOf()
-        )
+        val dishRequest =
+            DishCreateRequest(
+                name = "Margherita Pizza",
+                description = "Another pizza with the same name",
+                image = "https://example.com/another-pizza.jpg",
+                dishOptionRequests = mutableSetOf(),
+            )
 
         given(restaurantRepository.findByIdOrNull(restaurantId)).willReturn(restaurant)
         given(dishRepository.findByName("Margherita Pizza")).willReturn(existingDish) // Dish already exists
 
         // When & Then
-        val exception = assertThrows<DishAlreadyExistsException> {
-            dishService.createDish(restaurantId, dishRequest)
-        }
-        
+        val exception =
+            assertThrows<DishAlreadyExistsException> {
+                dishService.createDish(restaurantId, dishRequest)
+            }
+
         assertThat(exception.message).isEqualTo("Dish with name 'Margherita Pizza' already exists")
-        
+
         // Verify that save was never called
         verify(dishRepository, org.mockito.Mockito.never()).save(org.mockito.ArgumentMatchers.any(Dish::class.java))
     }

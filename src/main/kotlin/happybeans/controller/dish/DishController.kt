@@ -35,8 +35,6 @@ class DishController(
     ): ResponseEntity<MessageResponse> {
         val savedDish = dishService.createDish(restaurantId, dishRequest)
 
-        //TODO check dish name is unique
-
         val location: URI =
             ServletUriComponentsBuilder
                 .fromCurrentRequest()
