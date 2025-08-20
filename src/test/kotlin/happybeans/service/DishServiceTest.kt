@@ -80,7 +80,7 @@ class DishServiceTest {
     fun `findById should throw EntityNotFoundException when dish not found`() {
         // Given
         val dishId = 999L
-        given(dishRepository.findById(dishId)).willReturn(null)
+        given(dishRepository.findById(dishId)).willReturn(Optional.empty())
 
         // When & Then
         assertThrows<EntityNotFoundException> {
@@ -144,7 +144,7 @@ class DishServiceTest {
                 dishOptionRequests = mutableSetOf(),
             )
 
-        given(restaurantRepository.findById(restaurantId)).willReturn(null)
+        given(restaurantRepository.findById(restaurantId)).willReturn(Optional.empty())
 
         // When & Then
         assertThrows<EntityNotFoundException> {
@@ -268,7 +268,7 @@ class DishServiceTest {
                 description = "Updated description",
                 image = "updated-image.jpg",
             )
-        given(dishRepository.findById(dishId)).willReturn(null)
+        given(dishRepository.findById(dishId)).willReturn(Optional.empty())
 
         // When & Then
         assertThrows<EntityNotFoundException> {
@@ -304,7 +304,6 @@ class DishServiceTest {
         val dish = TestFixture.createMargheritaPizza().apply { id = dishId }
         val updateRequest =
             DishUpdateRequest(
-                // Same name as current dish
                 name = dish.name,
                 description = "Updated description",
                 image = "updated-image.jpg",
@@ -340,7 +339,7 @@ class DishServiceTest {
     fun `deleteDishById should throw EntityNotFoundException when dish not found`() {
         // Given
         val dishId = 999L
-        given(dishRepository.findById(dishId)).willReturn(null)
+        given(dishRepository.findById(dishId)).willReturn(Optional.empty())
 
         // When & Then
         assertThrows<EntityNotFoundException> {
@@ -357,10 +356,8 @@ class DishServiceTest {
         val originalDescription = dish.description
         val patchRequest =
             DishPatchRequest(
-                // Not updating name
                 name = null,
                 description = "Updated description only",
-                // Not updating image
                 image = null,
             )
         given(dishRepository.findById(dishId)).willReturn(Optional.of(dish))
@@ -370,9 +367,9 @@ class DishServiceTest {
         val result = dishService.patchDish(dishId, patchRequest)
 
         // Then
-        assertThat(result.name).isEqualTo(originalName) // Should remain unchanged
+        assertThat(result.name).isEqualTo(originalName)
         assertThat(result.description).isNotEqualTo(originalDescription)
-        assertThat(result.description).isEqualTo("Updated description only") // Should be updated
+        assertThat(result.description).isEqualTo("Updated description only")
         verify(dishRepository).save(dish)
     }
 
@@ -406,7 +403,7 @@ class DishServiceTest {
         // Given
         val dishId = 999L
         val patchRequest = DishPatchRequest(name = "New Name")
-        given(dishRepository.findById(dishId)).willReturn(null)
+        given(dishRepository.findById(dishId)).willReturn(Optional.empty())
 
         // When & Then
         assertThrows<EntityNotFoundException> {
@@ -511,7 +508,7 @@ class DishServiceTest {
                 prepTimeMinutes = 25,
                 rating = 4.8,
             )
-        given(dishRepository.findById(dishId)).willReturn(null)
+        given(dishRepository.findById(dishId)).willReturn(Optional.empty())
 
         // When & Then
         assertThrows<EntityNotFoundException> {
@@ -525,7 +522,7 @@ class DishServiceTest {
         val dishId = 1L
         val optionId = 1L
         val dish = TestFixture.createMargheritaPizzaWithAllOptions().apply { id = dishId }
-        val dishOption = dish.dishOptions.first().apply { id = optionId }
+        dish.dishOptions.first().apply { id = optionId }
         val updateRequest =
             DishOptionUpdateRequest(
                 name = "Updated Option",
@@ -582,11 +579,9 @@ class DishServiceTest {
         val originalImage = dishOption.image
         val patchRequest =
             DishOptionPatchRequest(
-                // Not updating
                 name = null,
                 description = "Patched description",
                 price = 15.99,
-                // Not updating
                 image = null,
                 prepTimeMinutes = null,
                 rating = null,
@@ -598,10 +593,10 @@ class DishServiceTest {
         val result = dishService.patchDishOption(dishId, optionId, patchRequest)
 
         // Then
-        assertThat(result.name).isEqualTo(originalName) // Unchanged
-        assertThat(result.description).isEqualTo("Patched description") // Updated
-        assertThat(result.price).isEqualTo(15.99) // Updated
-        assertThat(result.image).isEqualTo(originalImage) // Unchanged
+        assertThat(result.name).isEqualTo(originalName)
+        assertThat(result.description).isEqualTo("Patched description")
+        assertThat(result.price).isEqualTo(15.99)
+        assertThat(result.image).isEqualTo(originalImage)
         verify(dishRepository).save(dish)
     }
 

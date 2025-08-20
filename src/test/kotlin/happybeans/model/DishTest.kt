@@ -58,7 +58,7 @@ class DishTest {
     @Test
     fun `findById should throw NotFoundException when dish does not exist`() {
         // Given
-        given(dishRepository.findById(999L)).willReturn(null)
+        given(dishRepository.findById(999L)).willReturn(Optional.empty())
 
         // When && Then
         assertThrows<EntityNotFoundException> {
@@ -155,7 +155,7 @@ class DishTest {
     fun `deleteDishById should throw EntityNotFoundException when dish does not exist`() {
         // Given
         val dishId = 999L
-        given(dishRepository.findById(dishId)).willReturn(null)
+        given(dishRepository.findById(dishId)).willReturn(Optional.empty())
 
         // When & Then
         assertThrows<EntityNotFoundException> {
