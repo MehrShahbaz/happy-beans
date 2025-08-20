@@ -20,30 +20,24 @@ import java.time.LocalDateTime
 @Entity
 @Table(
     name = "cart_products",
-    uniqueConstraints = [UniqueConstraint(columnNames = ["user_id", "dish_option_id"])]
+    uniqueConstraints = [UniqueConstraint(columnNames = ["user_id", "dish_option_id"])],
 )
 class CartProduct(
     @ManyToOne
     @JoinColumn(name = "user_id", nullable = false)
     val user: User,
-
     @ManyToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "dish_id", nullable = false)
     val dish: Dish,
-
     @OneToOne(fetch = FetchType.EAGER)
     @JoinColumn(name = "dish_option_id", nullable = false)
     val dishOption: DishOption,
-
     @Column(name = "quantity", nullable = false)
     var quantity: Int = 1,
-
     @CreationTimestamp
     var createdAt: LocalDateTime? = null,
-
     @UpdateTimestamp
     var updatedAt: LocalDateTime? = null,
-
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long = 0L,
