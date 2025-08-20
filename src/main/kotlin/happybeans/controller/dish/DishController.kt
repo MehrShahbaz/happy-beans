@@ -37,6 +37,8 @@ class DishController(
         return ResponseEntity.ok(dish)
     }
 
+    //TODO: change  '@PostMapping("/api/restaurant/{restaurantId}/dishes")' and fix
+    //TODO: change validation : uniqueness of dish name per-restaurant
     @PostMapping("/{dishId}")
     fun createDish(
         @PathVariable restaurantId: Long,
