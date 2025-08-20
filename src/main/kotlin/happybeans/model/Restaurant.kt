@@ -1,5 +1,6 @@
 package happybeans.model
 
+import happybeans.dto.restaurant.RestaurantPatchRequest
 import jakarta.persistence.CascadeType
 import jakarta.persistence.CollectionTable
 import jakarta.persistence.Column
@@ -10,6 +11,7 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
+import jakarta.persistence.ManyToOne
 import jakarta.persistence.OneToMany
 import jakarta.persistence.Table
 import org.hibernate.annotations.CreationTimestamp
@@ -19,10 +21,13 @@ import java.time.LocalDateTime
 @Entity
 @Table(name = "restaurants")
 class Restaurant(
+    @ManyToOne
+    @JoinColumn(name = "user_id")
+    var user: User,
     @Column(name = "name", nullable = false, length = 100)
     var name: String,
     @Column(name = "description", length = 500)
-    var description: String? = null,
+    var description: String,
     @Column(name = "image")
     var image: String,
     @Column(name = "address_url")
@@ -45,18 +50,22 @@ class Restaurant(
     val id: Long = 0L,
 ) {
     fun addDish(dish: Dish) {
-        this.dishes.add(dish)
+        dishes.add(dish)
     }
 
-    // if not used, can remove later : equals, hashCode, toString
-    override fun equals(other: Any?): Boolean {
-        if (this === other) return true
-        if (other !is Restaurant) return false
-        return id != 0L && id == other.id
+    fun patchFields(patchOption: RestaurantPatchRequest) {
+        patchOption.name?.let { name = it }
+        patchOption.description?.let { description = it }
+        patchOption.image?.let { image = it }
+        patchOption.addressUrl?.let { addressUrl = it }
+        patchOption.workingDateHours?.let { patch ->
+            val byDay = workingDateHours.associateBy { it.dayOfWeek }
+            patch.forEach { patchHour ->
+                byDay[patchHour.dayOfWeek]?.apply {
+                    openTime = patchHour.openTime
+                    closeTime = patchHour.closeTime
+                }
+            }
+        }
     }
-
-    override fun hashCode(): Int = java.util.Objects.hash(id)
-
-    override fun toString(): String = "Restaurant(id=$id, name='$name')"
 }
-
