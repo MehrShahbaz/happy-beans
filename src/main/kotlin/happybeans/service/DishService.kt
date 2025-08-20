@@ -70,23 +70,23 @@ class DishService(
         return savedDish
     }
 
-   private fun createAndLinkDishOptions(
+    private fun createAndLinkDishOptions(
         dish: Dish,
         optionRequests: Set<DishOptionCreateRequest>,
     ): MutableSet<DishOption> {
         return optionRequests.map { optionRequest ->
-            val dishOption = DishOption(
-                dish = dish,
-                name = optionRequest.name,
-                description = optionRequest.description,
-                price = optionRequest.price,
-                image = optionRequest.image,
-                prepTimeMinutes = optionRequest.prepTimeMinutes,
-                rating = optionRequest.rating,
-            )
-            
+            val dishOption =
+                DishOption(
+                    dish = dish,
+                    name = optionRequest.name,
+                    description = optionRequest.description,
+                    price = optionRequest.price,
+                    image = optionRequest.image,
+                    prepTimeMinutes = optionRequest.prepTimeMinutes,
+                    rating = optionRequest.rating,
+                )
+
             dishOption
         }.toMutableSet()
     }
-
 }
