@@ -13,18 +13,11 @@ import org.mockito.BDDMockito.given
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
-import org.springframework.data.repository.findByIdOrNull
 
 @ExtendWith(MockitoExtension::class)
 class DishTest {
     @Mock
     private lateinit var dishRepository: DishRepository
-
-    @Mock
-    private lateinit var restaurantRepository: RestaurantRepository
-
-    @Mock
-    private lateinit var tagContainerRepository: TagContainerRepository
 
     @InjectMocks
     private lateinit var dishService: DishService
@@ -35,7 +28,7 @@ class DishTest {
         given(dishRepository.findByIdOrNull(1L)).willReturn(dishFromFixture)
 
         val result = dishService.findById(1L)
-        assertThat(result?.name).isEqualTo(dishFromFixture.name)
+        assertThat(result.name).isEqualTo(dishFromFixture.name)
     }
 
     @Test
