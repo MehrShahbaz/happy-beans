@@ -1,6 +1,5 @@
 package happybeans.dto.restaurant
 
-import jakarta.validation.Valid
 import jakarta.validation.constraints.NotNull
 
 data class RestaurantCreateRequest(
