@@ -1,6 +1,8 @@
 package happybeans.service
 
+import happybeans.dto.cart.CartProductListResponse
 import happybeans.dto.cart.CartProductRequest
+import happybeans.dto.cart.CartProductResponse
 import happybeans.model.CartProduct
 import happybeans.model.User
 import happybeans.repository.CartProductRepository
@@ -20,6 +22,11 @@ class CartProductService(
     @Transactional(readOnly = true)
     fun findAllByUserId(user: User): List<CartProduct> {
         return cartProductRepository.findAllByUserId(user.id)
+    }
+
+    @Transactional(readOnly = true)
+    fun findAllByUserId2(user: User): CartProductListResponse {
+        return CartProductListResponse(findAllByUserId(user).map { CartProductResponse(it) })
     }
 
     @Transactional
