@@ -4,6 +4,7 @@ import happybeans.dto.dish.RecommendedDishDto
 import happybeans.model.DishReview
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
+import org.springframework.data.repository.query.Param
 
 interface DishReviewRepository : JpaRepository<DishReview, Long> {
     fun findByUserId(userId: Long): List<DishReview>
@@ -33,4 +34,16 @@ interface DishReviewRepository : JpaRepository<DishReview, Long> {
     """,
     )
     fun findHighestRatedDishes(): List<RecommendedDishDto>
+
+    @Query(
+        value = """
+        SELECT AVG(rating)
+        FROM dish_review
+        WHERE dish_option_id = :dishOptionId
+        """,
+        nativeQuery = true,
+    )
+    fun findAverageDishOptionRating(
+        @Param("dishOptionId") dishOptionId: Long,
+    ): Double?
 }
