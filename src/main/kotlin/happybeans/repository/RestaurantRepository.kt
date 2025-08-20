@@ -1,8 +1,8 @@
 package happybeans.repository
 
-import happybeans.model.Dish
+import happybeans.model.Restaurant
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
 
 @Repository
-interface DishRepository : JpaRepository<Dish, Long>
+interface RestaurantRepository : JpaRepository<Restaurant, Long>

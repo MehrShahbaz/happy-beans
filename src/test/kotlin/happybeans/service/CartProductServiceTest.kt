@@ -4,6 +4,7 @@ import happybeans.dto.cart.CartProductRequest
 import happybeans.model.CartProduct
 import happybeans.model.Dish
 import happybeans.model.DishOption
+import happybeans.model.TagContainer
 import happybeans.model.User
 import happybeans.repository.CartProductRepository
 import io.mockk.every
@@ -19,11 +20,9 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
 import org.junit.jupiter.api.extension.ExtendWith
-import happybeans.model.TagContainer
 
 @ExtendWith(MockKExtension::class)
 class CartProductServiceTest {
-
     @InjectMockKs
     private lateinit var cartProductService: CartProductService
 
@@ -43,31 +42,34 @@ class CartProductServiceTest {
 
     @BeforeEach
     fun setUp() {
-        user = User(
-            id = 1,
-            email = "test@example.com",
-            password = "password",
-            firstName = "Test",
-            lastName = "User"
-        )
+        user =
+            User(
+                id = 1,
+                email = "test@example.com",
+                password = "password",
+                firstName = "Test",
+                lastName = "User",
+            )
 
-        dish = Dish(
-            id = 10,
-            name = "Coffee",
-            description = "A classic hot beverage.",
-            image = "coffee.jpg"
-        )
+        dish =
+            Dish(
+                id = 10,
+                name = "Coffee",
+                description = "A classic hot beverage.",
+                image = "coffee.jpg",
+            )
 
-        dishOption = DishOption(
-            id = 100,
-            dish = dish,
-            name = "Large",
-            description = "A large cup of coffee.",
-            price = 3.00, // Price is now a Double
-            image = "large_coffee.jpg",
-            ingredients = tagContainer,
-            rating = 4.5
-        )
+        dishOption =
+            DishOption(
+                id = 100,
+                dish = dish,
+                name = "Large",
+                description = "A large cup of coffee.",
+                price = 3.00,
+                image = "large_coffee.jpg",
+                ingredients = tagContainer,
+                rating = 4.5,
+            )
 
         cartProduct = CartProduct(user, dish, dishOption).apply { quantity = 2 }
     }
@@ -154,7 +156,7 @@ class CartProductServiceTest {
     fun `updateQuantity should throw exception for zero quantity`() {
         val request = CartProductRequest(quantity = 0)
 
-       assertThrows<IllegalArgumentException> {
+        assertThrows<IllegalArgumentException> {
             cartProductService.updateQuantity(user, dishOption.id, request)
         }
         verify(exactly = 0) { cartProductRepository.findByUserIdAndDishOptionId(any(), any()) }

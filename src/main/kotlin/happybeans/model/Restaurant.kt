@@ -60,18 +60,3 @@ class Restaurant(
 
     override fun toString(): String = "Restaurant(id=$id, name='$name')"
 }
-
-/* TODO: decide to implement "calculating location for recommendation feature"
-: it can be one additional entity : class locationInfo
-    @Column(name = "address", nullable = false)
-    var address: String,
-
-@Column(name = "postal_code")
-var postalCode: String? = null,
-
-@Column(name = "latitude", precision = 10, scale = 8)
-var latitude: BigDecimal? = null,
-
-@Column(name = "longitude", precision = 11, scale = 8)
-var longitude: BigDecimal? = null,
-*/

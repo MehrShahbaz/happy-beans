@@ -30,7 +30,6 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPat
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
 class CartProductControllerTest : AbstractDocumentTest() {
-
     @MockitoBean
     private lateinit var cartProductService: CartProductService
 
@@ -43,14 +42,14 @@ class CartProductControllerTest : AbstractDocumentTest() {
             .thenReturn(
                 CartProductListResponse(
                     listOf(
-                        CartProductResponse("dishName", "dishOptionName", 1.0)
-                    )
-                )
+                        CartProductResponse("dishName", "dishOptionName", 1.0),
+                    ),
+                ),
             )
 
         mockMvc.perform(
             get("/api/member/cart")
-                .accept(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON),
         )
             .andExpect(status().isOk)
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -73,9 +72,9 @@ class CartProductControllerTest : AbstractDocumentTest() {
                             .description("Dish option name in cart"),
                         fieldWithPath("cartProducts[].dishPrice")
                             .type(JsonFieldType.NUMBER)
-                            .description("Price")
-                    )
-                )
+                            .description("Price"),
+                    ),
+                ),
             )
     }
 
@@ -90,11 +89,11 @@ class CartProductControllerTest : AbstractDocumentTest() {
             RestDocumentationRequestBuilders.post(
                 "/api/member/cart/dish/{dishId}/dish-option/{dishOptionId}",
                 dishId,
-                optionId
+                optionId,
             )
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(body))
+                .content(objectMapper.writeValueAsString(body)),
         )
             .andExpect(status().isOk)
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -106,17 +105,17 @@ class CartProductControllerTest : AbstractDocumentTest() {
                     preprocessResponse(Preprocessors.prettyPrint()),
                     pathParameters(
                         parameterWithName("dishId").description("ID dish"),
-                        parameterWithName("dishOptionId").description("ID dish option")
+                        parameterWithName("dishOptionId").description("ID dish option"),
                     ),
                     relaxedRequestFields(
                         fieldWithPath("quantity")
                             .type(JsonFieldType.NUMBER)
-                            .description("Quantity of dish in cart")
+                            .description("Quantity of dish in cart"),
                     ),
                     responseFields(
-                        fieldWithPath("message").type(JsonFieldType.STRING).description("Message status")
-                    )
-                )
+                        fieldWithPath("message").type(JsonFieldType.STRING).description("Message status"),
+                    ),
+                ),
             )
 
         verify(cartProductService).addToCart(eq(testUser), eq(Pair(dishId, optionId)), any())
@@ -132,7 +131,7 @@ class CartProductControllerTest : AbstractDocumentTest() {
             RestDocumentationRequestBuilders.patch("/api/member/cart/dish-option/{dishOptionId}", optionId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(body))
+                .content(objectMapper.writeValueAsString(body)),
         )
             .andExpect(status().isOk)
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
@@ -143,17 +142,17 @@ class CartProductControllerTest : AbstractDocumentTest() {
                     preprocessRequest(Preprocessors.prettyPrint()),
                     preprocessResponse(Preprocessors.prettyPrint()),
                     pathParameters(
-                        parameterWithName("dishOptionId").description("ID опции блюда")
+                        parameterWithName("dishOptionId").description("ID опции блюда"),
                     ),
                     relaxedRequestFields(
                         fieldWithPath("quantity")
                             .type(JsonFieldType.NUMBER)
-                            .description("New quantity in cart")
+                            .description("New quantity in cart"),
                     ),
                     responseFields(
-                        fieldWithPath("message").type(JsonFieldType.STRING).description("Message status")
-                    )
-                )
+                        fieldWithPath("message").type(JsonFieldType.STRING).description("Message status"),
+                    ),
+                ),
             )
 
         verify(cartProductService).updateQuantity(eq(testUser), eq(optionId), any())
@@ -166,7 +165,7 @@ class CartProductControllerTest : AbstractDocumentTest() {
 
         mockMvc.perform(
             RestDocumentationRequestBuilders.delete("/api/member/cart/dish-option/{dishOptionId}", optionId)
-                .accept(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON),
         )
             .andExpect(status().isNoContent)
             .andDo(
@@ -175,9 +174,9 @@ class CartProductControllerTest : AbstractDocumentTest() {
                     preprocessRequest(Preprocessors.prettyPrint()),
                     preprocessResponse(Preprocessors.prettyPrint()),
                     pathParameters(
-                        parameterWithName("dishOptionId").description("ID dish option, which should be deleted")
-                    )
-                )
+                        parameterWithName("dishOptionId").description("ID dish option, which should be deleted"),
+                    ),
+                ),
             )
 
         verify(cartProductService).deleteFromCart(testUser, optionId)
@@ -188,15 +187,15 @@ class CartProductControllerTest : AbstractDocumentTest() {
     fun clear_ok() {
         mockMvc.perform(
             RestDocumentationRequestBuilders.delete("/api/member/cart")
-                .accept(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON),
         )
             .andExpect(status().isNoContent)
             .andDo(
                 document(
                     "cart-clear",
                     preprocessRequest(prettyPrint()),
-                    preprocessResponse(prettyPrint())
-                )
+                    preprocessResponse(prettyPrint()),
+                ),
             )
 
         verify(cartProductService).clear(testUser)

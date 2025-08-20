@@ -18,7 +18,6 @@ import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager
 
 @DataJpaTest
 class CartProductRepositoryTest {
-
     @Autowired
     private lateinit var entityManager: TestEntityManager
 

@@ -32,13 +32,14 @@ abstract class AbstractDocumentTest {
 
     @BeforeEach
     fun setUp() {
-        testUser = User(
-            id = 1L,
-            firstName = "Test User",
-            email = "test@example.com",
-            password = "password",
-            lastName = "Test User"
-        )
+        testUser =
+            User(
+                id = 1L,
+                firstName = "Test User",
+                email = "test@example.com",
+                password = "password",
+                lastName = "Test User",
+            )
 
         whenever(loginMemberArgumentResolver.supportsParameter(any())).thenReturn(true)
         whenever(loginMemberArgumentResolver.resolveArgument(any(), any(), any(), any()))
@@ -46,4 +47,3 @@ abstract class AbstractDocumentTest {
         whenever(memberInterceptor.preHandle(any(), any(), any())).thenReturn(true)
     }
 }
-

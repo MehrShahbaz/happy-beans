@@ -12,7 +12,7 @@ class TagService(
     @Transactional
     fun findOrCreateTags(ingredientNames: Set<String>): Set<Tag> {
         return ingredientNames.map { name ->
-            tagRepository.findByNameOrNull(name)
+            tagRepository.findByName(name)
                 ?: Tag(name = name)
         }.toSet()
     }
