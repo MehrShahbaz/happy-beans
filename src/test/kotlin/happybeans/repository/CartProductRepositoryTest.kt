@@ -12,6 +12,7 @@ import org.junit.jupiter.api.Assertions.assertNull
 import org.junit.jupiter.api.Assertions.assertTrue
 import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
+import org.junit.jupiter.api.assertThrows
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager
@@ -110,5 +111,16 @@ class CartProductRepositoryTest {
         assertEquals(1, remainingForUser1.size)
         assertEquals(dishOption2.id, remainingForUser1[0].dishOption.id)
         assertNotNull(productForUser2)
+    }
+
+    @Test
+    fun `should throw exception when persisting with zero quantity`() {
+        val newCartProduct = CartProduct(user = user2, dish = dish, dishOption = dishOption1, quantity = 1)
+
+        newCartProduct.quantity = 0
+
+        assertThrows<IllegalArgumentException> {
+            entityManager.persistAndFlush(newCartProduct)
+        }
     }
 }
