@@ -9,6 +9,7 @@ import happybeans.service.DishReviewService
 import happybeans.utils.annotations.LoginMember
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -19,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController
 import java.net.URI
 
 @RestController
-@RequestMapping("/api/dishOption-review")
+@RequestMapping("/api/member/review/dishOption")
 class MemberDishReviewController
 (private val dishReviewService: DishReviewService) {
     @PostMapping("")
@@ -41,25 +42,32 @@ class MemberDishReviewController
         return ResponseEntity.ok(MessageResponse("Updated dish Review"))
     }
 
-    @GetMapping("/user")
+    @GetMapping("")
     fun getDishReviewsByUserId(
-        @PathVariable userId: Long,
         @LoginMember member: User,
     ): List<DishReviewDto> {
         return dishReviewService.getReviewsByUserId(member.id)
     }
 
-    @GetMapping("/{dishOptionId}")
+    @GetMapping("/by-dish-option/{dishOptionId}")
     fun getDishReviewsByDishOptionId(
         @PathVariable dishOptionId: Long,
     ): List<DishReviewDto> {
         return dishReviewService.getReviewsByDishOptionId(dishOptionId)
     }
 
-    @GetMapping("/{dishId}")
+    @GetMapping("/by-dish/{dishId}")
     fun getDishReviewsByDishId(
         @PathVariable dishId: Long,
     ): List<DishReviewDto> {
         return dishReviewService.getReviewsByDishId(dishId)
+    }
+
+    @DeleteMapping("/{dishReviewId}")
+    fun deleteDishReviewById(
+        @PathVariable dishReviewId: Long,
+    ): ResponseEntity<Unit> {
+        dishReviewService.deleteReview(dishReviewId)
+        return ResponseEntity.noContent().build()
     }
 }

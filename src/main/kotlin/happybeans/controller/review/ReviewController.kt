@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/api/reviews")
+@RequestMapping("/api/owner/reviews")
 class ReviewController(
     private val dishReviewService: DishReviewService,
     private val restaurantReviewService: RestaurantReviewService,

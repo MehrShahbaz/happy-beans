@@ -55,6 +55,13 @@ class DishReviewService(
         dishReviewRepository.save(review)
     }
 
+    fun deleteReview(id: Long) {
+        if (!dishReviewRepository.existsById(id)) {
+            throw EntityNotFoundException("Review with ID $id not found")
+        }
+        dishReviewRepository.deleteById(id)
+    }
+
     fun getAllReviews(): List<DishReviewDto> {
         return dishReviewRepository.findAll().map { it.toReviewDto() }
     }
@@ -90,7 +97,7 @@ class DishReviewService(
             userName = this.userName,
             rating = this.rating,
             message = this.message,
-            dishOptionId = this.dishOptionId!!,
+            dishOptionId = this.dishOptionId,
             dishOptionName = this.dishOptionName,
             dishOptionPrice = this.dishOptionPrice,
             createdAt = this.createdAt,

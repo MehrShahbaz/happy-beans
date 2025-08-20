@@ -168,6 +168,7 @@ class RestaurantReviewServiceTest {
                 rating = 4.0,
                 message = "Review 1",
                 restaurantId = restaurant.id,
+                restaurantName = "Cozy Bistro",
             ),
         )
         restaurantReviewRepository.save(
@@ -177,6 +178,7 @@ class RestaurantReviewServiceTest {
                 rating = 5.0,
                 message = "Review 2",
                 restaurantId = restaurant.id,
+                restaurantName = "Cozy Bistro",
             ),
         )
 
@@ -215,6 +217,7 @@ class RestaurantReviewServiceTest {
                 rating = 4.0,
                 message = "Review 1",
                 restaurantId = restaurant.id,
+                restaurantName = "Cozy Bistro",
             ),
         )
         restaurantReviewRepository.save(
@@ -224,6 +227,7 @@ class RestaurantReviewServiceTest {
                 rating = 5.0,
                 message = "Review 2",
                 restaurantId = restaurant.id,
+                restaurantName = "Cozy Bistro",
             ),
         )
         restaurantReviewRepository.save(
@@ -233,6 +237,7 @@ class RestaurantReviewServiceTest {
                 rating = 3.0,
                 message = "Review on other restaurant",
                 restaurantId = restaurant2.id,
+                restaurantName = "Cozy Bistro",
             ),
         )
 
@@ -262,6 +267,7 @@ class RestaurantReviewServiceTest {
                 rating = 4.0,
                 message = "Review 1",
                 restaurantId = restaurant.id,
+                restaurantName = "Cozy Bistro",
             ),
         )
         restaurantReviewRepository.save(
@@ -271,6 +277,7 @@ class RestaurantReviewServiceTest {
                 rating = 5.0,
                 message = "Review 2",
                 restaurantId = restaurant.id,
+                restaurantName = "Cozy Bistro",
             ),
         )
         restaurantReviewRepository.save(
@@ -280,6 +287,7 @@ class RestaurantReviewServiceTest {
                 rating = 3.0,
                 message = "Review from other user",
                 restaurantId = restaurant.id,
+                restaurantName = "Cozy Bistro",
             ),
         )
 
@@ -296,6 +304,7 @@ class RestaurantReviewServiceTest {
                 rating = 5.0,
                 message = "Review 1",
                 restaurantId = restaurant.id,
+                restaurantName = "Cozy Bistro",
             ),
         )
         restaurantReviewRepository.save(
@@ -305,6 +314,7 @@ class RestaurantReviewServiceTest {
                 rating = 3.0,
                 message = "Review 2",
                 restaurantId = restaurant.id,
+                restaurantName = "Cozy Bistro",
             ),
         )
         restaurantReviewRepository.save(
@@ -314,6 +324,7 @@ class RestaurantReviewServiceTest {
                 rating = 4.0,
                 message = "Review 3",
                 restaurantId = restaurant.id,
+                restaurantName = "Cozy Bistro",
             ),
         )
 
