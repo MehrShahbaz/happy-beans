@@ -34,7 +34,7 @@ class DishTest {
         val dishFromFixture = TestFixture.createMargheritaPizza()
         given(dishRepository.findByIdOrNull(1L)).willReturn(dishFromFixture)
 
-        val result = dishService.findDishById(1L)
+        val result = dishService.findById(1L)
         assertThat(result?.name).isEqualTo(dishFromFixture.name)
     }
 
