@@ -2,17 +2,14 @@ package happybeans.service
 
 import happybeans.dto.restaurant.RestaurantCreateRequest
 import happybeans.dto.restaurant.WorkingDateHourRequest
-import happybeans.model.Dish
 import happybeans.model.Restaurant
 import happybeans.model.WorkingDateHour
 import happybeans.repository.DishRepository
 import happybeans.repository.RestaurantRepository
 import happybeans.utils.exception.EntityNotFoundException
-import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import kotlin.collections.map
-import org.springframework.data.repository.findByIdOrNull
 
 @Service
 class RestaurantService(
@@ -39,13 +36,6 @@ class RestaurantService(
         return restaurantRepository.findByIdOrNull(id)
             ?: throw EntityNotFoundException("Restaurant with id $id not found")
     }
-
-//    fun findDishesByRestaurant(
-//        id: Long,
-//        pageable: Pageable,
-//    ): List<Dish>? {
-//        return dishRepository.findDishesByRestaurantId(id, pageable)
-//    }
 
     private fun createWorkingHours(dtos: List<WorkingDateHourRequest>): List<WorkingDateHour> {
         return dtos.map { dto ->
