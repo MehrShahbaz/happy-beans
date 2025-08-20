@@ -22,26 +22,24 @@ class DishService(
     private val restaurantRepository: RestaurantRepository,
     private val tagContainerRepository: TagContainerRepository,
 ) {
-    // TODO While creating first create a TagContainer with type INGRIDIENT and add it to the dish option
+    // TODO While creating first create a TagContainer with type INGREIDIENTS and add it to the dish option
     fun findByName(name: String): Dish? {
         return dishRepository.findByName(name)
     }
-
 
     fun findAll(pageable: Pageable): List<Dish> {
         return dishRepository.findAll(pageable).content
     }
 
-//    fun findDishById(dishId: Long): Dish? {
-//        // val dish = findById(dishId)
-//        return dishRepository.findByIdOrNull(dishId)
-//    }
+    fun findDishById(dishId: Long): Dish? {
+        return dishRepository.findByIdOrNull(dishId)
+    }
 
     fun findByIdAndDishOptionId(
         dishId: Long,
         dishOptionId: Long,
     ): DishOption {
-        val dish = findById(dishId)
+        val dish = dishRepository.findById(dishId)
 
         return dish.dishOptions.firstOrNull { it.id == dishOptionId }
             ?: throw EntityNotFoundException("Dish with id $dishId and dish option id $dishOptionId not found")
@@ -70,7 +68,7 @@ class DishService(
         return savedDish
     }
 
-    private fun createAndLinkDishOptions(
+   private fun createAndLinkDishOptions(
         dish: Dish,
         optionRequests: Set<DishOptionCreateRequest>,
     ): Set<DishOption> {
@@ -78,11 +76,12 @@ class DishService(
             val ingredientsContainer =
                 TagContainer(
                     type = TagContainerType.INGREDIENTS,
+                    //TODO: replace? (dish = dish with user = null)
                     dish = dish,
                 )
 
             val dishOption =
-                DishOption(
+                DishOption(q
                     dish = dish,
                     name = optionRequest.name,
                     description = optionRequest.description,
@@ -98,11 +97,4 @@ class DishService(
         }.toSet()
     }
 
-    @Transactional
-    fun updateDishAverageRating(dishId: Long) {
-        val dish =
-            dishRepository.findByIdOrNull(dishId)
-                ?: throw EntityNotFoundException("Dish with id $dishId not found")
-        val averageRating = dish.dishOptions.map { it.rating }.average()
-    }
 }

@@ -35,6 +35,8 @@ class DishController(
     ): ResponseEntity<MessageResponse> {
         val savedDish = dishService.createDish(restaurantId, dishRequest)
 
+        //TODO check dish name is unique
+
         val location: URI =
             ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -42,6 +44,6 @@ class DishController(
                 .buildAndExpand(savedDish.id)
                 .toUri()
 
-        return ResponseEntity.created(location).body(MessageResponse("Product added to cart"))
+        return ResponseEntity.created(location).body(MessageResponse("Dish created successfully"))
     }
 }
