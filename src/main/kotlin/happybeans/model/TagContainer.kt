@@ -10,9 +10,9 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
+import jakarta.persistence.JoinTable
+import jakarta.persistence.ManyToMany
 import jakarta.persistence.ManyToOne
-import jakarta.persistence.OneToMany
-import jakarta.persistence.OneToOne
 import jakarta.persistence.Table
 import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
@@ -21,17 +21,25 @@ import java.time.LocalDateTime
 @Entity
 @Table(name = "tag_containers")
 class TagContainer(
-    @OneToMany(cascade = [(CascadeType.ALL)], fetch = FetchType.LAZY)
-    @JoinColumn(name = "tag_containers_id")
-    val tags: MutableList<Tag> = mutableListOf(),
+    @ManyToMany(cascade = [CascadeType.PERSIST, CascadeType.MERGE], fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "tag_container_tags",
+        joinColumns = [JoinColumn(name = "tag_container_id")],
+        inverseJoinColumns = [JoinColumn(name = "tag_id")]
+    )
+    val tags: MutableSet<Tag> = mutableSetOf(),
+
     @Enumerated(EnumType.STRING)
     var type: TagContainerType,
-    @ManyToOne
-    @JoinColumn(name = "users_id")
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "user_id")
     var user: User? = null,
-    @OneToOne
+
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "dish_id")
     var dish: Dish? = null,
+
     @CreationTimestamp
     var createdAt: LocalDateTime? = null,
     @UpdateTimestamp
@@ -41,6 +49,24 @@ class TagContainer(
     val id: Long = 0L,
 ) {
     init {
-        require((user == null && dish != null) || (user != null && dish == null)) { "Either user or dish must be set." }
+        require((user == null) != (dish == null)) { "Exactly one of user or dish must be set" }
     }
+
+    fun addTag(tag: Tag) {
+        tags.add(tag)
+    }
+
+    fun addTags(newTags: Collection<Tag>) {
+        tags.addAll(newTags)
+    }
+
+    fun removeTag(tag: Tag) {
+        tags.remove(tag)
+    }
+
+    fun clearTags() {
+        tags.clear()
+    }
+
+    fun getTagNames(): Set<String> = tags.map { it.name }.toSet()
 }
