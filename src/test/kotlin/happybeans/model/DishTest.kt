@@ -2,7 +2,6 @@ package happybeans
 
 import happybeans.repository.DishRepository
 import happybeans.repository.RestaurantRepository
-import happybeans.repository.TagContainerRepository
 import happybeans.service.DishService
 import happybeans.utils.exception.EntityNotFoundException
 import org.assertj.core.api.Assertions.assertThat
@@ -18,6 +17,9 @@ import org.mockito.junit.jupiter.MockitoExtension
 class DishTest {
     @Mock
     private lateinit var dishRepository: DishRepository
+
+    @Mock
+    private lateinit var restaurantRepository: RestaurantRepository
 
     @InjectMocks
     private lateinit var dishService: DishService
