@@ -2,13 +2,11 @@ package happybeans.service
 
 import happybeans.dto.dish.DishCreateRequest
 import happybeans.dto.dish.DishOptionCreateRequest
-import happybeans.enums.TagContainerType
 import happybeans.model.Dish
 import happybeans.model.DishOption
-import happybeans.model.TagContainer
 import happybeans.repository.DishRepository
 import happybeans.repository.RestaurantRepository
-import happybeans.repository.TagContainerRepository
+import happybeans.utils.exception.DishAlreadyExistsException
 import happybeans.utils.exception.EntityNotFoundException
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -19,9 +17,7 @@ import kotlin.collections.map
 class DishService(
     private val dishRepository: DishRepository,
     private val restaurantRepository: RestaurantRepository,
-    private val tagContainerRepository: TagContainerRepository,
 ) {
-    // TODO While creating first create a TagContainer with type INGREIDIENTS and add it to the dish option
     fun findByName(name: String): Dish? {
         return dishRepository.findByName(name)
     }
@@ -54,6 +50,11 @@ class DishService(
             restaurantRepository.findByIdOrNull(restaurantId)
                 ?: throw EntityNotFoundException("Restaurant with id $restaurantId not found")
 
+        val existingDish = dishRepository.findByName(dishRequest.name)
+        if (existingDish != null) {
+            throw DishAlreadyExistsException("Dish with name '${dishRequest.name}' already exists")
+        }
+
         val dish =
             Dish(
                 name = dishRequest.name,
@@ -62,6 +63,7 @@ class DishService(
                 dishOptions = mutableSetOf(),
             )
         val createdDishOptions = createAndLinkDishOptions(dish, dishRequest.dishOptionRequests)
+        dish.dishOptions = createdDishOptions
 
         restaurant.addDish(dish)
         val savedDish = dishRepository.save(dish)
@@ -71,29 +73,20 @@ class DishService(
    private fun createAndLinkDishOptions(
         dish: Dish,
         optionRequests: Set<DishOptionCreateRequest>,
-    ): Set<DishOption> {
+    ): MutableSet<DishOption> {
         return optionRequests.map { optionRequest ->
-            val ingredientsContainer =
-                TagContainer(
-                    type = TagContainerType.INGREDIENTS,
-                    user = null,
-                    dish = dish,
-                )
-
-            val dishOption =
-                DishOption(
-                    dish = dish,
-                    name = optionRequest.name,
-                    description = optionRequest.description,
-                    price = optionRequest.price,
-                    image = optionRequest.image,
-                    prepTimeMinutes = optionRequest.prepTimeMinutes,
-                    rating = optionRequest.rating,
-                )
-            dish.dishOptions.add(dishOption)
-
+            val dishOption = DishOption(
+                dish = dish,
+                name = optionRequest.name,
+                description = optionRequest.description,
+                price = optionRequest.price,
+                image = optionRequest.image,
+                prepTimeMinutes = optionRequest.prepTimeMinutes,
+                rating = optionRequest.rating,
+            )
+            
             dishOption
-        }.toSet()
+        }.toMutableSet()
     }
 
 }
