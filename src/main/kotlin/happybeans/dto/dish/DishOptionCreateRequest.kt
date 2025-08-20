@@ -11,8 +11,6 @@ data class DishOptionCreateRequest(
     val price: Double,
     @field:NotNull
     val image: String,
-    @field:NotNull
-    val ingredients: Set<String>,
     val available: Boolean = true,
     @field:NotNull
     val rating: Double,

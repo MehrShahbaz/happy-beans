@@ -6,7 +6,6 @@ data class DishOptionResponse(
     val description: String,
     val price: Double,
     val image: String,
-    val ingredients: Set<String> = emptySet(),
     val available: Boolean,
     val prepTimeMinutes: Int,
     val rating: Double,
