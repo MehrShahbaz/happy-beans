@@ -1,8 +1,10 @@
 package happybeans
 
+import happybeans.dto.dish.DishUpdateRequest
 import happybeans.repository.DishRepository
 import happybeans.repository.RestaurantRepository
 import happybeans.service.DishService
+import happybeans.utils.exception.DishAlreadyExistsException
 import happybeans.utils.exception.EntityNotFoundException
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
@@ -88,5 +90,73 @@ class DishTest {
 
         // Then
         assertThat(result).isNull()
+    }
+
+    @Test
+    fun `updateDish should update dish successfully`() {
+        // Given
+        val dishId = 1L
+        val dish = TestFixture.createMargheritaPizza()
+        val updateRequest = DishUpdateRequest(
+            name = "Updated Pizza",
+            description = "Updated description",
+            image = "updated-image.jpg"
+        )
+        given(dishRepository.findByIdOrNull(dishId)).willReturn(dish)
+        given(dishRepository.findByName(updateRequest.name)).willReturn(null)
+        given(dishRepository.save(dish)).willReturn(dish)
+
+        // When
+        val result = dishService.updateDish(dishId, updateRequest)
+
+        // Then
+        assertThat(result.name).isEqualTo(updateRequest.name)
+        assertThat(result.description).isEqualTo(updateRequest.description)
+        assertThat(result.image).isEqualTo(updateRequest.image)
+    }
+
+    @Test
+    fun `updateDish should throw DishAlreadyExistsException when name conflicts`() {
+        // Given
+        val dishId = 1L
+        val dish = TestFixture.createMargheritaPizza()
+        val existingDish = TestFixture.createMargheritaPizza().apply { id = 2L }
+        val updateRequest = DishUpdateRequest(
+            name = "Existing Dish Name",
+            description = "Updated description",
+            image = "updated-image.jpg"
+        )
+        given(dishRepository.findByIdOrNull(dishId)).willReturn(dish)
+        given(dishRepository.findByName(updateRequest.name)).willReturn(existingDish)
+
+        // When & Then
+        assertThrows<DishAlreadyExistsException> {
+            dishService.updateDish(dishId, updateRequest)
+        }
+    }
+
+    @Test
+    fun `deleteDishById should delete dish successfully`() {
+        // Given
+        val dishId = 1L
+        val dish = TestFixture.createMargheritaPizza()
+        given(dishRepository.findByIdOrNull(dishId)).willReturn(dish)
+
+        // When
+        dishService.deleteDishById(dishId)
+
+        // Then - no exception thrown
+    }
+
+    @Test
+    fun `deleteDishById should throw EntityNotFoundException when dish does not exist`() {
+        // Given
+        val dishId = 999L
+        given(dishRepository.findByIdOrNull(dishId)).willReturn(null)
+
+        // When & Then
+        assertThrows<EntityNotFoundException> {
+            dishService.deleteDishById(dishId)
+        }
     }
 }

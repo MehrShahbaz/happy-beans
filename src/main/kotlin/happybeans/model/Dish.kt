@@ -30,7 +30,7 @@ class Dish(
     var updatedAt: LocalDateTime? = null,
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long = 0L,
+    var id: Long = 0L,
 ) {
     fun addDishOption(option: DishOption) {
         option.dish = this

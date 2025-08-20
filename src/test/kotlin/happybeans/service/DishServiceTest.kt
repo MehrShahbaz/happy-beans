@@ -3,6 +3,10 @@ package happybeans.service
 import happybeans.TestFixture
 import happybeans.dto.dish.DishCreateRequest
 import happybeans.dto.dish.DishOptionCreateRequest
+import happybeans.dto.dish.DishUpdateRequest
+import happybeans.dto.dish.DishPatchRequest
+import happybeans.dto.dish.DishOptionUpdateRequest
+import happybeans.dto.dish.DishOptionPatchRequest
 import happybeans.model.Dish
 import happybeans.model.Restaurant
 import happybeans.repository.DishRepository
@@ -227,5 +231,395 @@ class DishServiceTest {
 
         // Verify that save was never called
         verify(dishRepository, org.mockito.Mockito.never()).save(org.mockito.ArgumentMatchers.any(Dish::class.java))
+    }
+
+    @Test
+    fun `updateDish should update dish successfully`() {
+        // Given
+        val dishId = 1L
+        val dish = TestFixture.createMargheritaPizza()
+        val updateRequest = DishUpdateRequest(
+            name = "Updated Pizza",
+            description = "Updated description",
+            image = "updated-image.jpg"
+        )
+        given(dishRepository.findByIdOrNull(dishId)).willReturn(dish)
+        given(dishRepository.findByName(updateRequest.name)).willReturn(null)
+        given(dishRepository.save(dish)).willReturn(dish)
+
+        // When
+        val result = dishService.updateDish(dishId, updateRequest)
+
+        // Then
+        assertThat(result.name).isEqualTo(updateRequest.name)
+        assertThat(result.description).isEqualTo(updateRequest.description)
+        assertThat(result.image).isEqualTo(updateRequest.image)
+        verify(dishRepository).save(dish)
+    }
+
+    @Test
+    fun `updateDish should throw EntityNotFoundException when dish not found`() {
+        // Given
+        val dishId = 999L
+        val updateRequest = DishUpdateRequest(
+            name = "Updated Pizza",
+            description = "Updated description",
+            image = "updated-image.jpg"
+        )
+        given(dishRepository.findByIdOrNull(dishId)).willReturn(null)
+
+        // When & Then
+        assertThrows<EntityNotFoundException> {
+            dishService.updateDish(dishId, updateRequest)
+        }
+    }
+
+    @Test
+    fun `updateDish should throw DishAlreadyExistsException when name conflicts`() {
+        // Given
+        val dishId = 1L
+        val dish = TestFixture.createMargheritaPizza()
+        val existingDish = TestFixture.createMargheritaPizza().apply { id = 2L }
+        val updateRequest = DishUpdateRequest(
+            name = "Existing Dish Name",
+            description = "Updated description",
+            image = "updated-image.jpg"
+        )
+        given(dishRepository.findByIdOrNull(dishId)).willReturn(dish)
+        given(dishRepository.findByName(updateRequest.name)).willReturn(existingDish)
+
+        // When & Then
+        assertThrows<DishAlreadyExistsException> {
+            dishService.updateDish(dishId, updateRequest)
+        }
+    }
+
+    @Test
+    fun `updateDish should allow same dish to keep its name`() {
+        // Given
+        val dishId = 1L
+        val dish = TestFixture.createMargheritaPizza().apply { id = dishId }
+        val updateRequest = DishUpdateRequest(
+            name = dish.name, // Same name as current dish
+            description = "Updated description",
+            image = "updated-image.jpg"
+        )
+        given(dishRepository.findByIdOrNull(dishId)).willReturn(dish)
+        given(dishRepository.findByName(updateRequest.name)).willReturn(dish) // Same dish
+        given(dishRepository.save(dish)).willReturn(dish)
+
+        // When
+        val result = dishService.updateDish(dishId, updateRequest)
+
+        // Then
+        assertThat(result.name).isEqualTo(updateRequest.name)
+        assertThat(result.description).isEqualTo(updateRequest.description)
+        verify(dishRepository).save(dish)
+    }
+
+    @Test
+    fun `deleteDishById should delete dish successfully`() {
+        // Given
+        val dishId = 1L
+        val dish = TestFixture.createMargheritaPizza()
+        given(dishRepository.findByIdOrNull(dishId)).willReturn(dish)
+
+        // When
+        dishService.deleteDishById(dishId)
+
+        // Then
+        verify(dishRepository).delete(dish)
+    }
+
+    @Test
+    fun `deleteDishById should throw EntityNotFoundException when dish not found`() {
+        // Given
+        val dishId = 999L
+        given(dishRepository.findByIdOrNull(dishId)).willReturn(null)
+
+        // When & Then
+        assertThrows<EntityNotFoundException> {
+            dishService.deleteDishById(dishId)
+        }
+    }
+
+    @Test
+    fun `patchDish should update only provided fields`() {
+        // Given
+        val dishId = 1L
+        val dish = TestFixture.createMargheritaPizza().apply { id = dishId }
+        val originalName = dish.name
+        val originalDescription = dish.description
+        val patchRequest = DishPatchRequest(
+            name = null, // Not updating name
+            description = "Updated description only",
+            image = null // Not updating image
+        )
+        given(dishRepository.findByIdOrNull(dishId)).willReturn(dish)
+        given(dishRepository.save(dish)).willReturn(dish)
+
+        // When
+        val result = dishService.patchDish(dishId, patchRequest)
+
+        // Then
+        assertThat(result.name).isEqualTo(originalName) // Should remain unchanged
+        assertThat(result.description).isNotEqualTo(originalDescription)
+        assertThat(result.description).isEqualTo("Updated description only") // Should be updated
+        verify(dishRepository).save(dish)
+    }
+
+    @Test
+    fun `patchDish should update all provided fields`() {
+        // Given
+        val dishId = 1L
+        val dish = TestFixture.createMargheritaPizza().apply { id = dishId }
+        val patchRequest = DishPatchRequest(
+            name = "New Name",
+            description = "New Description",
+            image = "new-image.jpg"
+        )
+        given(dishRepository.findByIdOrNull(dishId)).willReturn(dish)
+        given(dishRepository.findByName("New Name")).willReturn(null)
+        given(dishRepository.save(dish)).willReturn(dish)
+
+        // When
+        val result = dishService.patchDish(dishId, patchRequest)
+
+        // Then
+        assertThat(result.name).isEqualTo("New Name")
+        assertThat(result.description).isEqualTo("New Description")
+        assertThat(result.image).isEqualTo("new-image.jpg")
+        verify(dishRepository).save(dish)
+    }
+
+    @Test
+    fun `patchDish should throw EntityNotFoundException when dish not found`() {
+        // Given
+        val dishId = 999L
+        val patchRequest = DishPatchRequest(name = "New Name")
+        given(dishRepository.findByIdOrNull(dishId)).willReturn(null)
+
+        // When & Then
+        assertThrows<EntityNotFoundException> {
+            dishService.patchDish(dishId, patchRequest)
+        }
+    }
+
+    @Test
+    fun `patchDish should throw DishAlreadyExistsException when name conflicts`() {
+        // Given
+        val dishId = 1L
+        val dish = TestFixture.createMargheritaPizza().apply { id = dishId }
+        val existingDish = TestFixture.createMargheritaPizza().apply { id = 2L }
+        val patchRequest = DishPatchRequest(name = "Conflicting Name")
+        given(dishRepository.findByIdOrNull(dishId)).willReturn(dish)
+        given(dishRepository.findByName("Conflicting Name")).willReturn(existingDish)
+
+        // When & Then
+        assertThrows<DishAlreadyExistsException> {
+            dishService.patchDish(dishId, patchRequest)
+        }
+    }
+
+    @Test
+    fun `patchDish should allow same dish to keep its name`() {
+        // Given
+        val dishId = 1L
+        val dish = TestFixture.createMargheritaPizza().apply { id = dishId }
+        val patchRequest = DishPatchRequest(name = dish.name) // Same name
+        given(dishRepository.findByIdOrNull(dishId)).willReturn(dish)
+        given(dishRepository.findByName(dish.name)).willReturn(dish) // Same dish
+        given(dishRepository.save(dish)).willReturn(dish)
+
+        // When
+        val result = dishService.patchDish(dishId, patchRequest)
+
+        // Then
+        assertThat(result.name).isEqualTo(dish.name)
+        verify(dishRepository).save(dish)
+    }
+
+    @Test
+    fun `patchDish should handle empty patch request`() {
+        // Given
+        val dishId = 1L
+        val dish = TestFixture.createMargheritaPizza().apply { id = dishId }
+        val originalName = dish.name
+        val originalDescription = dish.description
+        val originalImage = dish.image
+        val patchRequest = DishPatchRequest() // All fields null
+        given(dishRepository.findByIdOrNull(dishId)).willReturn(dish)
+        given(dishRepository.save(dish)).willReturn(dish)
+
+        // When
+        val result = dishService.patchDish(dishId, patchRequest)
+
+        // Then - Nothing should change
+        assertThat(result.name).isEqualTo(originalName)
+        assertThat(result.description).isEqualTo(originalDescription)
+        assertThat(result.image).isEqualTo(originalImage)
+        verify(dishRepository).save(dish)
+    }
+
+    @Test
+    fun `addDishOption should add option to dish successfully`() {
+        // Given
+        val dishId = 1L
+        val dish = TestFixture.createMargheritaPizza().apply { id = dishId }
+        val initialOptionsCount = dish.dishOptions.size
+        val optionRequest = DishOptionCreateRequest(
+            name = "Extra Large",
+            description = "Perfect for big appetite",
+            price = 29.99,
+            image = "extra-large.jpg",
+            prepTimeMinutes = 25,
+            rating = 4.8
+        )
+        given(dishRepository.findByIdOrNull(dishId)).willReturn(dish)
+        given(dishRepository.save(dish)).willReturn(dish)
+
+        // When
+        val result = dishService.addDishOption(dishId, optionRequest)
+
+        // Then
+        assertThat(result.name).isEqualTo("Extra Large")
+        assertThat(result.dish).isEqualTo(dish)
+        assertThat(dish.dishOptions).hasSize(initialOptionsCount + 1)
+        verify(dishRepository).save(dish)
+    }
+
+    @Test
+    fun `addDishOption should throw EntityNotFoundException when dish not found`() {
+        // Given
+        val dishId = 999L
+        val optionRequest = DishOptionCreateRequest(
+            name = "Extra Large",
+            description = "Perfect for big appetite",
+            price = 29.99,
+            image = "extra-large.jpg",
+            prepTimeMinutes = 25,
+            rating = 4.8
+        )
+        given(dishRepository.findByIdOrNull(dishId)).willReturn(null)
+
+        // When & Then
+        assertThrows<EntityNotFoundException> {
+            dishService.addDishOption(dishId, optionRequest)
+        }
+    }
+
+    @Test
+    fun `updateDishOption should update option successfully`() {
+        // Given
+        val dishId = 1L
+        val optionId = 1L
+        val dish = TestFixture.createMargheritaPizzaWithAllOptions().apply { id = dishId }
+        val dishOption = dish.dishOptions.first().apply { id = optionId }
+        val updateRequest = DishOptionUpdateRequest(
+            name = "Updated Option",
+            description = "Updated description",
+            price = 19.99,
+            image = "updated-option.jpg",
+            prepTimeMinutes = 20,
+            rating = 4.9
+        )
+        given(dishRepository.findByIdOrNull(dishId)).willReturn(dish)
+        given(dishRepository.save(dish)).willReturn(dish)
+
+        // When
+        val result = dishService.updateDishOption(dishId, optionId, updateRequest)
+
+        // Then
+        assertThat(result.name).isEqualTo("Updated Option")
+        assertThat(result.description).isEqualTo("Updated description")
+        assertThat(result.price).isEqualTo(19.99)
+        verify(dishRepository).save(dish)
+    }
+
+    @Test
+    fun `updateDishOption should throw EntityNotFoundException when option not found`() {
+        // Given
+        val dishId = 1L
+        val optionId = 999L
+        val dish = TestFixture.createMargheritaPizza().apply { id = dishId }
+        val updateRequest = DishOptionUpdateRequest(
+            name = "Updated Option",
+            description = "Updated description",
+            price = 19.99,
+            image = "updated-option.jpg",
+            prepTimeMinutes = 20,
+            rating = 4.9
+        )
+        given(dishRepository.findByIdOrNull(dishId)).willReturn(dish)
+
+        // When & Then
+        assertThrows<EntityNotFoundException> {
+            dishService.updateDishOption(dishId, optionId, updateRequest)
+        }
+    }
+
+    @Test
+    fun `patchDishOption should update only provided fields`() {
+        // Given
+        val dishId = 1L
+        val optionId = 1L
+        val dish = TestFixture.createMargheritaPizzaWithAllOptions().apply { id = dishId }
+        val dishOption = dish.dishOptions.first().apply { id = optionId }
+        val originalName = dishOption.name
+        val originalImage = dishOption.image
+        val patchRequest = DishOptionPatchRequest(
+            name = null, // Not updating
+            description = "Patched description",
+            price = 15.99,
+            image = null, // Not updating
+            prepTimeMinutes = null,
+            rating = null
+        )
+        given(dishRepository.findByIdOrNull(dishId)).willReturn(dish)
+        given(dishRepository.save(dish)).willReturn(dish)
+
+        // When
+        val result = dishService.patchDishOption(dishId, optionId, patchRequest)
+
+        // Then
+        assertThat(result.name).isEqualTo(originalName) // Unchanged
+        assertThat(result.description).isEqualTo("Patched description") // Updated
+        assertThat(result.price).isEqualTo(15.99) // Updated
+        assertThat(result.image).isEqualTo(originalImage) // Unchanged
+        verify(dishRepository).save(dish)
+    }
+
+    @Test
+    fun `deleteDishOption should remove option from dish successfully`() {
+        // Given
+        val dishId = 1L
+        val optionId = 1L
+        val dish = TestFixture.createMargheritaPizzaWithAllOptions().apply { id = dishId }
+        val initialOptionsCount = dish.dishOptions.size
+        val dishOption = dish.dishOptions.first().apply { id = optionId }
+        given(dishRepository.findByIdOrNull(dishId)).willReturn(dish)
+        given(dishRepository.save(dish)).willReturn(dish)
+
+        // When
+        dishService.deleteDishOption(dishId, optionId)
+
+        // Then
+        assertThat(dish.dishOptions).hasSize(initialOptionsCount - 1)
+        assertThat(dish.dishOptions).doesNotContain(dishOption)
+        verify(dishRepository).save(dish)
+    }
+
+    @Test
+    fun `deleteDishOption should throw EntityNotFoundException when option not found`() {
+        // Given
+        val dishId = 1L
+        val optionId = 999L
+        val dish = TestFixture.createMargheritaPizza().apply { id = dishId }
+        given(dishRepository.findByIdOrNull(dishId)).willReturn(dish)
+
+        // When & Then
+        assertThrows<EntityNotFoundException> {
+            dishService.deleteDishOption(dishId, optionId)
+        }
     }
 }

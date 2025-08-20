@@ -3,7 +3,6 @@ package happybeans.dto.dish
 import jakarta.validation.constraints.NotNull
 
 data class DishOptionCreateRequest(
-    // TODO: check when to add `@field:valid`
     @field:NotNull
     val name: String,
     val description: String?,

@@ -30,7 +30,7 @@ object TestFixture {
                 available = true,
                 prepTimeMinutes = 15,
                 rating = 4.7,
-            )
+            ).apply { id = 1L }
 
         val mediumOption =
             DishOption(
@@ -42,7 +42,7 @@ object TestFixture {
                 available = true,
                 prepTimeMinutes = 18,
                 rating = 4.8,
-            )
+            ).apply { id = 2L }
 
         val largeOption =
             DishOption(
@@ -54,7 +54,7 @@ object TestFixture {
                 available = true,
                 prepTimeMinutes = 22,
                 rating = 4.9,
-            )
+            ).apply { id = 3L }
 
         dish.addDishOptions(listOf(personalOption, mediumOption, largeOption))
 
