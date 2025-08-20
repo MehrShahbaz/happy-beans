@@ -31,15 +31,16 @@ class DishService(
         return dishRepository.findAll(pageable).content
     }
 
-    fun findDishById(dishId: Long): Dish? {
+    fun findById(dishId: Long): Dish {
         return dishRepository.findByIdOrNull(dishId)
+            ?: throw EntityNotFoundException("Dish with id $dishId not found")
     }
 
     fun findByIdAndDishOptionId(
         dishId: Long,
         dishOptionId: Long,
     ): DishOption {
-        val dish = dishRepository.findById(dishId)
+        val dish = findById(dishId)
 
         return dish.dishOptions.firstOrNull { it.id == dishOptionId }
             ?: throw EntityNotFoundException("Dish with id $dishId and dish option id $dishOptionId not found")
@@ -76,12 +77,12 @@ class DishService(
             val ingredientsContainer =
                 TagContainer(
                     type = TagContainerType.INGREDIENTS,
-                    //TODO: replace? (dish = dish with user = null)
-                    dish = dish,
+                    user = null,
+                    dish = null,
                 )
 
             val dishOption =
-                DishOption(q
+                DishOption(
                     dish = dish,
                     name = optionRequest.name,
                     description = optionRequest.description,
