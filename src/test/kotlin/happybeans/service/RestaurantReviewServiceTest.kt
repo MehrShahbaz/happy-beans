@@ -122,7 +122,6 @@ class RestaurantReviewServiceTest {
                 price = 12.99,
                 image = "https://example.com/regular-portion.jpg",
                 available = true,
-                ingredients = savedTagContainer,
                 rating = 4.0,
                 prepTimeMinutes = 15,
             )

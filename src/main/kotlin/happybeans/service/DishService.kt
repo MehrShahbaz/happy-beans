@@ -88,7 +88,6 @@ class DishService(
                     description = optionRequest.description,
                     price = optionRequest.price,
                     image = optionRequest.image,
-                    ingredients = ingredientsContainer,
                     prepTimeMinutes = optionRequest.prepTimeMinutes,
                     rating = optionRequest.rating,
                 )

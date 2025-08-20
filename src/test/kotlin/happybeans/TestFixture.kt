@@ -27,7 +27,6 @@ object TestFixture {
                 price = 12.99,
                 image = "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=600&q=80",
                 available = true,
-                ingredients = createPizzaIngredientsForDish(dish),
                 prepTimeMinutes = 15,
                 rating = 4.7,
             )
@@ -40,7 +39,6 @@ object TestFixture {
                 price = 18.99,
                 image = "https://images.unsplash.com/photo-1604382355076-af4b0eb60143?w=600&q=80",
                 available = true,
-                ingredients = createPizzaIngredientsForDish(dish),
                 prepTimeMinutes = 18,
                 rating = 4.8,
             )
@@ -53,12 +51,10 @@ object TestFixture {
                 price = 24.99,
                 image = "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=600&q=80",
                 available = true,
-                ingredients = createPizzaIngredientsForDish(dish),
                 prepTimeMinutes = 22,
                 rating = 4.9,
             )
 
-        // Add options to the dish
         dish.addDishOptions(listOf(personalOption, mediumOption, largeOption))
 
         return dish
@@ -106,7 +102,6 @@ object TestFixture {
             price = 12.99,
             image = "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=600&q=80",
             available = true,
-            ingredients = createPizzaIngredientsForDish(dish),
             prepTimeMinutes = 15,
             rating = 4.7,
         )
@@ -121,7 +116,6 @@ object TestFixture {
             price = 18.99,
             image = "https://images.unsplash.com/photo-1604382355076-af4b0eb60143?w=600&q=80",
             available = true,
-            ingredients = createPizzaIngredientsForDish(dish),
             prepTimeMinutes = 18,
             rating = 4.8,
         )
@@ -136,7 +130,6 @@ object TestFixture {
             price = 24.99,
             image = "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=600&q=80",
             available = true,
-            ingredients = createPizzaIngredientsForDish(dish),
             prepTimeMinutes = 22,
             rating = 4.9,
         )
