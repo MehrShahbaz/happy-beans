@@ -2,6 +2,7 @@ package happybeans.config.advice
 
 import com.fasterxml.jackson.databind.exc.MismatchedInputException
 import happybeans.dto.error.ErrorResponse
+import happybeans.utils.exception.DuplicateEntityException
 import happybeans.utils.exception.EntityNotFoundException
 import happybeans.utils.exception.UnauthorisedUserException
 import happybeans.utils.exception.UserAlreadyExistsException
@@ -71,6 +72,14 @@ class GlobalExceptionHandler {
         request: HttpServletRequest,
     ): ResponseEntity<ErrorResponse> {
         return errorResponse(HttpStatus.CONFLICT, ex.message ?: "Already exists", request)
+    }
+
+    @ExceptionHandler(DuplicateEntityException::class)
+    fun handleDuplicateEntityException(
+        ex: DuplicateEntityException,
+        request: HttpServletRequest,
+    ): ResponseEntity<ErrorResponse> {
+        return errorResponse(HttpStatus.UNPROCESSABLE_ENTITY, ex.message ?: "Already exists", request)
     }
 
     private fun errorResponse(
