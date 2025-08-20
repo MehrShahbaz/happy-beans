@@ -97,11 +97,12 @@ class DishTest {
         // Given
         val dishId = 1L
         val dish = TestFixture.createMargheritaPizza()
-        val updateRequest = DishUpdateRequest(
-            name = "Updated Pizza",
-            description = "Updated description",
-            image = "updated-image.jpg"
-        )
+        val updateRequest =
+            DishUpdateRequest(
+                name = "Updated Pizza",
+                description = "Updated description",
+                image = "updated-image.jpg",
+            )
         given(dishRepository.findByIdOrNull(dishId)).willReturn(dish)
         given(dishRepository.findByName(updateRequest.name)).willReturn(null)
         given(dishRepository.save(dish)).willReturn(dish)
@@ -121,11 +122,12 @@ class DishTest {
         val dishId = 1L
         val dish = TestFixture.createMargheritaPizza()
         val existingDish = TestFixture.createMargheritaPizza().apply { id = 2L }
-        val updateRequest = DishUpdateRequest(
-            name = "Existing Dish Name",
-            description = "Updated description",
-            image = "updated-image.jpg"
-        )
+        val updateRequest =
+            DishUpdateRequest(
+                name = "Existing Dish Name",
+                description = "Updated description",
+                image = "updated-image.jpg",
+            )
         given(dishRepository.findByIdOrNull(dishId)).willReturn(dish)
         given(dishRepository.findByName(updateRequest.name)).willReturn(existingDish)
 
