@@ -42,6 +42,6 @@ class DishController(
                 .buildAndExpand(savedDish.id)
                 .toUri()
 
-        return ResponseEntity.created(location).body(MessageResponse("Product added to cart"))
+        return ResponseEntity.created(location).body(MessageResponse("Dish created successfully"))
     }
 }

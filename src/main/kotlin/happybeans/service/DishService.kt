@@ -11,7 +11,6 @@ import happybeans.repository.RestaurantRepository
 import happybeans.repository.TagContainerRepository
 import happybeans.utils.exception.EntityNotFoundException
 import org.springframework.data.domain.Pageable
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import kotlin.collections.map
@@ -22,7 +21,7 @@ class DishService(
     private val restaurantRepository: RestaurantRepository,
     private val tagContainerRepository: TagContainerRepository,
 ) {
-    // TODO While creating first create a TagContainer with type INGRIDIENT and add it to the dish option
+    // TODO While creating first create a TagContainer with type INGREIDIENTS and add it to the dish option
     fun findByName(name: String): Dish? {
         return dishRepository.findByNameOrNull(name)
     }
@@ -77,6 +76,7 @@ class DishService(
             val ingredientsContainer =
                 TagContainer(
                     type = TagContainerType.INGREDIENTS,
+                    //TODO: replace? (dish = dish with user = null)
                     dish = dish,
                 )
 
@@ -97,6 +97,7 @@ class DishService(
         }.toSet()
     }
 
+    //remove if unnecessary
     @Transactional
     fun updateDishAverageRating(dishId: Long) {
         val dish =

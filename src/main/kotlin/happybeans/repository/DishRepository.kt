@@ -14,9 +14,4 @@ interface DishRepository : JpaRepository<Dish, Long> {
     fun findByIdOrNull(id: Long): Dish?
 
     fun findAllOrNull(pageable: Pageable): List<Dish>?
-
-    fun findDishesByRestaurantId(
-        restaurantId: Long,
-        pageable: Pageable,
-    ): List<Dish>?
 }
