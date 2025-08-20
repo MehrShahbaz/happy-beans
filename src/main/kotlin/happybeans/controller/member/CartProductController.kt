@@ -36,7 +36,12 @@ class CartProductController(
         @PathVariable("dishOptionId") dishOptionId: Long,
         @Valid @RequestBody cartProductRequest: CartProductRequest,
     ): ResponseEntity<MessageResponse> {
-        cartProductService.addToCart(user, Pair(dishId, dishOptionId), cartProductRequest)
+        cartProductService
+            .addOrUpdateCartProduct(
+                user,
+                Pair(dishId, dishOptionId),
+                cartProductRequest,
+            )
         return ResponseEntity.ok(MessageResponse("Successfully added to cart!"))
     }
 

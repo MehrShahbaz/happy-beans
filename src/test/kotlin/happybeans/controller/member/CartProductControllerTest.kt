@@ -118,7 +118,7 @@ class CartProductControllerTest : AbstractDocumentTest() {
                 ),
             )
 
-        verify(cartProductService).addToCart(eq(testUser), eq(Pair(dishId, optionId)), any())
+        verify(cartProductService).addOrUpdateCartProduct(eq(testUser), eq(Pair(dishId, optionId)), any())
     }
 
     @Test

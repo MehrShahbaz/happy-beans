@@ -101,9 +101,31 @@ class CartProductServiceTest {
 
         every { dishService.findById(dish.id) } returns dish
         every { dishService.findByIdAndDishOptionId(dish.id, dishOption.id) } returns dishOption
+        every { cartProductRepository.findByUserIdAndDishOptionId(user.id, dishOption.id)} returns null
         every { cartProductRepository.save(capture(cartProductSlot)) } returns cartProduct
 
-        cartProductService.addToCart(user, Pair(dish.id, dishOption.id), request)
+        cartProductService.addOrUpdateCartProduct(user, Pair(dish.id, dishOption.id), request)
+
+        verify(exactly = 1) { cartProductRepository.save(any()) }
+
+        val capturedProduct = cartProductSlot.captured
+        assertEquals(user, capturedProduct.user)
+        assertEquals(dish, capturedProduct.dish)
+        assertEquals(dishOption, capturedProduct.dishOption)
+        assertEquals(request.quantity, capturedProduct.quantity)
+    }
+
+    @Test
+    fun `addToCart should update product if exists`() {
+        val request = CartProductRequest(quantity = 3)
+        val cartProductSlot = slot<CartProduct>()
+
+        every { dishService.findById(dish.id) } returns dish
+        every { dishService.findByIdAndDishOptionId(dish.id, dishOption.id) } returns dishOption
+        every { cartProductRepository.findByUserIdAndDishOptionId(user.id, dishOption.id)} returns cartProduct
+        every { cartProductRepository.save(capture(cartProductSlot)) } returns cartProduct
+
+        cartProductService.addOrUpdateCartProduct(user, Pair(dish.id, dishOption.id), request)
 
         verify(exactly = 1) { cartProductRepository.save(any()) }
 
