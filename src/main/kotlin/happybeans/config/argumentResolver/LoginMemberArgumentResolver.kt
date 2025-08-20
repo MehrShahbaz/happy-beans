@@ -6,6 +6,7 @@ import happybeans.repository.UserRepository
 import happybeans.utils.annotations.LoginMember
 import happybeans.utils.exception.UnauthorisedUserException
 import org.springframework.core.MethodParameter
+import org.springframework.stereotype.Component
 import org.springframework.web.bind.support.WebDataBinderFactory
 import org.springframework.web.context.request.NativeWebRequest
 import org.springframework.web.context.request.ServletWebRequest

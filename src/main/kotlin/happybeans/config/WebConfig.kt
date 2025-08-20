@@ -26,7 +26,7 @@ class WebConfig(
         registry.addInterceptor(adminInterceptor)
             .addPathPatterns("")
         registry.addInterceptor(restaurantOwnerInterceptor)
-            .addPathPatterns("")
+            .addPathPatterns("/api/restaurant-owner/restaurants/**")
         super.addInterceptors(registry)
     }
 
