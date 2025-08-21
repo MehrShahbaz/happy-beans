@@ -5,10 +5,10 @@ import happybeans.dto.dish.DishOptionCreateRequest
 import happybeans.dto.dish.DishOptionPatchRequest
 import happybeans.dto.dish.DishOptionUpdateRequest
 import happybeans.dto.dish.DishPatchRequest
+import happybeans.dto.dish.DishResponse
 import happybeans.dto.dish.DishUpdateRequest
+import happybeans.dto.dish.toResponse
 import happybeans.dto.response.MessageResponse
-import happybeans.model.Dish
-import happybeans.model.DishOption
 import happybeans.service.DishService
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
@@ -25,19 +25,19 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import java.net.URI
 
 @RestController
-@RequestMapping()
+@RequestMapping("/api")
 class DishController(
     private val dishService: DishService,
 ) {
-    @GetMapping("/api/dish/{dishId}")
+    @GetMapping("/dish/{dishId}")
     fun getDishById(
         @PathVariable dishId: Long,
-    ): ResponseEntity<Dish> {
+    ): ResponseEntity<DishResponse> {
         val dish = dishService.findById(dishId)
-        return ResponseEntity.ok(dish)
+        return ResponseEntity.ok(dish.toResponse())
     }
 
-    @PostMapping("/api/restaurant/{restaurantId}/dishes")
+    @PostMapping("/restaurant/{restaurantId}/dishes")
     fun createDish(
         @PathVariable restaurantId: Long,
         @Valid @RequestBody dishRequest: DishCreateRequest,
@@ -54,67 +54,73 @@ class DishController(
         return ResponseEntity.created(location).body(MessageResponse("Dish created successfully"))
     }
 
-    @PutMapping("/api/dish/{dishId}")
+    @PutMapping("/dish/{dishId}")
     fun updateDish(
         @PathVariable dishId: Long,
         @Valid @RequestBody updateRequest: DishUpdateRequest,
-    ): ResponseEntity<Dish> {
-        val updatedDish = dishService.updateDish(dishId, updateRequest)
-        return ResponseEntity.ok(updatedDish)
+    ): ResponseEntity<MessageResponse> {
+        dishService.updateDish(dishId, updateRequest)
+        return ResponseEntity.ok(MessageResponse("Dish updated successfully"))
     }
 
-    @PatchMapping("/api/dish/{dishId}")
+    @PatchMapping("/dish/{dishId}")
     fun patchDish(
         @PathVariable dishId: Long,
         @Valid @RequestBody patchRequest: DishPatchRequest,
-    ): ResponseEntity<Dish> {
-        val updatedDish = dishService.patchDish(dishId, patchRequest)
-        return ResponseEntity.ok(updatedDish)
+    ): ResponseEntity<MessageResponse> {
+        dishService.patchDish(dishId, patchRequest)
+        return ResponseEntity.ok(MessageResponse("Dish updated successfully"))
     }
 
-    @PostMapping("/api/dish/{dishId}/options")
+    @PostMapping("/dish/{dishId}/options")
     fun addDishOption(
         @PathVariable dishId: Long,
         @Valid @RequestBody optionRequest: DishOptionCreateRequest,
-    ): ResponseEntity<DishOption> {
+    ): ResponseEntity<MessageResponse> {
         val dishOption = dishService.addDishOption(dishId, optionRequest)
-        return ResponseEntity.ok(dishOption)
+        val location: URI =
+            ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{optionId}")
+                .buildAndExpand(dishOption.id)
+                .toUri()
+        return ResponseEntity.created(location).body(MessageResponse("Dish option added successfully"))
     }
 
-    @PutMapping("/api/dish/{dishId}/options/{optionId}")
+    @PutMapping("/dish/{dishId}/options/{optionId}")
     fun updateDishOption(
         @PathVariable dishId: Long,
         @PathVariable optionId: Long,
         @Valid @RequestBody updateRequest: DishOptionUpdateRequest,
-    ): ResponseEntity<DishOption> {
-        val updatedOption = dishService.updateDishOption(dishId, optionId, updateRequest)
-        return ResponseEntity.ok(updatedOption)
+    ): ResponseEntity<MessageResponse> {
+        dishService.updateDishOption(dishId, optionId, updateRequest)
+        return ResponseEntity.ok(MessageResponse("Option updated"))
     }
 
-    @PatchMapping("/api/dish/{dishId}/options/{optionId}")
+    @PatchMapping("/dish/{dishId}/options/{optionId}")
     fun patchDishOption(
         @PathVariable dishId: Long,
         @PathVariable optionId: Long,
         @Valid @RequestBody patchRequest: DishOptionPatchRequest,
-    ): ResponseEntity<DishOption> {
-        val updatedOption = dishService.patchDishOption(dishId, optionId, patchRequest)
-        return ResponseEntity.ok(updatedOption)
+    ): ResponseEntity<MessageResponse> {
+        dishService.patchDishOption(dishId, optionId, patchRequest)
+        return ResponseEntity.ok(MessageResponse("Option updated"))
     }
 
-    @DeleteMapping("/api/dish/{dishId}/options/{optionId}")
+    @DeleteMapping("/dish/{dishId}/options/{optionId}")
     fun deleteDishOption(
         @PathVariable dishId: Long,
         @PathVariable optionId: Long,
-    ): ResponseEntity<MessageResponse> {
+    ): ResponseEntity<Void> {
         dishService.deleteDishOption(dishId, optionId)
-        return ResponseEntity.ok(MessageResponse("Dish option deleted successfully"))
+        return ResponseEntity.noContent().build()
     }
 
-    @DeleteMapping("/api/dish/{dishId}")
+    @DeleteMapping("/dish/{dishId}")
     fun deleteDishById(
         @PathVariable dishId: Long,
-    ): ResponseEntity<MessageResponse> {
+    ): ResponseEntity<Void> {
         dishService.deleteDishById(dishId)
-        return ResponseEntity.ok(MessageResponse("Dish deleted successfully"))
+        return ResponseEntity.noContent().build()
     }
 }

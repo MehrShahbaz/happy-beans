@@ -158,7 +158,7 @@ class DishControllerTest : AbstractDocumentTest() {
     }
 
     @Test
-    @DisplayName("PUT /api/dish/{dishId} -> 200 and updated dish")
+    @DisplayName("PUT /api/dish/{dishId} -> 200 and success message")
     fun updateDish_ok() {
         val dishId = 1L
         val updateRequest =
@@ -168,14 +168,7 @@ class DishControllerTest : AbstractDocumentTest() {
                 image = "https://updated-image.com/pizza.jpg",
             )
 
-        val updatedDish =
-            TestFixture.createMargheritaPizza().apply {
-                id = dishId
-                name = "Updated Margherita Pizza"
-                description = "Updated classic Italian pizza"
-                image = "https://updated-image.com/pizza.jpg"
-            }
-
+        val updatedDish = TestFixture.createMargheritaPizza().apply { id = dishId }
         whenever(dishService.updateDish(eq(dishId), any())).thenReturn(updatedDish)
 
         mockMvc.perform(
@@ -186,8 +179,7 @@ class DishControllerTest : AbstractDocumentTest() {
         )
             .andExpect(status().isOk)
             .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$.id").value(dishId))
-            .andExpect(jsonPath("$.name").value("Updated Margherita Pizza"))
+            .andExpect(jsonPath("$.message").value("Dish updated successfully"))
             .andDo(
                 document(
                     "dish-update",
@@ -201,12 +193,8 @@ class DishControllerTest : AbstractDocumentTest() {
                         fieldWithPath("description").type(JsonFieldType.STRING).description("New dish description"),
                         fieldWithPath("image").type(JsonFieldType.STRING).description("New dish image URL"),
                     ),
-                    relaxedResponseFields(
-                        fieldWithPath("id").type(JsonFieldType.NUMBER).description("Dish ID"),
-                        fieldWithPath("name").type(JsonFieldType.STRING).description("Updated dish name"),
-                        fieldWithPath("description").type(JsonFieldType.STRING).description("Updated dish description"),
-                        fieldWithPath("image").type(JsonFieldType.STRING).description("Updated dish image URL"),
-                        fieldWithPath("dishOptions").type(JsonFieldType.ARRAY).description("Dish options"),
+                    responseFields(
+                        fieldWithPath("message").type(JsonFieldType.STRING).description("Success message"),
                     ),
                 ),
             )
@@ -215,7 +203,7 @@ class DishControllerTest : AbstractDocumentTest() {
     }
 
     @Test
-    @DisplayName("DELETE /api/dish/{dishId} -> 200 and success message")
+    @DisplayName("DELETE /api/dish/{dishId} -> 204 No Content")
     fun deleteDish_ok() {
         val dishId = 1L
 
@@ -223,9 +211,7 @@ class DishControllerTest : AbstractDocumentTest() {
             RestDocumentationRequestBuilders.delete("/api/dish/{dishId}", dishId)
                 .accept(MediaType.APPLICATION_JSON),
         )
-            .andExpect(status().isOk)
-            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$.message").value("Dish deleted successfully"))
+            .andExpect(status().isNoContent)
             .andDo(
                 document(
                     "dish-delete",
@@ -233,9 +219,6 @@ class DishControllerTest : AbstractDocumentTest() {
                     preprocessResponse(prettyPrint()),
                     pathParameters(
                         parameterWithName("dishId").description("ID of the dish to delete"),
-                    ),
-                    responseFields(
-                        fieldWithPath("message").type(JsonFieldType.STRING).description("Success message"),
                     ),
                 ),
             )
