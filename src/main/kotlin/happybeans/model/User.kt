@@ -40,14 +40,14 @@ class User(
     @JoinTable(
         name = "user_likes_tags",
         joinColumns = [JoinColumn(name = "user_id")],
-        inverseJoinColumns = [JoinColumn(name = "tag_id")]
+        inverseJoinColumns = [JoinColumn(name = "tag_id")],
     )
     val likes: MutableSet<Tag> = mutableSetOf(),
     @ManyToMany(cascade = [CascadeType.PERSIST, CascadeType.MERGE], fetch = FetchType.LAZY)
     @JoinTable(
         name = "user_dislikes_tags",
         joinColumns = [JoinColumn(name = "user_id")],
-        inverseJoinColumns = [JoinColumn(name = "tag_id")]
+        inverseJoinColumns = [JoinColumn(name = "tag_id")],
     )
     val dislikes: MutableSet<Tag> = mutableSetOf(),
     @Id

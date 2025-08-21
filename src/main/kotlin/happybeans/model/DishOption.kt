@@ -42,7 +42,7 @@ class DishOption(
     @JoinTable(
         name = "dish_option_tags",
         joinColumns = [JoinColumn(name = "dish_option_id")],
-        inverseJoinColumns = [JoinColumn(name = "tag_id")]
+        inverseJoinColumns = [JoinColumn(name = "tag_id")],
     )
     val dishOptionTags: MutableSet<Tag> = mutableSetOf(),
     @Id
