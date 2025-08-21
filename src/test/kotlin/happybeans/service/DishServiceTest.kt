@@ -60,27 +60,29 @@ class DishServiceTest {
     }
 
     @Test
-    fun `findByName should return dish when found`() {
+    fun `findByNameAndRestaurant should return dish when found`() {
         // Given
         val dishName = "Margherita Pizza"
+        val restaurantId = 1L
         val expectedDish = TestFixture.createMargheritaPizza()
-        given(dishRepository.findByName(dishName)).willReturn(expectedDish)
+        given(dishRepository.findByNameAndRestaurantId(dishName, restaurantId)).willReturn(expectedDish)
 
         // When
-        val result = dishService.findByName(dishName)
+        val result = dishService.findByNameAndRestaurant(dishName, restaurantId)
 
         // Then
         assertThat(result).isEqualTo(expectedDish)
     }
 
     @Test
-    fun `findByName should return null when dish not found`() {
+    fun `findByNameAndRestaurant should return null when dish not found`() {
         // Given
         val dishName = "Non-existent Dish"
-        given(dishRepository.findByName(dishName)).willReturn(null)
+        val restaurantId = 1L
+        given(dishRepository.findByNameAndRestaurantId(dishName, restaurantId)).willReturn(null)
 
         // When
-        val result = dishService.findByName(dishName)
+        val result = dishService.findByNameAndRestaurant(dishName, restaurantId)
 
         // Then
         assertThat(result).isNull()

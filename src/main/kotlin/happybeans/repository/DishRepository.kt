@@ -10,8 +10,6 @@ import org.springframework.stereotype.Repository
 
 @Repository
 interface DishRepository : JpaRepository<Dish, Long> {
-    fun findByName(name: String): Dish?
-
     // For validating that the dish name is unique within the same restaurant
     @Query(
         "SELECT d FROM Dish d WHERE d.name = :name AND EXISTS " +

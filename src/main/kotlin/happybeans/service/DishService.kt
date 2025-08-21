@@ -30,8 +30,11 @@ class DishService(
         return dishRepository.findDishesByRestaurant(restaurantId, pageable)
     }
 
-    fun findByName(name: String): Dish? {
-        return dishRepository.findByName(name)
+    fun findByNameAndRestaurant(
+        name: String,
+        restaurantId: Long,
+    ): Dish? {
+        return dishRepository.findByNameAndRestaurantId(name, restaurantId)
     }
 
     fun findById(dishId: Long): Dish {
@@ -87,6 +90,7 @@ class DishService(
                 DishOption(
                     dish = dish,
                     name = optionRequest.name,
+                    available = optionRequest.available,
                     description = optionRequest.description,
                     price = optionRequest.price,
                     image = optionRequest.image,
@@ -162,6 +166,7 @@ class DishService(
             DishOption(
                 dish = dish,
                 name = optionRequest.name,
+                available = optionRequest.available,
                 description = optionRequest.description,
                 price = optionRequest.price,
                 image = optionRequest.image,
