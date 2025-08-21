@@ -25,11 +25,11 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import java.net.URI
 
 @RestController
-@RequestMapping("/api/dish")
+@RequestMapping()
 class DishController(
     private val dishService: DishService,
 ) {
-    @GetMapping("/{dishId}")
+    @GetMapping("/api/dish/{dishId}")
     fun getDishById(
         @PathVariable dishId: Long,
     ): ResponseEntity<Dish> {
@@ -54,7 +54,7 @@ class DishController(
         return ResponseEntity.created(location).body(MessageResponse("Dish created successfully"))
     }
 
-    @PutMapping("/{dishId}")
+    @PutMapping("/api/dish/{dishId}")
     fun updateDish(
         @PathVariable dishId: Long,
         @Valid @RequestBody updateRequest: DishUpdateRequest,
@@ -63,7 +63,7 @@ class DishController(
         return ResponseEntity.ok(updatedDish)
     }
 
-    @PatchMapping("/{dishId}")
+    @PatchMapping("/api/dish/{dishId}")
     fun patchDish(
         @PathVariable dishId: Long,
         @Valid @RequestBody patchRequest: DishPatchRequest,
@@ -72,7 +72,7 @@ class DishController(
         return ResponseEntity.ok(updatedDish)
     }
 
-    @PostMapping("/{dishId}/options")
+    @PostMapping("/api/dish/{dishId}/options")
     fun addDishOption(
         @PathVariable dishId: Long,
         @Valid @RequestBody optionRequest: DishOptionCreateRequest,
@@ -81,7 +81,7 @@ class DishController(
         return ResponseEntity.ok(dishOption)
     }
 
-    @PutMapping("/{dishId}/options/{optionId}")
+    @PutMapping("/api/dish/{dishId}/options/{optionId}")
     fun updateDishOption(
         @PathVariable dishId: Long,
         @PathVariable optionId: Long,
@@ -91,7 +91,7 @@ class DishController(
         return ResponseEntity.ok(updatedOption)
     }
 
-    @PatchMapping("/{dishId}/options/{optionId}")
+    @PatchMapping("/api/dish/{dishId}/options/{optionId}")
     fun patchDishOption(
         @PathVariable dishId: Long,
         @PathVariable optionId: Long,
@@ -101,7 +101,7 @@ class DishController(
         return ResponseEntity.ok(updatedOption)
     }
 
-    @DeleteMapping("/{dishId}/options/{optionId}")
+    @DeleteMapping("/api/dish/{dishId}/options/{optionId}")
     fun deleteDishOption(
         @PathVariable dishId: Long,
         @PathVariable optionId: Long,
@@ -110,7 +110,7 @@ class DishController(
         return ResponseEntity.ok(MessageResponse("Dish option deleted successfully"))
     }
 
-    @DeleteMapping("/{dishId}")
+    @DeleteMapping("/api/dish/{dishId}")
     fun deleteDishById(
         @PathVariable dishId: Long,
     ): ResponseEntity<MessageResponse> {
