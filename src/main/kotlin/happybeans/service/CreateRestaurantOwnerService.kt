@@ -12,22 +12,20 @@ import org.springframework.transaction.annotation.Transactional
 class CreateRestaurantOwnerService(
     private val userRepository: UserRepository,
 ) {
-    fun createRestaurantOwner(
-        request: RestaurantOwnerRequestDto
-    ): User {
+    fun createRestaurantOwner(request: RestaurantOwnerRequestDto): User {
         return userRepository.save(
             User(
                 request.email,
                 createPassword(request.firstName),
                 request.firstName,
                 request.lastName,
-                UserRole.RESTAURANT_OWNER
-            )
+                UserRole.RESTAURANT_OWNER,
+            ),
         )
     }
 
-    private fun createPassword(firstName:String):String {
-        return RESTAURANT_OWNER_PASSWORD +"-"+ firstName.first()
+    private fun createPassword(firstName: String): String {
+        return RESTAURANT_OWNER_PASSWORD + "-" + firstName.first()
     }
 
     companion object {

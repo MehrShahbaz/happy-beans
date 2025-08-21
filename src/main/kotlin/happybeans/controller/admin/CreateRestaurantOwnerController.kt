@@ -14,19 +14,20 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 @RestController
 @RequestMapping("/api/admin/restaurant-owner")
 class CreateRestaurantOwnerController(
-    private val createRestaurantOwnerService: CreateRestaurantOwnerService
+    private val createRestaurantOwnerService: CreateRestaurantOwnerService,
 ) {
     @PostMapping
     fun createRestaurantOwner(
-        @Valid @RequestBody restaurantOwnerRequestDto: RestaurantOwnerRequestDto
+        @Valid @RequestBody restaurantOwnerRequestDto: RestaurantOwnerRequestDto,
     ): ResponseEntity<MessageResponse> {
-        val user =createRestaurantOwnerService.createRestaurantOwner(restaurantOwnerRequestDto)
+        val user = createRestaurantOwnerService.createRestaurantOwner(restaurantOwnerRequestDto)
 
-        val location = ServletUriComponentsBuilder
-            .fromCurrentRequest()
-            .path("/{optionId}")
-            .buildAndExpand(user.id)
-            .toUri()
+        val location =
+            ServletUriComponentsBuilder
+                .fromCurrentRequest()
+                .path("/{optionId}")
+                .buildAndExpand(user.id)
+                .toUri()
         return ResponseEntity.created(location).body(MessageResponse("RestaurantOwner created!"))
     }
 }
