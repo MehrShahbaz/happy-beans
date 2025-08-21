@@ -53,9 +53,11 @@ class DishService(
             restaurantRepository.findById(restaurantId)
                 .orElseThrow { EntityNotFoundException("Restaurant not found") }
 
-        val existingDish = dishRepository.findByName(dishRequest.name)
+        val existingDish = dishRepository.findByNameAndRestaurantId(dishRequest.name, restaurantId)
         if (existingDish != null) {
-            throw DishAlreadyExistsException("Dish with name '${dishRequest.name}' already exists")
+            throw DishAlreadyExistsException(
+                "Dish with name '${dishRequest.name}' already exists in this restaurant with id '$restaurantId'",
+            )
         }
 
         val dish =
@@ -65,8 +67,8 @@ class DishService(
                 image = dishRequest.image,
                 dishOptions = mutableSetOf(),
             )
-        val createdDishOptions = createAndLinkDishOptions(dish, dishRequest.dishOptionRequests)
-        dish.dishOptions = createdDishOptions
+     //   val createdDishOptions = createAndLinkDishOptions(dish, dishRequest.dishOptionRequests)
+        dish.dishOptions = createAndLinkDishOptions(dish, dishRequest.dishOptionRequests)
 
         restaurant.addDish(dish)
         val savedDish = dishRepository.save(dish)
@@ -100,10 +102,15 @@ class DishService(
     ): Dish {
         val dish = findById(dishId)
 
-        // Check if new name conflicts with the existing dish
-        val existingDishWithSameName = dishRepository.findByName(updateRequest.name)
+        // Find restaurant that owns this dish
+        val restaurant =
+            restaurantRepository.findAll().firstOrNull { it.dishes.contains(dish) }
+                ?: throw EntityNotFoundException("Restaurant for dish not found")
+
+        // Check if new name conflicts with another dish in the same restaurant
+        val existingDishWithSameName = dishRepository.findByNameAndRestaurantId(updateRequest.name, restaurant.id)
         if (existingDishWithSameName != null && existingDishWithSameName.id != dishId) {
-            throw DishAlreadyExistsException("Dish with name '${updateRequest.name}' already exists")
+            throw DishAlreadyExistsException("Dish with name '${updateRequest.name}' already exists in this restaurant")
         }
 
         dish.name = updateRequest.name
@@ -122,9 +129,14 @@ class DishService(
 
         // Check if new name conflicts with existing dish (only if name is being updated)
         patchRequest.name?.let { newName ->
-            val existingDishWithSameName = dishRepository.findByName(newName)
+            // Find restaurant that owns this dish
+            val restaurant =
+                restaurantRepository.findAll().firstOrNull { it.dishes.contains(dish) }
+                    ?: throw EntityNotFoundException("Restaurant for dish not found")
+
+            val existingDishWithSameName = dishRepository.findByNameAndRestaurantId(newName, restaurant.id)
             if (existingDishWithSameName != null && existingDishWithSameName.id != dishId) {
-                throw DishAlreadyExistsException("Dish with name '$newName' already exists")
+                throw DishAlreadyExistsException("Dish with name '$newName' already exists in this restaurant")
             }
             dish.name = newName
         }

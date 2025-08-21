@@ -112,7 +112,7 @@ class DishServiceTest {
             )
 
         given(restaurantRepository.findById(restaurantId)).willReturn(Optional.of(restaurant))
-        given(dishRepository.findByName("Test Pizza")).willReturn(null) // No existing dish
+        given(dishRepository.findByNameAndRestaurantId("Test Pizza", restaurantId)).willReturn(null)
         given(dishRepository.save(org.mockito.ArgumentMatchers.any(Dish::class.java)))
             .willAnswer { it.arguments[0] as Dish }
 
@@ -166,6 +166,7 @@ class DishServiceTest {
             )
 
         given(restaurantRepository.findById(restaurantId)).willReturn(Optional.of(restaurant))
+        given(dishRepository.findByNameAndRestaurantId("Simple Dish", restaurantId)).willReturn(null)
         given(dishRepository.save(org.mockito.ArgumentMatchers.any(Dish::class.java)))
             .willAnswer { it.arguments[0] as Dish }
 
@@ -193,6 +194,7 @@ class DishServiceTest {
             )
 
         given(restaurantRepository.findById(restaurantId)).willReturn(Optional.of(restaurant))
+        given(dishRepository.findByNameAndRestaurantId("New Dish", restaurantId)).willReturn(null)
         given(dishRepository.save(org.mockito.ArgumentMatchers.any(Dish::class.java)))
             .willAnswer { it.arguments[0] as Dish }
 
@@ -219,7 +221,7 @@ class DishServiceTest {
             )
 
         given(restaurantRepository.findById(restaurantId)).willReturn(Optional.of(restaurant))
-        given(dishRepository.findByName("Margherita Pizza")).willReturn(existingDish) // Dish already exists
+        given(dishRepository.findByNameAndRestaurantId("Margherita Pizza", restaurantId)).willReturn(existingDish)
 
         // When & Then
         val exception =
@@ -227,10 +229,43 @@ class DishServiceTest {
                 dishService.createDish(restaurantId, dishRequest)
             }
 
-        assertThat(exception.message).isEqualTo("Dish with name 'Margherita Pizza' already exists")
+        assertThat(exception.message).isEqualTo("Dish with name 'Margherita Pizza' already exists in this restaurant with id '1'")
 
         // Verify that save was never called
         verify(dishRepository, org.mockito.Mockito.never()).save(org.mockito.ArgumentMatchers.any(Dish::class.java))
+    }
+
+    @Test
+    fun `createDish should allow same dish name in different restaurants`() {
+        // Given
+        val restaurant1Id = 1L
+        val restaurant2Id = 2L
+        val restaurant1 = TestFixture.createHappyBeansCafe()
+        val restaurant2 = TestFixture.createMammaMiaPizzeria()
+        val dishRequest =
+            DishCreateRequest(
+                name = "Margherita Pizza",
+                description = "Classic Italian pizza",
+                image = "https://example.com/pizza.jpg",
+                dishOptionRequests = mutableSetOf(),
+            )
+
+        given(restaurantRepository.findById(restaurant1Id)).willReturn(Optional.of(restaurant1))
+        given(restaurantRepository.findById(restaurant2Id)).willReturn(Optional.of(restaurant2))
+        given(dishRepository.findByNameAndRestaurantId("Margherita Pizza", restaurant1Id)).willReturn(null)
+        given(dishRepository.findByNameAndRestaurantId("Margherita Pizza", restaurant2Id)).willReturn(null)
+        given(dishRepository.save(org.mockito.ArgumentMatchers.any(Dish::class.java)))
+            .willAnswer { it.arguments[0] as Dish }
+
+        // When - Create same dish name for different restaurants
+        val result1 = dishService.createDish(restaurant1Id, dishRequest)
+        val result2 = dishService.createDish(restaurant2Id, dishRequest)
+
+        // Then - Both should succeed
+        assertThat(result1.name).isEqualTo("Margherita Pizza")
+        assertThat(result2.name).isEqualTo("Margherita Pizza")
+        assertThat(restaurant1.dishes).contains(result1)
+        assertThat(restaurant2.dishes).contains(result2)
     }
 
     @Test
@@ -244,8 +279,12 @@ class DishServiceTest {
                 description = "Updated description",
                 image = "updated-image.jpg",
             )
+        val restaurant = TestFixture.createHappyBeansCafe().apply { 
+            dishes.add(dish) 
+        }
         given(dishRepository.findById(dishId)).willReturn(Optional.of(dish))
-        given(dishRepository.findByName(updateRequest.name)).willReturn(null)
+        given(restaurantRepository.findAll()).willReturn(listOf(restaurant))
+        given(dishRepository.findByNameAndRestaurantId(updateRequest.name, restaurant.id)).willReturn(null)
         given(dishRepository.save(dish)).willReturn(dish)
 
         // When
@@ -282,6 +321,9 @@ class DishServiceTest {
         val dishId = 1L
         val dish = TestFixture.createMargheritaPizza()
         val existingDish = TestFixture.createMargheritaPizza().apply { id = 2L }
+        val restaurant = TestFixture.createHappyBeansCafe().apply { 
+            dishes.add(dish) 
+        }
         val updateRequest =
             DishUpdateRequest(
                 name = "Existing Dish Name",
@@ -289,7 +331,8 @@ class DishServiceTest {
                 image = "updated-image.jpg",
             )
         given(dishRepository.findById(dishId)).willReturn(Optional.of(dish))
-        given(dishRepository.findByName(updateRequest.name)).willReturn(existingDish)
+        given(restaurantRepository.findAll()).willReturn(listOf(restaurant))
+        given(dishRepository.findByNameAndRestaurantId(updateRequest.name, restaurant.id)).willReturn(existingDish)
 
         // When & Then
         assertThrows<DishAlreadyExistsException> {
@@ -302,6 +345,9 @@ class DishServiceTest {
         // Given
         val dishId = 1L
         val dish = TestFixture.createMargheritaPizza().apply { id = dishId }
+        val restaurant = TestFixture.createHappyBeansCafe().apply { 
+            dishes.add(dish) 
+        }
         val updateRequest =
             DishUpdateRequest(
                 name = dish.name,
@@ -309,7 +355,8 @@ class DishServiceTest {
                 image = "updated-image.jpg",
             )
         given(dishRepository.findById(dishId)).willReturn(Optional.of(dish))
-        given(dishRepository.findByName(updateRequest.name)).willReturn(dish) // Same dish
+        given(restaurantRepository.findAll()).willReturn(listOf(restaurant))
+        given(dishRepository.findByNameAndRestaurantId(updateRequest.name, restaurant.id)).willReturn(dish) // Same dish
         given(dishRepository.save(dish)).willReturn(dish)
 
         // When
@@ -378,6 +425,9 @@ class DishServiceTest {
         // Given
         val dishId = 1L
         val dish = TestFixture.createMargheritaPizza().apply { id = dishId }
+        val restaurant = TestFixture.createHappyBeansCafe().apply { 
+            dishes.add(dish) 
+        }
         val patchRequest =
             DishPatchRequest(
                 name = "New Name",
@@ -385,7 +435,8 @@ class DishServiceTest {
                 image = "new-image.jpg",
             )
         given(dishRepository.findById(dishId)).willReturn(Optional.of(dish))
-        given(dishRepository.findByName("New Name")).willReturn(null)
+        given(restaurantRepository.findAll()).willReturn(listOf(restaurant))
+        given(dishRepository.findByNameAndRestaurantId("New Name", restaurant.id)).willReturn(null)
         given(dishRepository.save(dish)).willReturn(dish)
 
         // When
@@ -417,9 +468,13 @@ class DishServiceTest {
         val dishId = 1L
         val dish = TestFixture.createMargheritaPizza().apply { id = dishId }
         val existingDish = TestFixture.createMargheritaPizza().apply { id = 2L }
+        val restaurant = TestFixture.createHappyBeansCafe().apply { 
+            dishes.add(dish) 
+        }
         val patchRequest = DishPatchRequest(name = "Conflicting Name")
         given(dishRepository.findById(dishId)).willReturn(Optional.of(dish))
-        given(dishRepository.findByName("Conflicting Name")).willReturn(existingDish)
+        given(restaurantRepository.findAll()).willReturn(listOf(restaurant))
+        given(dishRepository.findByNameAndRestaurantId("Conflicting Name", restaurant.id)).willReturn(existingDish)
 
         // When & Then
         assertThrows<DishAlreadyExistsException> {
@@ -432,9 +487,13 @@ class DishServiceTest {
         // Given
         val dishId = 1L
         val dish = TestFixture.createMargheritaPizza().apply { id = dishId }
+        val restaurant = TestFixture.createHappyBeansCafe().apply { 
+            dishes.add(dish) 
+        }
         val patchRequest = DishPatchRequest(name = dish.name) // Same name
         given(dishRepository.findById(dishId)).willReturn(Optional.of(dish))
-        given(dishRepository.findByName(dish.name)).willReturn(dish) // Same dish
+        given(restaurantRepository.findAll()).willReturn(listOf(restaurant))
+        given(dishRepository.findByNameAndRestaurantId(dish.name, restaurant.id)).willReturn(dish) // Same dish
         given(dishRepository.save(dish)).willReturn(dish)
 
         // When
