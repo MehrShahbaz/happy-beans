@@ -9,6 +9,7 @@ import happybeans.service.RestaurantReviewService
 import happybeans.utils.annotations.LoginMember
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
+import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PatchMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -19,7 +20,7 @@ import org.springframework.web.bind.annotation.RestController
 import java.net.URI
 
 @RestController
-@RequestMapping("/api/restaurant-review")
+@RequestMapping("/api/member/review/restaurant")
 class MemberRestaurantReviewController(
     private val restaurantReviewService: RestaurantReviewService,
 ) {
@@ -57,5 +58,13 @@ class MemberRestaurantReviewController(
         @LoginMember member: User,
     ): List<RestaurantReviewDto> {
         return restaurantReviewService.getReviewsByUserId(member.id)
+    }
+
+    @DeleteMapping("/{restaurantId}")
+    fun deleteRestaurantReviewById(
+        @PathVariable restaurantId: Long,
+    ): ResponseEntity<Unit> {
+        restaurantReviewService.deleteReviewById(restaurantId)
+        return ResponseEntity.noContent().build()
     }
 }

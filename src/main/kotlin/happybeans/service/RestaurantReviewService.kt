@@ -57,6 +57,13 @@ class RestaurantReviewService(
         restaurantReviewRepository.save(review)
     }
 
+    fun deleteReviewById(id: Long) {
+        if (!restaurantReviewRepository.existsById(id)) {
+            throw EntityNotFoundException("Review with ID $id not found")
+        }
+        restaurantReviewRepository.deleteById(id)
+    }
+
     fun getAllReviews(): List<RestaurantReviewDto> {
         return restaurantReviewRepository.findAll().map { it.toReviewDto() }
     }
@@ -88,7 +95,7 @@ class RestaurantReviewService(
             userName = this.userName,
             rating = this.rating,
             message = this.message,
-            restaurantId = this.restaurantId!!,
+            restaurantId = this.restaurantId,
             restaurantName = this.restaurantName,
             createdAt = this.createdAt,
             updatedAt = this.updatedAt,

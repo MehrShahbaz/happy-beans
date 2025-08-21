@@ -22,7 +22,7 @@ class RestaurantReview(
     @Column(name = "restaurant_id")
     var restaurantId: Long,
     @Column(name = "restaurant_name")
-    var restaurantName: String? = null,
+    var restaurantName: String,
     @CreationTimestamp
     val createdAt: LocalDateTime? = null,
     @UpdateTimestamp
