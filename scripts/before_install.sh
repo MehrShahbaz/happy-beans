@@ -12,3 +12,5 @@ if sudo docker ps -aq --filter "name=happy-beans" | grep -q .; then
   echo "Removing old container..."
   sudo docker rm happy-beans
 fi
+
+sudo systemctl enable docker
