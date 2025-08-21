@@ -7,11 +7,11 @@ files:
 hooks:
   BeforeInstall:
     - location: scripts/before_install.sh
-      timeout: 120
+      timeout: 60
       runas: ubuntu
   AfterInstall:
     - location: scripts/after_install.sh
-      timeout: 120
+      timeout: 60
       runas: ubuntu
   ApplicationStart:
     - location: scripts/start.sh

@@ -1,12 +1,12 @@
 #!/bin/bash
-set -e
+JAR_FILE=$(ls /home/ubuntu/app/build/libs/*.jar | head -n 1)
 
-echo "Starting happy-beans container with Docker Compose..."
+if [ -z "$JAR_FILE" ]; then
+  echo ">>> [ApplicationStart] No JAR file found!"
+  exit 1
+fi
 
-# Go to the application directory
-cd /home/ubuntu/app
+echo ">>> ####### Test #######"
+echo ">>> [ApplicationStart] Starting application: $JAR_FILE"
+nohup java -jar $JAR_FILE > /home/ubuntu/app/app.log 2>&1 &
 
-# Run Docker Compose
-sudo docker compose -f docker-compose.yml up --build -d
-
-echo "Container started successfully."

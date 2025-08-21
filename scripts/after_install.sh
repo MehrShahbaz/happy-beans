@@ -1,14 +1,8 @@
 #!/bin/bash
-set -e
 
-# Stop running container if exists
-if sudo docker ps -q --filter "name=happy-beans" | grep -q .; then
-  echo "Stopping existing container..."
-  sudo docker stop happy-beans
-fi
+echo ">>> [BeforeInstall] Fixing ownership..."
+sudo chown -R ubuntu:ubuntu /home/ubuntu/app
 
-# Remove old container if exists
-if sudo docker ps -aq --filter "name=happy-beans" | grep -q .; then
-  echo "Removing old container..."
-  sudo docker rm happy-beans
-fi
+echo ">>> [AfterInstall] Setting permissions for jar..."
+chmod +x /home/ubuntu/app/build/libs/*.jar
+
