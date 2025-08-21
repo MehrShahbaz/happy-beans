@@ -22,6 +22,9 @@ import org.mockito.BDDMockito.verify
 import org.mockito.InjectMocks
 import org.mockito.Mock
 import org.mockito.junit.jupiter.MockitoExtension
+import org.springframework.data.domain.PageImpl
+import org.springframework.data.domain.PageRequest
+import org.springframework.data.domain.Pageable
 import java.util.Optional
 
 @ExtendWith(MockitoExtension::class)
@@ -34,6 +37,27 @@ class DishServiceTest {
 
     @InjectMocks
     private lateinit var dishService: DishService
+
+    @Test
+    fun `findDishesByRestaurant should return dishes when found`() {
+        // Given
+        val restaurantId = 1L
+        val dish1 = TestFixture.createMargheritaPizza().apply { id = 1L }
+        val dish2 = TestFixture.createClassicBeefBurger().apply { id = 2L }
+        val expectedDish = listOf(dish1, dish2)
+        val pageable: Pageable = PageRequest.of(0, 10)
+        given(dishRepository.findDishesByRestaurant(restaurantId, pageable)).willReturn(
+            PageImpl(expectedDish, pageable, expectedDish.size.toLong()),
+        )
+
+        // When
+        val result = dishService.findDishesByRestaurant(restaurantId, pageable)
+
+        // Then
+        assertThat(result).hasSize(2)
+        assertThat(result).containsExactlyInAnyOrder(dish1, dish2)
+        verify(dishRepository).findDishesByRestaurant(restaurantId, pageable)
+    }
 
     @Test
     fun `findByName should return dish when found`() {
@@ -279,9 +303,10 @@ class DishServiceTest {
                 description = "Updated description",
                 image = "updated-image.jpg",
             )
-        val restaurant = TestFixture.createHappyBeansCafe().apply { 
-            dishes.add(dish) 
-        }
+        val restaurant =
+            TestFixture.createHappyBeansCafe().apply {
+                dishes.add(dish)
+            }
         given(dishRepository.findById(dishId)).willReturn(Optional.of(dish))
         given(restaurantRepository.findAll()).willReturn(listOf(restaurant))
         given(dishRepository.findByNameAndRestaurantId(updateRequest.name, restaurant.id)).willReturn(null)
@@ -321,9 +346,10 @@ class DishServiceTest {
         val dishId = 1L
         val dish = TestFixture.createMargheritaPizza()
         val existingDish = TestFixture.createMargheritaPizza().apply { id = 2L }
-        val restaurant = TestFixture.createHappyBeansCafe().apply { 
-            dishes.add(dish) 
-        }
+        val restaurant =
+            TestFixture.createHappyBeansCafe().apply {
+                dishes.add(dish)
+            }
         val updateRequest =
             DishUpdateRequest(
                 name = "Existing Dish Name",
@@ -345,9 +371,10 @@ class DishServiceTest {
         // Given
         val dishId = 1L
         val dish = TestFixture.createMargheritaPizza().apply { id = dishId }
-        val restaurant = TestFixture.createHappyBeansCafe().apply { 
-            dishes.add(dish) 
-        }
+        val restaurant =
+            TestFixture.createHappyBeansCafe().apply {
+                dishes.add(dish)
+            }
         val updateRequest =
             DishUpdateRequest(
                 name = dish.name,
@@ -425,9 +452,10 @@ class DishServiceTest {
         // Given
         val dishId = 1L
         val dish = TestFixture.createMargheritaPizza().apply { id = dishId }
-        val restaurant = TestFixture.createHappyBeansCafe().apply { 
-            dishes.add(dish) 
-        }
+        val restaurant =
+            TestFixture.createHappyBeansCafe().apply {
+                dishes.add(dish)
+            }
         val patchRequest =
             DishPatchRequest(
                 name = "New Name",
@@ -468,9 +496,10 @@ class DishServiceTest {
         val dishId = 1L
         val dish = TestFixture.createMargheritaPizza().apply { id = dishId }
         val existingDish = TestFixture.createMargheritaPizza().apply { id = 2L }
-        val restaurant = TestFixture.createHappyBeansCafe().apply { 
-            dishes.add(dish) 
-        }
+        val restaurant =
+            TestFixture.createHappyBeansCafe().apply {
+                dishes.add(dish)
+            }
         val patchRequest = DishPatchRequest(name = "Conflicting Name")
         given(dishRepository.findById(dishId)).willReturn(Optional.of(dish))
         given(restaurantRepository.findAll()).willReturn(listOf(restaurant))
@@ -487,9 +516,10 @@ class DishServiceTest {
         // Given
         val dishId = 1L
         val dish = TestFixture.createMargheritaPizza().apply { id = dishId }
-        val restaurant = TestFixture.createHappyBeansCafe().apply { 
-            dishes.add(dish) 
-        }
+        val restaurant =
+            TestFixture.createHappyBeansCafe().apply {
+                dishes.add(dish)
+            }
         val patchRequest = DishPatchRequest(name = dish.name) // Same name
         given(dishRepository.findById(dishId)).willReturn(Optional.of(dish))
         given(restaurantRepository.findAll()).willReturn(listOf(restaurant))

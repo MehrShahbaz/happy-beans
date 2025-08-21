@@ -68,7 +68,7 @@ class RestaurantServiceTest {
 
     @AfterEach
     fun tearDown() {
-        //tagContainerRepository.deleteAll()
+        // tagContainerRepository.deleteAll()
         restaurantRepository.deleteAll()
         userRepository.deleteAll()
     }

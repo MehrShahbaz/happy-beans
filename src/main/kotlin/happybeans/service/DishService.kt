@@ -12,6 +12,7 @@ import happybeans.repository.DishRepository
 import happybeans.repository.RestaurantRepository
 import happybeans.utils.exception.DishAlreadyExistsException
 import happybeans.utils.exception.EntityNotFoundException
+import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -22,12 +23,15 @@ class DishService(
     private val dishRepository: DishRepository,
     private val restaurantRepository: RestaurantRepository,
 ) {
-    fun findByName(name: String): Dish? {
-        return dishRepository.findByName(name)
+    fun findDishesByRestaurant(
+        restaurantId: Long,
+        pageable: Pageable,
+    ): Page<Dish> {
+        return dishRepository.findDishesByRestaurant(restaurantId, pageable)
     }
 
-    fun findAll(pageable: Pageable): List<Dish> {
-        return dishRepository.findAll(pageable).content
+    fun findByName(name: String): Dish? {
+        return dishRepository.findByName(name)
     }
 
     fun findById(dishId: Long): Dish {
@@ -67,7 +71,6 @@ class DishService(
                 image = dishRequest.image,
                 dishOptions = mutableSetOf(),
             )
-     //   val createdDishOptions = createAndLinkDishOptions(dish, dishRequest.dishOptionRequests)
         dish.dishOptions = createAndLinkDishOptions(dish, dishRequest.dishOptionRequests)
 
         restaurant.addDish(dish)
