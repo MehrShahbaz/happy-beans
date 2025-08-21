@@ -1,5 +1,6 @@
 package happybeans.dto.restaurant
 
+import jakarta.validation.Valid
 import jakarta.validation.constraints.NotNull
 
 data class RestaurantCreateRequest(
@@ -11,7 +12,7 @@ data class RestaurantCreateRequest(
     val image: String,
     @field:NotNull(message = "Address URL is required")
     val addressUrl: String,
-//    @field:Valid
-//    @field:NotNull(message = "Working Dat Hours is required")
+    @field:Valid
+    @field:NotNull(message = "Working Dat Hours is required")
     var workingDateHours: List<WorkingDateHourRequest> = listOf(),
 )
