@@ -32,6 +32,6 @@ if [ -n "$PID" ]; then
 fi
 
 # Start the app
-nohup java -jar $JAR_FILE > $LOG_FILE 2>&1 &
+nohup sudo java -jar $JAR_FILE > $LOG_FILE 2>&1 &
 
 echo ">>> [ApplicationStart] App started with PID $!"
