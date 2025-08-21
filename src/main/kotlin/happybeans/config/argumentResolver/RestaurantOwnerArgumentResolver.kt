@@ -14,7 +14,7 @@ import org.springframework.web.method.support.HandlerMethodArgumentResolver
 import org.springframework.web.method.support.ModelAndViewContainer
 
 @Component
-class LoginMemberArgumentResolver(
+class RestaurantOwnerArgumentResolver(
     private val userRepository: UserRepository,
 ) : HandlerMethodArgumentResolver {
     override fun supportsParameter(parameter: MethodParameter): Boolean {
@@ -32,7 +32,7 @@ class LoginMemberArgumentResolver(
 
         val user =
             userRepository.findByEmail(email).orElseThrow { UnauthorisedUserException("User not found") }
-        if (user.role != UserRole.USER) {
+        if (user.role != UserRole.RESTAURANT_OWNER) {
             throw UnauthorisedUserException("User role not valid")
         }
 
