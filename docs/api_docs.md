@@ -16,13 +16,13 @@
 
   ```kotlin
   // Example 1: return type
-  return ResponseEntity.created(URI.create("/cart/$id")).body(MessageResponse("Product added to cart"))
+  return ResponseEntity.created(URI.create("/api/cart/$id")).body(MessageResponse("Product added to cart"))
   return ResponseEntity.ok(MessageResponse("Option updated"))
   ```
 
   ```kotlin
   // Example 2
-  @PutMapping("/{productId}/options/{optionId}")
+  @PutMapping("/api/{productId}/options/{optionId}")
   fun updateOption(
       @PathVariable("productId") productId: Long,
       @PathVariable("optionId") optionId: Long,
