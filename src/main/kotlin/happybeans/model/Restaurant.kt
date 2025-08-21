@@ -16,7 +16,7 @@ import org.hibernate.annotations.CreationTimestamp
 import org.hibernate.annotations.UpdateTimestamp
 import java.time.LocalDateTime
 
-@Entity()
+@Entity
 @Table(name = "restaurants")
 class Restaurant(
     @Column(name = "name", nullable = false, length = 100)
@@ -34,7 +34,7 @@ class Restaurant(
         joinColumns = [JoinColumn(name = "restaurant_id")],
     )
     var workingDateHours: MutableList<WorkingDateHour> = mutableListOf(),
-    @OneToMany(cascade = arrayOf(CascadeType.ALL), fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(cascade = [(CascadeType.ALL)], fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "restaurant_id")
     val dishes: MutableList<Dish> = mutableListOf(),
     @CreationTimestamp
@@ -53,25 +53,10 @@ class Restaurant(
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is Restaurant) return false
-        return id != null && id == other.id
+        return id != 0L && id == other.id
     }
 
     override fun hashCode(): Int = java.util.Objects.hash(id)
 
     override fun toString(): String = "Restaurant(id=$id, name='$name')"
 }
-
-/* TODO: decide to implement "calculating location for recommendation feature"
-: it can be one additional entity : class locationInfo
-    @Column(name = "address", nullable = false)
-    var address: String,
-
-@Column(name = "postal_code")
-var postalCode: String? = null,
-
-@Column(name = "latitude", precision = 10, scale = 8)
-var latitude: BigDecimal? = null,
-
-@Column(name = "longitude", precision = 11, scale = 8)
-var longitude: BigDecimal? = null,
-*/

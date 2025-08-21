@@ -1,0 +1,36 @@
+= Happy Beans API Documentation
+Author Name
+:doctype: book
+:toc: left
+:toclevels: 3
+:sectnums:
+
+== Cart API
+
+=== Add to cart
+
+include::{snippets}/cart-add/curl-request.adoc[]
+include::{snippets}/cart-add/http-request.adoc[]
+include::{snippets}/cart-add/request-fields.adoc[]
+include::{snippets}/cart-add/http-response.adoc[]
+include::{snippets}/cart-add/response-fields.adoc[]
+
+=== Update quantity
+
+include::{snippets}/cart-update/curl-request.adoc[]
+include::{snippets}/cart-update/http-request.adoc[]
+include::{snippets}/cart-update/request-fields.adoc[]
+include::{snippets}/cart-update/http-response.adoc[]
+include::{snippets}/cart-update/response-fields.adoc[]
+
+=== Cart clear
+
+include::{snippets}/cart-clear/curl-request.adoc[]
+include::{snippets}/cart-clear/http-request.adoc[]
+include::{snippets}/cart-clear/http-response.adoc[]
+
+=== Cart delete one product
+
+include::{snippets}/cart-delete-one/curl-request.adoc[]
+include::{snippets}/cart-delete-one/http-request.adoc[]
+include::{snippets}/cart-delete-one/http-response.adoc[]

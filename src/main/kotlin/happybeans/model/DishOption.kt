@@ -48,7 +48,7 @@ class DishOption(
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is DishOption) return false
-        return id != null && id == other.id
+        return id != 0L && id == other.id
     }
 
     override fun hashCode(): Int = java.util.Objects.hash(id)
