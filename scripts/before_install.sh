@@ -1,10 +1,14 @@
 #!/bin/bash
-echo ">>> [BeforeInstall] Stopping current application if running..."
-pkill -f 'java -jar' || true
+set -e
 
-echo ">>> [BeforeInstall] Fixing ownership..."
-sudo chown -R ubuntu:ubuntu /home/ubuntu/app
+# Stop running container if exists
+if sudo docker ps -q --filter "name=happy-beans" | grep -q .; then
+  echo "Stopping existing container..."
+  sudo docker stop happy-beans
+fi
 
-echo ">>> [BeforeInstall] Cleaning old files..."
-rm -rf /home/ubuntu/app/*
-
+# Remove old container if exists
+if sudo docker ps -aq --filter "name=happy-beans" | grep -q .; then
+  echo "Removing old container..."
+  sudo docker rm happy-beans
+fi

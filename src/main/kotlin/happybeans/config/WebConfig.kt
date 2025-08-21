@@ -19,7 +19,7 @@ class WebConfig(
 ) : WebMvcConfigurer {
     override fun addInterceptors(registry: InterceptorRegistry) {
         registry.addInterceptor(authInterceptor)
-            .addPathPatterns("")
+            .addPathPatterns("/api/member/orders/**")
         registry.addInterceptor(adminInterceptor)
             .addPathPatterns("")
         super.addInterceptors(registry)
