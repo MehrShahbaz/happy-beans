@@ -4,6 +4,7 @@ import happybeans.dto.dish.DishCreateRequest
 import happybeans.dto.response.MessageResponse
 import happybeans.model.Dish
 import happybeans.service.DishService
+import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
