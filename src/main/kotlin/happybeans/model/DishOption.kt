@@ -1,5 +1,6 @@
 package happybeans.model
 
+import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
@@ -7,6 +8,8 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
+import jakarta.persistence.JoinTable
+import jakarta.persistence.ManyToMany
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
 import org.hibernate.annotations.CreationTimestamp
@@ -35,6 +38,13 @@ class DishOption(
     var createdAt: LocalDateTime? = null,
     @UpdateTimestamp
     var updatedAt: LocalDateTime? = null,
+    @ManyToMany(cascade = [CascadeType.PERSIST, CascadeType.MERGE], fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "dish_option_tags",
+        joinColumns = [JoinColumn(name = "dish_option_id")],
+        inverseJoinColumns = [JoinColumn(name = "tag_id")]
+    )
+    val dishOptionTags: MutableSet<Tag> = mutableSetOf(),
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long = 0L,

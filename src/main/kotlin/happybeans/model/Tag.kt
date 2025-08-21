@@ -6,6 +6,7 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.Index
+import jakarta.persistence.ManyToMany
 import jakarta.persistence.Table
 import org.hibernate.annotations.CreationTimestamp
 import java.time.LocalDateTime
@@ -22,6 +23,12 @@ class Tag(
     val name: String,
     @CreationTimestamp
     var createdAt: LocalDateTime? = null,
+    @ManyToMany(mappedBy = "likes")
+    val likedByUsers: MutableSet<User> = mutableSetOf(),
+    @ManyToMany(mappedBy = "dislikes")
+    val dislikedByUsers: MutableSet<User> = mutableSetOf(),
+    @ManyToMany(mappedBy = "dishOptionTags")
+    val ofDishOptions: MutableSet<User> = mutableSetOf(),
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0L,
