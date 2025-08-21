@@ -1,18 +1,14 @@
 #!/bin/bash
 set -e
 
-# Go to app directory
-cd /home/ubuntu/app
+# Stop running container if exists
+if sudo docker ps -q --filter "name=happy-beans" | grep -q .; then
+  echo "Stopping existing container..."
+  sudo docker stop happy-beans
+fi
 
-# Ensure Gradle Wrapper is executable
-chmod +x ./gradlew
-
-# Build the JAR
-echo "Building Spring Boot JAR..."
-./gradlew clean bootJar
-
-# Build Docker image
-echo "Building Docker image..."
-sudo docker build -t happy-beans-image:1.0 .
-
-echo "Docker image built successfully."
+# Remove old container if exists
+if sudo docker ps -aq --filter "name=happy-beans" | grep -q .; then
+  echo "Removing old container..."
+  sudo docker rm happy-beans
+fi

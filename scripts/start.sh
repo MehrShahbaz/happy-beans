@@ -1,12 +1,12 @@
 #!/bin/bash
 set -e
 
-echo "Starting happy-beans container..."
+echo "Starting happy-beans container with Docker Compose..."
 
-sudo docker run \
-  --env-file /home/ubuntu/config/.env \
-  -p 80:80 \
-  --name happy-beans \
-  -d happy-beans-image:1.0
+# Go to the application directory
+cd /home/ubuntu/app
+
+# Run Docker Compose
+sudo docker compose -f docker-compose.yml up --build -d
 
 echo "Container started successfully."
