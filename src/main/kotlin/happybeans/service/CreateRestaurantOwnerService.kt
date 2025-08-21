@@ -13,6 +13,10 @@ class CreateRestaurantOwnerService(
     private val userRepository: UserRepository,
 ) {
     fun createRestaurantOwner(request: RestaurantOwnerRequestDto): User {
+        if (userRepository.existsByEmailAndRole(request.email, UserRole.RESTAURANT_OWNER)) {
+            // TODO use DuplicateEntityException in Jin's PR
+            throw IllegalArgumentException("User already exists")
+        }
         return userRepository.save(
             User(
                 request.email,
