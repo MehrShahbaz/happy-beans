@@ -724,4 +724,119 @@ class DishServiceTest {
             dishService.deleteDishOption(dishId, optionId)
         }
     }
+
+    @Test
+    fun `enableDishOption should set dish option available to true`() {
+        // Given
+        val dishId = 1L
+        val optionId = 1L
+        val dish = TestFixture.createMargheritaPizzaWithAllOptions().apply { id = dishId }
+        val dishOption =
+            dish.dishOptions.first().apply {
+                id = optionId
+                available = false
+            }
+        given(dishRepository.findById(dishId)).willReturn(Optional.of(dish))
+        given(dishRepository.save(dish)).willReturn(dish)
+
+        // When
+        val result = dishService.enableDishOption(dishId, optionId)
+
+        // Then
+        assertThat(result.available).isTrue()
+        assertThat(dishOption.available).isTrue()
+        verify(dishRepository).save(dish)
+    }
+
+    @Test
+    fun `disableDishOption should set dish option available to false`() {
+        // Given
+        val dishId = 1L
+        val optionId = 1L
+        val dish = TestFixture.createMargheritaPizzaWithAllOptions().apply { id = dishId }
+        val dishOption =
+            dish.dishOptions.first().apply {
+                id = optionId
+                available = true
+            }
+        given(dishRepository.findById(dishId)).willReturn(Optional.of(dish))
+        given(dishRepository.save(dish)).willReturn(dish)
+
+        // When
+        val result = dishService.disableDishOption(dishId, optionId)
+
+        // Then
+        assertThat(result.available).isFalse()
+        assertThat(dishOption.available).isFalse()
+        verify(dishRepository).save(dish)
+    }
+
+    @Test
+    fun `setDishOptionAvailability should set availability to specified value`() {
+        // Given
+        val dishId = 1L
+        val optionId = 1L
+        val dish = TestFixture.createMargheritaPizzaWithAllOptions().apply { id = dishId }
+        val dishOption = dish.dishOptions.first().apply { id = optionId }
+        given(dishRepository.findById(dishId)).willReturn(Optional.of(dish))
+        given(dishRepository.save(dish)).willReturn(dish)
+
+        // When
+        val result = dishService.setDishOptionAvailability(dishId, optionId, false)
+
+        // Then
+        assertThat(result.available).isFalse()
+        assertThat(dishOption.available).isFalse()
+        verify(dishRepository).save(dish)
+    }
+
+    @Test
+    fun `getAvailableDishOptions should return only available options`() {
+        // Given
+        val dishId = 1L
+        val dish = TestFixture.createMargheritaPizzaWithAllOptions().apply { id = dishId }
+        dish.dishOptions.forEachIndexed { index, option ->
+            option.id = (index + 1).toLong()
+            option.available = (index % 2 == 0) // Make every other option unavailable
+        }
+        given(dishRepository.findById(dishId)).willReturn(Optional.of(dish))
+
+        // When
+        val result = dishService.getAvailableDishOptions(dishId)
+
+        // Then
+        val expectedAvailableCount = dish.dishOptions.count { it.available }
+        assertThat(result).hasSize(expectedAvailableCount)
+        assertThat(result.all { it.available }).isTrue()
+    }
+
+    @Test
+    fun `isDishAvailable should return true when dish has available options`() {
+        // Given
+        val dishId = 1L
+        val dish = TestFixture.createMargheritaPizzaWithAllOptions().apply { id = dishId }
+        dish.dishOptions.first().available = true
+        given(dishRepository.findById(dishId)).willReturn(Optional.of(dish))
+
+        // When
+        val result = dishService.isDishAvailable(dishId)
+
+        // Then
+        assertThat(result).isTrue()
+    }
+
+    @Test
+    fun `isDishAvailable should return false when dish has no available options`() {
+        // Given
+        val dishId = 1L
+        val dish = TestFixture.createMargheritaPizzaWithAllOptions().apply { id = dishId }
+        dish.dishOptions.forEach { it.available = false }
+        given(dishRepository.findById(dishId)).willReturn(Optional.of(dish))
+
+        // When
+        val result = dishService.isDishAvailable(dishId)
+
+        // Then
+        assertThat(result).isFalse()
+    }
 }

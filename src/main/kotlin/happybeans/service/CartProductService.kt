@@ -40,6 +40,11 @@ class CartProductService(
         val dish = dishService.findById(dishId)
         val dishOption = dishService.findByIdAndDishOptionId(dishId, optionId)
 
+        // Check if dish option is available before adding to cart
+        if (!dishOption.available) {
+            throw IllegalStateException("Dish option '${dishOption.name}' is currently unavailable")
+        }
+
         val product =
             cartProductRepository.findByUserIdAndDishOptionId(user.id, optionId)
                 ?.apply { quantity = req.quantity }

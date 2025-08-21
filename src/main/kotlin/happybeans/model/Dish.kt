@@ -1,5 +1,6 @@
 package happybeans.model
 
+import happybeans.utils.exception.EntityNotFoundException
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -45,6 +46,31 @@ class Dish(
 
     fun removeDishOption(option: DishOption) {
         dishOptions.remove(option)
+    }
+
+    fun setDishOptionAvailability(
+        optionId: Long,
+        available: Boolean,
+    ) {
+        dishOptions.find { it.id == optionId }?.let { option ->
+            option.available = available
+        } ?: throw EntityNotFoundException("Dish option with id $optionId not found in dish $id")
+    }
+
+    fun enableDishOption(optionId: Long) {
+        setDishOptionAvailability(optionId, true)
+    }
+
+    fun disableDishOption(optionId: Long) {
+        setDishOptionAvailability(optionId, false)
+    }
+
+    fun getAvailableOptions(): List<DishOption> {
+        return dishOptions.filter { it.available }
+    }
+
+    fun hasAvailableOptions(): Boolean {
+        return dishOptions.any { it.available }
     }
 
     // if not used, can remove later : equals, hashCode, toString

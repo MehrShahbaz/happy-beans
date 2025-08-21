@@ -235,4 +235,48 @@ class DishService(
         val dish = findById(dishId)
         dishRepository.delete(dish)
     }
+
+    @Transactional
+    fun enableDishOption(
+        dishId: Long,
+        optionId: Long,
+    ): DishOption {
+        val dish = findById(dishId)
+        dish.enableDishOption(optionId)
+        dishRepository.save(dish)
+        return findByIdAndDishOptionId(dishId, optionId)
+    }
+
+    @Transactional
+    fun disableDishOption(
+        dishId: Long,
+        optionId: Long,
+    ): DishOption {
+        val dish = findById(dishId)
+        dish.disableDishOption(optionId)
+        dishRepository.save(dish)
+        return findByIdAndDishOptionId(dishId, optionId)
+    }
+
+    @Transactional
+    fun setDishOptionAvailability(
+        dishId: Long,
+        optionId: Long,
+        available: Boolean,
+    ): DishOption {
+        val dish = findById(dishId)
+        dish.setDishOptionAvailability(optionId, available)
+        dishRepository.save(dish)
+        return findByIdAndDishOptionId(dishId, optionId)
+    }
+
+    fun getAvailableDishOptions(dishId: Long): List<DishOption> {
+        val dish = findById(dishId)
+        return dish.getAvailableOptions()
+    }
+
+    fun isDishAvailable(dishId: Long): Boolean {
+        val dish = findById(dishId)
+        return dish.hasAvailableOptions()
+    }
 }
