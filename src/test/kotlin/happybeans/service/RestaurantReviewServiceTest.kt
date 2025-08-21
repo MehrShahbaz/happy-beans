@@ -1,22 +1,17 @@
 package happybeans.service
 
 import happybeans.dto.review.ReviewCreateRequestDto
-import happybeans.enums.TagContainerType
 import happybeans.enums.UserRole
 import happybeans.model.Dish
 import happybeans.model.DishOption
 import happybeans.model.Restaurant
 import happybeans.model.RestaurantReview
-import happybeans.model.Tag
-import happybeans.model.TagContainer
 import happybeans.model.User
 import happybeans.model.WorkingDateHour
 import happybeans.repository.DishOptionRepository
 import happybeans.repository.DishRepository
 import happybeans.repository.RestaurantRepository
 import happybeans.repository.RestaurantReviewRepository
-import happybeans.repository.TagContainerRepository
-import happybeans.repository.TagRepository
 import happybeans.repository.UserRepository
 import jakarta.transaction.Transactional
 import org.assertj.core.api.Assertions.assertThat
@@ -45,12 +40,6 @@ class RestaurantReviewServiceTest {
 
     @Autowired
     private lateinit var dishOptionRepository: DishOptionRepository
-
-    @Autowired
-    private lateinit var tagContainerRepository: TagContainerRepository
-
-    @Autowired
-    private lateinit var tagRepository: TagRepository
 
     @Autowired
     private lateinit var dishRepository: DishRepository
@@ -115,18 +104,6 @@ class RestaurantReviewServiceTest {
             )
         restaurant.addDish(dish)
         dish = dishRepository.save(dish)
-
-        val tag = Tag(name = "Tomato")
-        val savedTag = tagRepository.save(tag)
-
-        val tagContainer =
-            TagContainer(
-                tags = mutableSetOf(savedTag),
-                type = TagContainerType.INGREDIENTS,
-                user = null,
-                dish = dish,
-            )
-        tagContainerRepository.save(tagContainer)
 
         dishOption =
             DishOption(
