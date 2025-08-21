@@ -78,7 +78,6 @@ class DishControllerTest : AbstractDocumentTest() {
                         fieldWithPath(
                             "dishOptions[].prepTimeMinutes",
                         ).type(JsonFieldType.NUMBER).description("Preparation time in minutes"),
-                        fieldWithPath("dishOptions[].rating").type(JsonFieldType.NUMBER).description("Dish option rating"),
                     ),
                 ),
             )

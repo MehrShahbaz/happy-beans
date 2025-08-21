@@ -10,7 +10,6 @@ data class DishOptionResponse(
     val image: String,
     val available: Boolean,
     val prepTimeMinutes: Int,
-    val rating: Double,
     val dishId: Long?,
 )
 
@@ -23,7 +22,6 @@ fun DishOption.toResponse(): DishOptionResponse {
         image = this.image,
         available = this.available,
         prepTimeMinutes = this.prepTimeMinutes,
-        rating = this.rating,
         dishId = this.dish.id,
     )
 }

@@ -29,7 +29,6 @@ object TestFixture {
                 image = "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=600&q=80",
                 available = true,
                 prepTimeMinutes = 15,
-                rating = 4.7,
             ).apply { id = 1L }
 
         val mediumOption =
@@ -41,7 +40,6 @@ object TestFixture {
                 image = "https://images.unsplash.com/photo-1604382355076-af4b0eb60143?w=600&q=80",
                 available = true,
                 prepTimeMinutes = 18,
-                rating = 4.8,
             ).apply { id = 2L }
 
         val largeOption =
@@ -53,7 +51,6 @@ object TestFixture {
                 image = "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=600&q=80",
                 available = true,
                 prepTimeMinutes = 22,
-                rating = 4.9,
             ).apply { id = 3L }
 
         dish.addDishOptions(listOf(personalOption, mediumOption, largeOption))
@@ -104,7 +101,6 @@ object TestFixture {
             image = "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=600&q=80",
             available = true,
             prepTimeMinutes = 15,
-            rating = 4.7,
         )
     }
 
@@ -118,7 +114,6 @@ object TestFixture {
             image = "https://images.unsplash.com/photo-1604382355076-af4b0eb60143?w=600&q=80",
             available = true,
             prepTimeMinutes = 18,
-            rating = 4.8,
         )
     }
 
@@ -132,7 +127,6 @@ object TestFixture {
             image = "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=600&q=80",
             available = true,
             prepTimeMinutes = 22,
-            rating = 4.9,
         )
     }
 

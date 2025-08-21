@@ -95,7 +95,6 @@ class DishService(
                     price = optionRequest.price,
                     image = optionRequest.image,
                     prepTimeMinutes = optionRequest.prepTimeMinutes,
-                    rating = optionRequest.rating,
                 )
 
             dishOption
@@ -169,7 +168,7 @@ class DishService(
                 price = optionRequest.price,
                 image = optionRequest.image,
                 prepTimeMinutes = optionRequest.prepTimeMinutes,
-                rating = optionRequest.rating,
+//                rating = optionRequest.rating,
             )
 
         dish.addDishOption(dishOption)
@@ -190,7 +189,6 @@ class DishService(
         dishOption.price = updateRequest.price
         dishOption.image = updateRequest.image
         dishOption.prepTimeMinutes = updateRequest.prepTimeMinutes
-        dishOption.rating = updateRequest.rating
 
         dishRepository.save(dishOption.dish)
         return dishOption
@@ -210,7 +208,6 @@ class DishService(
         patchRequest.price?.let { dishOption.price = it }
         patchRequest.image?.let { dishOption.image = it }
         patchRequest.prepTimeMinutes?.let { dishOption.prepTimeMinutes = it }
-        patchRequest.rating?.let { dishOption.rating = it }
 
         dishRepository.save(dishOption.dish)
         return dishOption

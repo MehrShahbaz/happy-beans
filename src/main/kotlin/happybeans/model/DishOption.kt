@@ -31,8 +31,6 @@ class DishOption(
     var available: Boolean = true,
     @Column(name = "prep_time_minute")
     var prepTimeMinutes: Int = 0,
-    @Column(name = "rating", nullable = false)
-    var rating: Double,
     @CreationTimestamp
     var createdAt: LocalDateTime? = null,
     @UpdateTimestamp

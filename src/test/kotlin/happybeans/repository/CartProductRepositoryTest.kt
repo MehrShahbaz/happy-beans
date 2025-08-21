@@ -45,9 +45,9 @@ class CartProductRepositoryTest {
         val tagContainer = TagContainer(type = TagContainerType.INGREDIENTS, dish = dish)
         entityManager.persist(tagContainer)
 
-        dishOption1 = DishOption(dish = dish, name = "Small", price = 10.0, image = "small.jpg", rating = 4.0)
-        dishOption2 = DishOption(dish = dish, name = "Large", price = 15.0, image = "large.jpg", rating = 4.5)
-        dishOption3 = DishOption(dish = dish, name = "Medium", price = 12.0, image = "medium.jpg", rating = 4.2)
+        dishOption1 = DishOption(dish = dish, name = "Small", price = 10.0, image = "small.jpg")
+        dishOption2 = DishOption(dish = dish, name = "Large", price = 15.0, image = "large.jpg")
+        dishOption3 = DishOption(dish = dish, name = "Medium", price = 12.0, image = "medium.jpg")
         entityManager.persist(dishOption1)
         entityManager.persist(dishOption2)
         entityManager.persist(dishOption3)

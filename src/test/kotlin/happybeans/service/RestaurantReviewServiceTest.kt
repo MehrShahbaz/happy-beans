@@ -126,7 +126,7 @@ class RestaurantReviewServiceTest {
                 user = null,
                 dish = dish,
             )
-        val savedTagContainer = tagContainerRepository.save(tagContainer)
+        tagContainerRepository.save(tagContainer)
 
         dishOption =
             DishOption(
@@ -136,7 +136,6 @@ class RestaurantReviewServiceTest {
                 price = 12.99,
                 image = "https://example.com/regular-portion.jpg",
                 available = true,
-                rating = 4.0,
                 prepTimeMinutes = 15,
             )
         dish.dishOptions.add(dishOption)

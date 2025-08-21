@@ -621,7 +621,6 @@ class DishServiceTest {
                 price = 19.99,
                 image = "updated-option.jpg",
                 prepTimeMinutes = 20,
-                rating = 4.9,
             )
         given(dishRepository.findById(dishId)).willReturn(Optional.of(dish))
         given(dishRepository.save(dish)).willReturn(dish)
@@ -649,7 +648,6 @@ class DishServiceTest {
                 price = 19.99,
                 image = "updated-option.jpg",
                 prepTimeMinutes = 20,
-                rating = 4.9,
             )
         given(dishRepository.findById(dishId)).willReturn(Optional.of(dish))
 
