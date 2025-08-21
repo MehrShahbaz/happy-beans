@@ -1,11 +1,8 @@
 package happybeans
 
-import happybeans.enums.TagContainerType
 import happybeans.model.Dish
 import happybeans.model.DishOption
 import happybeans.model.Restaurant
-import happybeans.model.Tag
-import happybeans.model.TagContainer
 import happybeans.model.User
 import happybeans.model.WorkingDateHour
 import java.time.DayOfWeek
@@ -63,32 +60,6 @@ object TestFixture {
             name = "Margherita Pizza",
             description = "Classic Italian pizza with fresh tomato sauce, mozzarella di bufala, and aromatic basil leaves.",
             image = "https://images.unsplash.com/photo-1604382355076-af4b0eb60143?w=800&q=80",
-        )
-
-    fun createPizzaIngredientsForDish(dish: Dish) =
-        TagContainer(
-            tags =
-                mutableSetOf(
-                    Tag("Tomato Sauce"),
-                    Tag("Mozzarella"),
-                    Tag("Basil"),
-                    Tag("Olive Oil"),
-                ),
-            type = TagContainerType.INGREDIENTS,
-            dish = dish,
-        )
-
-    fun createPizzaIngredients() =
-        TagContainer(
-            tags =
-                mutableSetOf(
-                    Tag("Tomato Sauce"),
-                    Tag("Mozzarella"),
-                    Tag("Basil"),
-                    Tag("Olive Oil"),
-                ),
-            type = TagContainerType.INGREDIENTS,
-            dish = null,
         )
 
     fun createPersonalMargherita(): DishOption {
