@@ -172,7 +172,7 @@ object TestFixture {
             workingDateHours =
                 createRestaurantHours(
                     LocalTime.of(11, 0),
-                    LocalTime.of(24, 0),
+                    LocalTime.of(23, 59),
                     *DayOfWeek.values(),
                 ).toMutableList(),
         )
