@@ -45,6 +45,7 @@ dependencies {
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.6")
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.6")
     runtimeOnly("com.h2database:h2")
+    runtimeOnly("org.postgresql:postgresql")
 
     testImplementation("org.springframework.boot:spring-boot-starter-test")
     testImplementation("org.jetbrains.kotlin:kotlin-test-junit5")
@@ -57,6 +58,7 @@ dependencies {
     testImplementation("io.mockk:mockk:1.13.11")
     testImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")
     testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
+
 //    testImplementation("com.epages:restdocs-api-spec-mockmvc:0.17.1")
 
     asciidoctorExt("org.springframework.restdocs:spring-restdocs-asciidoctor")
