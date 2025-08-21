@@ -25,21 +25,17 @@ class TagContainer(
     @JoinTable(
         name = "tag_container_tags",
         joinColumns = [JoinColumn(name = "tag_container_id")],
-        inverseJoinColumns = [JoinColumn(name = "tag_id")]
+        inverseJoinColumns = [JoinColumn(name = "tag_id")],
     )
     val tags: MutableSet<Tag> = mutableSetOf(),
-
     @Enumerated(EnumType.STRING)
     var type: TagContainerType,
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "user_id")
     var user: User? = null,
-
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "dish_id")
     var dish: Dish? = null,
-
     @CreationTimestamp
     var createdAt: LocalDateTime? = null,
     @UpdateTimestamp

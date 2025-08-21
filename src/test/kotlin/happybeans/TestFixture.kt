@@ -71,7 +71,7 @@ object TestFixture {
     fun createPizzaIngredientsForDish(dish: Dish) =
         TagContainer(
             tags =
-                mutableListOf(
+                mutableSetOf(
                     Tag("Tomato Sauce"),
                     Tag("Mozzarella"),
                     Tag("Basil"),
@@ -84,7 +84,7 @@ object TestFixture {
     fun createPizzaIngredients() =
         TagContainer(
             tags =
-                mutableListOf(
+                mutableSetOf(
                     Tag("Tomato Sauce"),
                     Tag("Mozzarella"),
                     Tag("Basil"),

@@ -121,7 +121,7 @@ class RestaurantReviewServiceTest {
 
         val tagContainer =
             TagContainer(
-                tags = mutableListOf(savedTag),
+                tags = mutableSetOf(savedTag),
                 type = TagContainerType.INGREDIENTS,
                 user = null,
                 dish = dish,

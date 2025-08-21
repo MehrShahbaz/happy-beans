@@ -10,25 +10,19 @@ class TagService(
     private val tagRepository: TagRepository,
 ) {
     @Transactional
-    fun getAllTags() {
-
-    }
-
-    @Transactional
     fun createTag(tag: String): Tag {
         return tagRepository.save(Tag(tag))
     }
 
     fun getDishIngredients() {
-
     }
 
     fun getUserLikes() {
-
     }
 
+    fun getUserDislikes() {
+    }
 
     fun deleteTag() {
-
     }
 }

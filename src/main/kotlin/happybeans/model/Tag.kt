@@ -11,9 +11,12 @@ import org.hibernate.annotations.CreationTimestamp
 import java.time.LocalDateTime
 
 @Entity
-@Table(name = "tags", indexes = [
-    Index(name = "idx_tag_name", columnList = "name")
-])
+@Table(
+    name = "tags",
+    indexes = [
+        Index(name = "idx_tag_name", columnList = "name"),
+    ],
+)
 class Tag(
     @Column(name = "name", unique = true, nullable = false)
     val name: String,

@@ -1,69 +1,69 @@
-package happybeans.e2e
-
-import com.fasterxml.jackson.databind.ObjectMapper
-import happybeans.TestFixture
-import happybeans.dto.dish.DishCreateRequest
-import happybeans.model.Restaurant
-import happybeans.repository.RestaurantRepository
-import org.junit.jupiter.api.BeforeEach
-import org.junit.jupiter.api.Test
-import org.springframework.beans.factory.annotation.Autowired
-import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
-import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureWebMvc
-import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.http.MediaType
-import org.springframework.test.context.ActiveProfiles
-import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
-import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
-import org.springframework.transaction.annotation.Transactional
-
-@SpringBootTest
-@AutoConfigureWebMvc
-@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
-@ActiveProfiles("test")
-@Transactional
-class DishE2ETest {
-    @Autowired
-    private lateinit var mockMvc: MockMvc
-
-    @Autowired
-    private lateinit var objectMapper: ObjectMapper
-
-    @Autowired
-    private lateinit var restaurantRepository: RestaurantRepository
-
-    private lateinit var restaurant: Restaurant
-
-    @BeforeEach
-    fun setUp() {
-        restaurant = restaurantRepository.save(TestFixture.createHappyBeansCafe())
-    }
-
-    @Test
-    fun `should return 404 when retrieving non-existent dish`() {
-        mockMvc.perform(get("/api/dish/999999"))
-            .andExpect(status().isNotFound)
-    }
-
-    @Test
-    fun `should return 404 when creating dish for non-existent restaurant`() {
-        val dishRequest =
-            DishCreateRequest(
-                name = "Test Pizza",
-                description = "A delicious test pizza",
-                image = "https://example.com/pizza.jpg",
-                dishOptionRequests = mutableSetOf(),
-            )
-
-        mockMvc.perform(
-            post("/api/dish/restaurant/999999")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(dishRequest)),
-        )
-            .andExpect(status().isNotFound)
-    }
+//package happybeans.e2e
+//
+//import com.fasterxml.jackson.databind.ObjectMapper
+//import happybeans.TestFixture
+//import happybeans.dto.dish.DishCreateRequest
+//import happybeans.model.Restaurant
+//import happybeans.repository.RestaurantRepository
+//import org.junit.jupiter.api.BeforeEach
+//import org.junit.jupiter.api.Test
+//import org.springframework.beans.factory.annotation.Autowired
+//import org.springframework.boot.test.autoconfigure.jdbc.AutoConfigureTestDatabase
+//import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureWebMvc
+//import org.springframework.boot.test.context.SpringBootTest
+//import org.springframework.http.MediaType
+//import org.springframework.test.context.ActiveProfiles
+//import org.springframework.test.web.servlet.MockMvc
+//import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get
+//import org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post
+//import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
+//import org.springframework.transaction.annotation.Transactional
+//
+//@SpringBootTest
+//@AutoConfigureWebMvc
+//@AutoConfigureTestDatabase(replace = AutoConfigureTestDatabase.Replace.ANY)
+//@ActiveProfiles("test")
+//@Transactional
+//class DishE2ETest {
+//    @Autowired
+//    private lateinit var mockMvc: MockMvc
+//
+//    @Autowired
+//    private lateinit var objectMapper: ObjectMapper
+//
+//    @Autowired
+//    private lateinit var restaurantRepository: RestaurantRepository
+//
+//    private lateinit var restaurant: Restaurant
+//
+//    @BeforeEach
+//    fun setUp() {
+//        restaurant = restaurantRepository.save(TestFixture.createHappyBeansCafe())
+//    }
+//
+//    @Test
+//    fun `should return 404 when retrieving non-existent dish`() {
+//        mockMvc.perform(get("/api/dish/999999"))
+//            .andExpect(status().isNotFound)
+//    }
+//
+//    @Test
+//    fun `should return 404 when creating dish for non-existent restaurant`() {
+//        val dishRequest =
+//            DishCreateRequest(
+//                name = "Test Pizza",
+//                description = "A delicious test pizza",
+//                image = "https://example.com/pizza.jpg",
+//                dishOptionRequests = mutableSetOf(),
+//            )
+//
+//        mockMvc.perform(
+//            post("/api/dish/restaurant/999999")
+//                .contentType(MediaType.APPLICATION_JSON)
+//                .content(objectMapper.writeValueAsString(dishRequest)),
+//        )
+//            .andExpect(status().isNotFound)
+//    }
 
 //
 //    @Test
