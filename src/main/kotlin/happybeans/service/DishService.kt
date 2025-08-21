@@ -109,7 +109,7 @@ class DishService(
     ): Dish {
         val dish = findById(dishId)
 
-        // Find restaurant that owns this dish
+        // Find the restaurant that owns this dish
         val restaurant =
             restaurantRepository.findAll().firstOrNull { it.dishes.contains(dish) }
                 ?: throw EntityNotFoundException("Restaurant for dish not found")
@@ -134,9 +134,8 @@ class DishService(
     ): Dish {
         val dish = findById(dishId)
 
-        // Check if new name conflicts with existing dish (only if name is being updated)
+        // Check if new name conflicts with the existing dish (only if name is being updated)
         patchRequest.name?.let { newName ->
-            // Find restaurant that owns this dish
             val restaurant =
                 restaurantRepository.findAll().firstOrNull { it.dishes.contains(dish) }
                     ?: throw EntityNotFoundException("Restaurant for dish not found")
@@ -148,7 +147,6 @@ class DishService(
             dish.name = newName
         }
 
-        // Update only provided fields
         patchRequest.description?.let { dish.description = it }
         patchRequest.image?.let { dish.image = it }
 

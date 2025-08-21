@@ -46,15 +46,17 @@ class DishE2ETest {
 
     @Test
     fun `should perform GET and UPDATE operations on dishes`() {
-        // Setup: Create restaurant and dish directly in database (bypassing authentication)
+        // Setup: Create restaurant and dish directly in the DB (bypassing authentication)
         val restaurant = TestFixture.createHappyBeansCafe()
-        val savedUser = userRepository.save(restaurant.user) // Save user first
+        val savedUser = userRepository.save(restaurant.user)
         restaurant.user = savedUser
         val savedRestaurant = restaurantRepository.save(restaurant)
 
-        val dish = TestFixture.createMargheritaPizza() // Use simpler version without options initially
+        // Use the simple version without options
+        val dish = TestFixture.createMargheritaPizza()
         savedRestaurant.dishes.add(dish)
-        restaurantRepository.save(savedRestaurant) // Save again to trigger cascade for dish
+        // Save again to trigger cascade for the dish
+        restaurantRepository.save(savedRestaurant)
 
         val savedDish = dishRepository.findAll().first()
         val dishId = savedDish.id
@@ -71,7 +73,7 @@ class DishE2ETest {
         assertThat(getResponse.body!!.id).isEqualTo(dishId)
         assertThat(getResponse.body!!.name).isEqualTo("Margherita Pizza")
         assertThat(getResponse.body!!.description).contains("Italian pizza")
-        assertThat(getResponse.body!!.dishOptions).isEmpty() // Simple version has no options initially
+        assertThat(getResponse.body!!.dishOptions).isEmpty()
 
         // === TEST 2: UPDATE DISH ===
         val updateRequest =
@@ -111,7 +113,7 @@ class DishE2ETest {
 
         assertThat(deleteResponse.statusCode).isEqualTo(HttpStatus.NO_CONTENT)
 
-        // Verify deletion in database
+        // Verify deletion in DB
         val deletedDish = dishRepository.findById(dishId).orElse(null)
         assertThat(deletedDish).isNull()
     }
@@ -128,6 +130,6 @@ class DishE2ETest {
             )
 
         assertThat(response.statusCode).isEqualTo(HttpStatus.NOT_FOUND)
-        // The controller properly returns 404 for non-existent dishes
+        // The controller returns 404 for non-existent dishes
     }
 }
