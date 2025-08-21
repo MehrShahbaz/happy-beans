@@ -1,5 +1,6 @@
 package happybeans.model
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
@@ -18,6 +19,7 @@ import java.time.LocalDateTime
 class DishOption(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "dish_id")
+    @JsonIgnore
     var dish: Dish,
     @Column(name = "name", nullable = false, length = 100)
     var name: String,
