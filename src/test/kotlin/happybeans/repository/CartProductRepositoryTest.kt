@@ -1,10 +1,8 @@
 package happybeans.repository
 
-import happybeans.enums.TagContainerType
 import happybeans.model.CartProduct
 import happybeans.model.Dish
 import happybeans.model.DishOption
-import happybeans.model.TagContainer
 import happybeans.model.User
 import org.junit.jupiter.api.Assertions.assertEquals
 import org.junit.jupiter.api.Assertions.assertNotNull
@@ -41,9 +39,6 @@ class CartProductRepositoryTest {
 
         dish = Dish(name = "Pizza", description = "Cheesy pizza", image = "pizza.jpg")
         entityManager.persist(dish)
-
-        val tagContainer = TagContainer(type = TagContainerType.INGREDIENTS, dish = dish)
-        entityManager.persist(tagContainer)
 
         dishOption1 = DishOption(dish = dish, name = "Small", price = 10.0, image = "small.jpg")
         dishOption2 = DishOption(dish = dish, name = "Large", price = 15.0, image = "large.jpg")
