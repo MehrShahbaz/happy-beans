@@ -6,6 +6,7 @@ import happybeans.dto.restaurant.WorkingDateHourRequest
 import happybeans.model.Restaurant
 import happybeans.model.User
 import happybeans.repository.RestaurantRepository
+import happybeans.repository.TagContainerRepository
 import happybeans.repository.UserRepository
 import happybeans.utils.exception.DuplicateEntityException
 import org.assertj.core.api.Assertions.assertThat
@@ -28,6 +29,9 @@ class RestaurantServiceTest {
 
     @Autowired
     lateinit var restaurantRepository: RestaurantRepository
+
+    @Autowired
+    lateinit var tagContainerRepository: TagContainerRepository
 
     lateinit var user: User
     lateinit var request: RestaurantCreateRequest
@@ -68,7 +72,7 @@ class RestaurantServiceTest {
 
     @AfterEach
     fun tearDown() {
-        // tagContainerRepository.deleteAll()
+        tagContainerRepository.deleteAll()
         restaurantRepository.deleteAll()
         userRepository.deleteAll()
     }

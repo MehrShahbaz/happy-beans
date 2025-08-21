@@ -5,6 +5,7 @@ import happybeans.dto.restaurant.RestaurantCreateRequest
 import happybeans.enums.UserRole
 import happybeans.model.User
 import happybeans.repository.RestaurantRepository
+import happybeans.repository.TagContainerRepository
 import happybeans.repository.UserRepository
 import happybeans.service.LoginService
 import io.restassured.RestAssured
@@ -28,6 +29,9 @@ class RestaurantControllerTest {
     @Autowired
     private lateinit var restaurantRepository: RestaurantRepository
 
+    @Autowired
+    lateinit var tagContainerRepository: TagContainerRepository
+
     lateinit var token: String
 
     @BeforeEach
@@ -47,6 +51,7 @@ class RestaurantControllerTest {
 
     @AfterEach
     fun cleanup() {
+        tagContainerRepository.deleteAll()
         restaurantRepository.deleteAll()
         userRepository.deleteAll()
     }
