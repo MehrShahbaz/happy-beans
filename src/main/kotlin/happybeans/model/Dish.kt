@@ -73,7 +73,6 @@ class Dish(
         return dishOptions.any { it.available }
     }
 
-    // if not used, can remove later : equals, hashCode, toString
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is Dish) return false
