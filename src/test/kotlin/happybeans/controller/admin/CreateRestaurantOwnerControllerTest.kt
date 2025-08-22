@@ -29,15 +29,16 @@ class CreateRestaurantOwnerControllerTest {
 
     @BeforeEach
     fun setUp() {
-        user = userRepository.save(
-            User(
-                "admin-owner@admin.com",
-                "12345678",
-                "first",
-                "last",
-                UserRole.ADMIN
+        user =
+            userRepository.save(
+                User(
+                    "admin-owner@admin.com",
+                    "12345678",
+                    "first",
+                    "last",
+                    UserRole.ADMIN,
+                ),
             )
-        )
         token = adminAuthService.login(LoginRequestDto(user.email, user.password))
     }
 
@@ -48,11 +49,12 @@ class CreateRestaurantOwnerControllerTest {
 
     @Test
     fun createRestaurantOwner() {
-        val actual = RestaurantOwnerRequestDto(
-            "owner-1122@res.com",
-            "Hello",
-            "World"
-        )
+        val actual =
+            RestaurantOwnerRequestDto(
+                "mehrshahbaz7@gmail.com",
+                "Hello",
+                "World",
+            )
 
         val response =
             RestAssured
