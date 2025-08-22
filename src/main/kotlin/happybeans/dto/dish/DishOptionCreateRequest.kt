@@ -12,7 +12,5 @@ data class DishOptionCreateRequest(
     val image: String,
     val available: Boolean = true,
     @field:NotNull
-    val rating: Double,
-    @field:NotNull
     val prepTimeMinutes: Int,
 )

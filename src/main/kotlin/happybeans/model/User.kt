@@ -52,7 +52,7 @@ class User(
     val dislikes: MutableSet<Tag> = mutableSetOf(),
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long = 0L,
+    var id: Long = 0L,
 ) {
     fun fullName(): String = "$firstName $lastName"
 }

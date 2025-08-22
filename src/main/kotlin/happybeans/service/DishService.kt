@@ -298,14 +298,8 @@ class DishService(
         restaurantId: Long,
         userId: Long,
     ): Restaurant {
-        //prev
-//        return restaurantRepository.findByIdAndUserId(restaurantId, userId)
-//            .orElseThrow { EntityNotFoundException("Restaurant of the user with id '$userId' not found") }
-        return try {
-            restaurantRepository.findByIdAndUserId(restaurantId, userId)
-        } catch (exception: Exception) {
-            throw EntityNotFoundException("Restaurant of the user with id '$userId' not found")
-        }
+        return restaurantRepository.findByIdAndUserId(restaurantId, userId)
+            ?: throw EntityNotFoundException("Restaurant with id '$restaurantId' not found for user with id '$userId'")
     }
 
     private fun findValidRestaurantByDishId(

@@ -2,11 +2,16 @@ package happybeans.controller.dish
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import happybeans.TestFixture
+import happybeans.config.argumentResolver.RestaurantOwnerArgumentResolver
+import happybeans.config.interceptor.RestaurantOwnerInterceptor
 import happybeans.controller.member.AbstractDocumentTest
 import happybeans.dto.dish.DishCreateRequest
 import happybeans.dto.dish.DishOptionCreateRequest
 import happybeans.dto.dish.DishUpdateRequest
+import happybeans.enums.UserRole
+import happybeans.model.User
 import happybeans.service.DishService
+import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
@@ -35,10 +40,33 @@ class DishControllerTest : AbstractDocumentTest() {
     @MockitoBean
     private lateinit var dishService: DishService
 
+    @MockitoBean
+    private lateinit var restaurantOwnerArgumentResolver: RestaurantOwnerArgumentResolver
+
+    @MockitoBean
+    private lateinit var restaurantOwnerInterceptor: RestaurantOwnerInterceptor
+
     private val objectMapper = jacksonObjectMapper()
 
+    private val testOwner =
+        User(
+            email = "test@owner.com",
+            password = "password",
+            firstName = "Test",
+            lastName = "Owner",
+            role = UserRole.RESTAURANT_OWNER,
+        ).apply { id = 1L }
+
+    @BeforeEach
+    fun setUpRestaurantOwnerAuth() {
+        whenever(restaurantOwnerArgumentResolver.supportsParameter(any())).thenReturn(true)
+        whenever(restaurantOwnerArgumentResolver.resolveArgument(any(), any(), any(), any()))
+            .thenReturn(testOwner)
+        whenever(restaurantOwnerInterceptor.preHandle(any(), any(), any())).thenReturn(true)
+    }
+
     @Test
-    @DisplayName("GET /api/dish/{dishId} -> 200 and dish details")
+    @DisplayName("GET /api/restaurant-owner/dish/{dishId} -> 200 and dish details")
     fun getDishById_ok() {
         val dishId = 1L
         val dish = TestFixture.createMargheritaPizzaWithAllOptions().apply { id = dishId }
@@ -46,7 +74,7 @@ class DishControllerTest : AbstractDocumentTest() {
         whenever(dishService.findById(dishId)).thenReturn(dish)
 
         mockMvc.perform(
-            RestDocumentationRequestBuilders.get("/api/dish/{dishId}", dishId)
+            RestDocumentationRequestBuilders.get("/api/restaurant-owner/dish/{dishId}", dishId)
                 .accept(MediaType.APPLICATION_JSON),
         )
             .andExpect(status().isOk)
@@ -86,7 +114,7 @@ class DishControllerTest : AbstractDocumentTest() {
     }
 
     @Test
-    @DisplayName("POST /api/restaurant/{restaurantId}/dishes -> 201 and success message")
+    @DisplayName("POST /api/restaurant-owner/restaurant/{restaurantId}/dishes -> 201 and success message")
     fun createDish_ok() {
         val restaurantId = 1L
         val dishOption =
@@ -96,7 +124,6 @@ class DishControllerTest : AbstractDocumentTest() {
                 price = 12.99,
                 image = "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=600&q=80",
                 available = true,
-                rating = 4.7,
                 prepTimeMinutes = 15,
             )
 
@@ -109,10 +136,10 @@ class DishControllerTest : AbstractDocumentTest() {
             )
 
         val createdDish = TestFixture.createMargheritaPizza().apply { id = 1L }
-        whenever(dishService.createDish(eq(restaurantId), any())).thenReturn(createdDish)
+        whenever(dishService.createDish(eq(restaurantId), any(), any())).thenReturn(createdDish)
 
         mockMvc.perform(
-            RestDocumentationRequestBuilders.post("/api/restaurant/{restaurantId}/dishes", restaurantId)
+            RestDocumentationRequestBuilders.post("/api/restaurant-owner/restaurant/{restaurantId}/dishes", restaurantId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(dishRequest)),
@@ -142,7 +169,6 @@ class DishControllerTest : AbstractDocumentTest() {
                         fieldWithPath(
                             "dishOptionRequests[].available",
                         ).type(JsonFieldType.BOOLEAN).description("Dish option availability").optional(),
-                        fieldWithPath("dishOptionRequests[].rating").type(JsonFieldType.NUMBER).description("Dish option rating"),
                         fieldWithPath(
                             "dishOptionRequests[].prepTimeMinutes",
                         ).type(JsonFieldType.NUMBER).description("Preparation time in minutes"),
@@ -153,11 +179,11 @@ class DishControllerTest : AbstractDocumentTest() {
                 ),
             )
 
-        verify(dishService).createDish(eq(restaurantId), any())
+        verify(dishService).createDish(eq(restaurantId), any(), any())
     }
 
     @Test
-    @DisplayName("PUT /api/dish/{dishId} -> 200 and success message")
+    @DisplayName("PUT /api/restaurant-owner/dish/{dishId} -> 200 and success message")
     fun updateDish_ok() {
         val dishId = 1L
         val updateRequest =
@@ -168,10 +194,10 @@ class DishControllerTest : AbstractDocumentTest() {
             )
 
         val updatedDish = TestFixture.createMargheritaPizza().apply { id = dishId }
-        whenever(dishService.updateDish(eq(dishId), any())).thenReturn(updatedDish)
+        whenever(dishService.updateDish(eq(dishId), any(), any())).thenReturn(updatedDish)
 
         mockMvc.perform(
-            RestDocumentationRequestBuilders.put("/api/dish/{dishId}", dishId)
+            RestDocumentationRequestBuilders.put("/api/restaurant-owner/dish/{dishId}", dishId)
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
                 .content(objectMapper.writeValueAsString(updateRequest)),
@@ -198,16 +224,16 @@ class DishControllerTest : AbstractDocumentTest() {
                 ),
             )
 
-        verify(dishService).updateDish(eq(dishId), any())
+        verify(dishService).updateDish(eq(dishId), any(), any())
     }
 
     @Test
-    @DisplayName("DELETE /api/dish/{dishId} -> 204 No Content")
+    @DisplayName("DELETE /api/restaurant-owner/dish/{dishId} -> 204 No Content")
     fun deleteDish_ok() {
         val dishId = 1L
 
         mockMvc.perform(
-            RestDocumentationRequestBuilders.delete("/api/dish/{dishId}", dishId)
+            RestDocumentationRequestBuilders.delete("/api/restaurant-owner/dish/{dishId}", dishId)
                 .accept(MediaType.APPLICATION_JSON),
         )
             .andExpect(status().isNoContent)
@@ -222,6 +248,6 @@ class DishControllerTest : AbstractDocumentTest() {
                 ),
             )
 
-        verify(dishService).deleteDishById(dishId)
+        verify(dishService).deleteDishById(eq(dishId), any())
     }
 }
