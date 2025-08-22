@@ -62,7 +62,10 @@ dependencies {
 //    testImplementation("com.epages:restdocs-api-spec-mockmvc:0.17.1")
 
     asciidoctorExt("org.springframework.restdocs:spring-restdocs-asciidoctor")
-    testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
+    testImplementation("org.springframework.restdocs:spring-restdocs-core")
+    testImplementation("org.springframework.restdocs:spring-restdocs-restassured")
+//    testImplementation("org.springframework.restdocs:spring-restdocs-webtestclient")
+    implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
 }
 
 kotlin {
