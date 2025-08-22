@@ -47,13 +47,13 @@
         </encoder>
     </appender>
 
-    <logger name="happybeans" level="INFO" additivity="false">
+    <logger name="happybeans" level="TRACE" additivity="false">
         <appender-ref ref="APP"/>
         <appender-ref ref="ERR"/>
         <appender-ref ref="CONSOLE"/>
     </logger>
 
-    <root level="WARN">
+    <root level="INFO">
         <appender-ref ref="APP"/>
         <appender-ref ref="ERR"/>
         <appender-ref ref="CONSOLE"/>

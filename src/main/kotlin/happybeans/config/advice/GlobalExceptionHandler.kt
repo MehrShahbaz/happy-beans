@@ -6,6 +6,7 @@ import happybeans.utils.exception.EntityNotFoundException
 import happybeans.utils.exception.UnauthorisedUserException
 import happybeans.utils.exception.UserAlreadyExistsException
 import jakarta.servlet.http.HttpServletRequest
+import mu.KotlinLogging
 import org.springframework.http.HttpStatus
 import org.springframework.http.ResponseEntity
 import org.springframework.http.converter.HttpMessageNotReadableException
@@ -15,11 +16,14 @@ import org.springframework.web.bind.annotation.RestControllerAdvice
 
 @RestControllerAdvice
 class GlobalExceptionHandler {
+    private val logger = KotlinLogging.logger {}
+
     @ExceptionHandler(EntityNotFoundException::class)
     fun handleEmptyResult(
         err: EntityNotFoundException,
         request: HttpServletRequest,
     ): ResponseEntity<ErrorResponse> {
+        logger.error(err) { "Entity not found at ${request.method} ${request.requestURI}" }
         return errorResponse(HttpStatus.NOT_FOUND, "${err.message}", request)
     }
 
@@ -37,6 +41,7 @@ class GlobalExceptionHandler {
                 }
                 else -> "Invalid request payload"
             }
+        logger.error(ex) { "Invalid request payload at ${request.method} ${request.requestURI}: $message" }
         return errorResponse(HttpStatus.BAD_REQUEST, message, request)
     }
 
@@ -71,6 +76,15 @@ class GlobalExceptionHandler {
         request: HttpServletRequest,
     ): ResponseEntity<ErrorResponse> {
         return errorResponse(HttpStatus.CONFLICT, ex.message ?: "Already exists", request)
+    }
+
+    @ExceptionHandler(Exception::class)
+    fun handleGlobalException(
+        ex: Exception,
+        request: HttpServletRequest,
+    ): ResponseEntity<ErrorResponse> {
+        logger.error(ex) { "An uncaught exception occurred at ${request.method} ${request.requestURI}" }
+        return errorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "An internal server error occurred", request)
     }
 
     private fun errorResponse(
