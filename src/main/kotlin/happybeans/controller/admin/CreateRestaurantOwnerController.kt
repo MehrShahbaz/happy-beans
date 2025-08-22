@@ -2,7 +2,7 @@ package happybeans.controller.admin
 
 import happybeans.dto.response.MessageResponse
 import happybeans.dto.user.RestaurantOwnerRequestDto
-import happybeans.service.CreateRestaurantOwnerService
+import happybeans.service.HandleRestaurantOwnerCreateService
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
@@ -14,13 +14,13 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 @RestController
 @RequestMapping("/api/admin/restaurant-owner")
 class CreateRestaurantOwnerController(
-    private val createRestaurantOwnerService: CreateRestaurantOwnerService,
+    private val service: HandleRestaurantOwnerCreateService,
 ) {
     @PostMapping
     fun createRestaurantOwner(
         @Valid @RequestBody restaurantOwnerRequestDto: RestaurantOwnerRequestDto,
     ): ResponseEntity<MessageResponse> {
-        val user = createRestaurantOwnerService.createRestaurantOwner(restaurantOwnerRequestDto)
+        val user = service.handleCreateRestaurantOwner(restaurantOwnerRequestDto)
 
         val location =
             ServletUriComponentsBuilder

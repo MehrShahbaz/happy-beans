@@ -16,8 +16,8 @@ class EmailDispatchService(
         val text = "Welcome to happy beans, login credentials password:$password. Note: Use the same email"
         val message = SimpleMailMessage()
         message.setTo(to)
-        message.setSubject(subject)
-        message.setText(text)
+        message.subject = subject
+        message.text = text
         mailSender.send(message)
     }
 
