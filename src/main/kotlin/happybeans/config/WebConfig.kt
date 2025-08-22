@@ -24,7 +24,7 @@ class WebConfig(
         registry.addInterceptor(memberInterceptor)
             .addPathPatterns("/api/member/cart/**")
         registry.addInterceptor(adminInterceptor)
-            .addPathPatterns("/api/admin/restaurant-owner/**")
+            .addPathPatterns("/api/admin/restaurant-owner/**", "/api/admin/join-request/**")
         registry.addInterceptor(restaurantOwnerInterceptor)
             .addPathPatterns("")
         super.addInterceptors(registry)

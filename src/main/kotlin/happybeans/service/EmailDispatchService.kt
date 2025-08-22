@@ -21,7 +21,17 @@ class EmailDispatchService(
         mailSender.send(message)
     }
 
+    fun sendJoinRequestRejectEmail(to: String) {
+        val text = "Sorry to say but admin rejected you"
+        val message = SimpleMailMessage()
+        message.setTo(to)
+        message.subject = REJECT_INVITE_SUBJECT
+        message.text = text
+        mailSender.send(message)
+    }
+
     companion object {
         private const val RESTAURANT_OWNER_EMAIL_MESSAGE = "Welcome to Happy Beans"
+        private const val REJECT_INVITE_SUBJECT = ""
     }
 }
