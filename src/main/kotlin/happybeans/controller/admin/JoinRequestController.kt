@@ -32,7 +32,7 @@ class JoinRequestController(
     fun rejectInvite(
         @PathVariable joinRequestId: Long,
     ): ResponseEntity<MessageResponse> {
-        joinRequestService.handleAcceptInvite(joinRequestId)
+        joinRequestService.handleRejectInvite(joinRequestId)
         return ResponseEntity.ok(MessageResponse("Owner Rejected"))
     }
 }
