@@ -1,5 +1,6 @@
 package happybeans.service
 
+import happybeans.dto.joinRequest.JoinRequestDto
 import happybeans.dto.user.RestaurantOwnerRequestDto
 import happybeans.enums.JoinRequestStatus
 import happybeans.model.JoinRequest
@@ -17,6 +18,21 @@ class JoinRequestService(
 ) {
     fun getAllJoinRequests(): List<JoinRequest> {
         return joinRequestRepository.findAll()
+    }
+
+    fun createJoinRequest(joinRequestDto: JoinRequestDto): JoinRequest {
+        if (joinRequestRepository.existsByEmail(joinRequestDto.email)) {
+            throw IllegalArgumentException("Request already exists")
+        }
+
+        return joinRequestRepository.save(
+            JoinRequest(
+                joinRequestDto.email,
+                joinRequestDto.firstName,
+                joinRequestDto.lastName,
+                joinRequestDto.message,
+            ),
+        )
     }
 
     fun handleAcceptInvite(inviteId: Long) {
