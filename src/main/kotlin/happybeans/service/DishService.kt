@@ -8,6 +8,8 @@ import happybeans.dto.dish.DishPatchRequest
 import happybeans.dto.dish.DishUpdateRequest
 import happybeans.model.Dish
 import happybeans.model.DishOption
+import happybeans.model.Restaurant
+import happybeans.model.User
 import happybeans.repository.DishRepository
 import happybeans.repository.RestaurantRepository
 import happybeans.utils.exception.DishAlreadyExistsException
@@ -55,10 +57,9 @@ class DishService(
     fun createDish(
         restaurantId: Long,
         dishRequest: DishCreateRequest,
+        owner: User,
     ): Dish {
-        val restaurant =
-            restaurantRepository.findById(restaurantId)
-                .orElseThrow { EntityNotFoundException("Restaurant not found") }
+        val restaurant = findValidRestaurant(restaurantId, owner.id)
 
         val existingDish = dishRepository.findByNameAndRestaurantId(dishRequest.name, restaurantId)
         if (existingDish != null) {
@@ -105,13 +106,11 @@ class DishService(
     fun updateDish(
         dishId: Long,
         updateRequest: DishUpdateRequest,
+        owner: User,
     ): Dish {
         val dish = findById(dishId)
 
-        // Find the restaurant that owns this dish
-        val restaurant =
-            restaurantRepository.findAll().firstOrNull { it.dishes.contains(dish) }
-                ?: throw EntityNotFoundException("Restaurant for dish not found")
+        val restaurant = findValidRestaurantByDishId(dish.id, owner.id)
 
         // Check if new name conflicts with another dish in the same restaurant
         val existingDishWithSameName = dishRepository.findByNameAndRestaurantId(updateRequest.name, restaurant.id)
@@ -130,14 +129,13 @@ class DishService(
     fun patchDish(
         dishId: Long,
         patchRequest: DishPatchRequest,
+        owner: User,
     ): Dish {
         val dish = findById(dishId)
 
         // Check if new name conflicts with the existing dish (only if name is being updated)
         patchRequest.name?.let { newName ->
-            val restaurant =
-                restaurantRepository.findAll().firstOrNull { it.dishes.contains(dish) }
-                    ?: throw EntityNotFoundException("Restaurant for dish not found")
+            val restaurant = findValidRestaurantByDishId(dish.id, owner.id)
 
             val existingDishWithSameName = dishRepository.findByNameAndRestaurantId(newName, restaurant.id)
             if (existingDishWithSameName != null && existingDishWithSameName.id != dishId) {
@@ -156,6 +154,7 @@ class DishService(
     fun addDishOption(
         dishId: Long,
         optionRequest: DishOptionCreateRequest,
+        owner: User,
     ): DishOption {
         val dish = findById(dishId)
 
@@ -168,9 +167,9 @@ class DishService(
                 price = optionRequest.price,
                 image = optionRequest.image,
                 prepTimeMinutes = optionRequest.prepTimeMinutes,
-//                rating = optionRequest.rating,
             )
 
+        findValidRestaurantByDishId(dishId, owner.id)
         dish.addDishOption(dishOption)
         dishRepository.save(dish)
         return dishOption
@@ -181,8 +180,11 @@ class DishService(
         dishId: Long,
         optionId: Long,
         updateRequest: DishOptionUpdateRequest,
+        owner: User,
     ): DishOption {
         val dishOption = findByIdAndDishOptionId(dishId, optionId)
+
+        findValidRestaurantByDishId(dishId, owner.id)
 
         dishOption.name = updateRequest.name
         dishOption.description = updateRequest.description
@@ -199,8 +201,11 @@ class DishService(
         dishId: Long,
         optionId: Long,
         patchRequest: DishOptionPatchRequest,
+        owner: User,
     ): DishOption {
         val dishOption = findByIdAndDishOptionId(dishId, optionId)
+
+        findValidRestaurantByDishId(dishId, owner.id)
 
         // Update only provided fields
         patchRequest.name?.let { dishOption.name = it }
@@ -217,8 +222,12 @@ class DishService(
     fun deleteDishOption(
         dishId: Long,
         optionId: Long,
+        owner: User,
     ) {
         val dish = findById(dishId)
+
+        findValidRestaurantByDishId(dishId, owner.id)
+
         val dishOption = findByIdAndDishOptionId(dishId, optionId)
 
         dish.removeDishOption(dishOption)
@@ -226,8 +235,12 @@ class DishService(
     }
 
     @Transactional
-    fun deleteDishById(dishId: Long) {
+    fun deleteDishById(
+        dishId: Long,
+        owner: User,
+    ) {
         val dish = findById(dishId)
+        findValidRestaurantByDishId(dishId, owner.id)
         dishRepository.delete(dish)
     }
 
@@ -235,8 +248,10 @@ class DishService(
     fun enableDishOption(
         dishId: Long,
         optionId: Long,
+        owner: User,
     ): DishOption {
         val dish = findById(dishId)
+        findValidRestaurantByDishId(dishId, owner.id)
         dish.enableDishOption(optionId)
         dishRepository.save(dish)
         return findByIdAndDishOptionId(dishId, optionId)
@@ -246,8 +261,10 @@ class DishService(
     fun disableDishOption(
         dishId: Long,
         optionId: Long,
+        owner: User,
     ): DishOption {
         val dish = findById(dishId)
+        findValidRestaurantByDishId(dishId, owner.id)
         dish.disableDishOption(optionId)
         dishRepository.save(dish)
         return findByIdAndDishOptionId(dishId, optionId)
@@ -258,8 +275,10 @@ class DishService(
         dishId: Long,
         optionId: Long,
         available: Boolean,
+        owner: User,
     ): DishOption {
         val dish = findById(dishId)
+        findValidRestaurantByDishId(dishId, owner.id)
         dish.setDishOptionAvailability(optionId, available)
         dishRepository.save(dish)
         return findByIdAndDishOptionId(dishId, optionId)
@@ -273,5 +292,32 @@ class DishService(
     fun isDishAvailable(dishId: Long): Boolean {
         val dish = findById(dishId)
         return dish.hasAvailableOptions()
+    }
+
+    private fun findValidRestaurant(
+        restaurantId: Long,
+        userId: Long,
+    ): Restaurant {
+        //prev
+//        return restaurantRepository.findByIdAndUserId(restaurantId, userId)
+//            .orElseThrow { EntityNotFoundException("Restaurant of the user with id '$userId' not found") }
+        return try {
+            restaurantRepository.findByIdAndUserId(restaurantId, userId)
+        } catch (exception: Exception) {
+            throw EntityNotFoundException("Restaurant of the user with id '$userId' not found")
+        }
+    }
+
+    private fun findValidRestaurantByDishId(
+        dishId: Long,
+        userId: Long,
+    ): Restaurant {
+        val dish = findById(dishId)
+
+        val restaurant =
+            restaurantRepository.findAll().firstOrNull { it.dishes.contains(dish) }
+                ?: throw EntityNotFoundException("Restaurant for dish not found")
+
+        return findValidRestaurant(restaurant.id, userId)
     }
 }

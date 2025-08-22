@@ -9,7 +9,9 @@ import happybeans.dto.dish.DishResponse
 import happybeans.dto.dish.DishUpdateRequest
 import happybeans.dto.dish.toResponse
 import happybeans.dto.response.MessageResponse
+import happybeans.model.User
 import happybeans.service.DishService
+import happybeans.utils.annotations.RestaurantOwner
 import jakarta.validation.Valid
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -25,7 +27,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import java.net.URI
 
 @RestController
-@RequestMapping("/api")
+@RequestMapping("/api/restaurant-owner/")
 class DishController(
     private val dishService: DishService,
 ) {
@@ -39,10 +41,11 @@ class DishController(
 
     @PostMapping("/restaurant/{restaurantId}/dishes")
     fun createDish(
+        @RestaurantOwner owner: User,
         @PathVariable restaurantId: Long,
         @Valid @RequestBody dishRequest: DishCreateRequest,
     ): ResponseEntity<MessageResponse> {
-        val savedDish = dishService.createDish(restaurantId, dishRequest)
+        val savedDish = dishService.createDish(restaurantId, dishRequest, owner)
 
         val location: URI =
             ServletUriComponentsBuilder
@@ -56,28 +59,31 @@ class DishController(
 
     @PutMapping("/dish/{dishId}")
     fun updateDish(
+        @RestaurantOwner owner: User,
         @PathVariable dishId: Long,
         @Valid @RequestBody updateRequest: DishUpdateRequest,
     ): ResponseEntity<MessageResponse> {
-        dishService.updateDish(dishId, updateRequest)
+        dishService.updateDish(dishId, updateRequest, owner)
         return ResponseEntity.ok(MessageResponse("Dish updated successfully"))
     }
 
     @PatchMapping("/dish/{dishId}")
     fun patchDish(
+        @RestaurantOwner owner: User,
         @PathVariable dishId: Long,
         @Valid @RequestBody patchRequest: DishPatchRequest,
     ): ResponseEntity<MessageResponse> {
-        dishService.patchDish(dishId, patchRequest)
+        dishService.patchDish(dishId, patchRequest, owner)
         return ResponseEntity.ok(MessageResponse("Dish updated successfully"))
     }
 
     @PostMapping("/dish/{dishId}/options")
     fun addDishOption(
+        @RestaurantOwner owner: User,
         @PathVariable dishId: Long,
         @Valid @RequestBody optionRequest: DishOptionCreateRequest,
     ): ResponseEntity<MessageResponse> {
-        val dishOption = dishService.addDishOption(dishId, optionRequest)
+        val dishOption = dishService.addDishOption(dishId, optionRequest, owner)
         val location: URI =
             ServletUriComponentsBuilder
                 .fromCurrentRequest()
@@ -89,38 +95,42 @@ class DishController(
 
     @PutMapping("/dish/{dishId}/options/{optionId}")
     fun updateDishOption(
+        @RestaurantOwner owner: User,
         @PathVariable dishId: Long,
         @PathVariable optionId: Long,
         @Valid @RequestBody updateRequest: DishOptionUpdateRequest,
     ): ResponseEntity<MessageResponse> {
-        dishService.updateDishOption(dishId, optionId, updateRequest)
+        dishService.updateDishOption(dishId, optionId, updateRequest, owner)
         return ResponseEntity.ok(MessageResponse("Option updated"))
     }
 
     @PatchMapping("/dish/{dishId}/options/{optionId}")
     fun patchDishOption(
+        @RestaurantOwner owner: User,
         @PathVariable dishId: Long,
         @PathVariable optionId: Long,
         @Valid @RequestBody patchRequest: DishOptionPatchRequest,
     ): ResponseEntity<MessageResponse> {
-        dishService.patchDishOption(dishId, optionId, patchRequest)
+        dishService.patchDishOption(dishId, optionId, patchRequest, owner)
         return ResponseEntity.ok(MessageResponse("Option updated"))
     }
 
     @DeleteMapping("/dish/{dishId}/options/{optionId}")
     fun deleteDishOption(
+        @RestaurantOwner owner: User,
         @PathVariable dishId: Long,
         @PathVariable optionId: Long,
     ): ResponseEntity<Void> {
-        dishService.deleteDishOption(dishId, optionId)
+        dishService.deleteDishOption(dishId, optionId, owner)
         return ResponseEntity.noContent().build()
     }
 
     @DeleteMapping("/dish/{dishId}")
     fun deleteDishById(
+        @RestaurantOwner owner: User,
         @PathVariable dishId: Long,
     ): ResponseEntity<Void> {
-        dishService.deleteDishById(dishId)
+        dishService.deleteDishById(dishId, owner)
         return ResponseEntity.noContent().build()
     }
 }
