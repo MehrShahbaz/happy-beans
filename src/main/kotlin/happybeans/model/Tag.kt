@@ -22,13 +22,6 @@ class Tag(
     val name: String,
     @CreationTimestamp
     var createdAt: LocalDateTime? = null,
-    // bidirectional: might be helpful for query-optimization, not mandatory
-//    @ManyToMany(mappedBy = "likes")
-//    val likedByUsers: MutableSet<User> = mutableSetOf(),
-//    @ManyToMany(mappedBy = "dislikes")
-//    val dislikedByUsers: MutableSet<User> = mutableSetOf(),
-//    @ManyToMany(mappedBy = "dishOptionTags")
-//    val ofDishOptions: MutableSet<User> = mutableSetOf(),
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     val id: Long = 0L,
