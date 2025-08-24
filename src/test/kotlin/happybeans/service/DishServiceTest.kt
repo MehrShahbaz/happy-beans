@@ -676,7 +676,7 @@ class DishServiceTest {
         // Given
         val dishId = 1L
         val optionId = 999L
-        val dish = TestFixture.createMargheritaPizza().apply { id = dishId }
+        TestFixture.createMargheritaPizza().apply { id = dishId }
         val updateRequest =
             DishOptionUpdateRequest(
                 name = "Updated Option",
@@ -757,7 +757,6 @@ class DishServiceTest {
     @Test
     fun `deleteDishOption should throw EntityNotFoundException when option not found`() {
         // Given
-        val dishId = 1L
         val optionId = 999L
         given(dishOptionRepository.findById(optionId)).willReturn(Optional.empty())
 
