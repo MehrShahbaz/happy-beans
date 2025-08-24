@@ -5,6 +5,7 @@ import happybeans.dto.user.RestaurantOwnerRequestDto
 import happybeans.enums.JoinRequestStatus
 import happybeans.model.JoinRequest
 import happybeans.repository.JoinRequestRepository
+import happybeans.utils.exception.DuplicateEntityException
 import happybeans.utils.exception.EntityNotFoundException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -22,7 +23,7 @@ class JoinRequestService(
 
     fun createJoinRequest(joinRequestDto: JoinRequestDto): JoinRequest {
         if (joinRequestRepository.existsByEmail(joinRequestDto.email)) {
-            throw IllegalArgumentException("Request already exists")
+            throw DuplicateEntityException("Request already exists")
         }
 
         return joinRequestRepository.save(
