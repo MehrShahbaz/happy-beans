@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/guest/join-request")
-class JoinRequestController(
+class GuestJoinRequestController(
     private val joinRequestService: JoinRequestService,
 ) {
     @PostMapping

@@ -1,3 +1,3 @@
 package happybeans.controller.admin
 
-class JoinRequestControllerTest
+class AdminJoinRequestControllerTest

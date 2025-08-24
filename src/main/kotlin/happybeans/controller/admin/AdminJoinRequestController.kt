@@ -12,7 +12,7 @@ import org.springframework.web.bind.annotation.RestController
 
 @RestController
 @RequestMapping("/api/admin/join-request")
-class JoinRequestController(
+class AdminJoinRequestController(
     private val joinRequestService: JoinRequestService,
 ) {
     @GetMapping()
