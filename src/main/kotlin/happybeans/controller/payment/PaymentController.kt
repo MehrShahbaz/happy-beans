@@ -15,4 +15,9 @@ class PaymentController(private val paymentService: PaymentService) {
         val data = paymentService.createPayment(1000)
         return ResponseEntity.ok(MessageResponse(data.id))
     }
+
+    @GetMapping("/checkout")
+    fun getCheckoutUrl(): ResponseEntity<Map<String, String>> {
+        return ResponseEntity.ok(mapOf("paymentLink" to paymentService.createSession()))
+    }
 }
