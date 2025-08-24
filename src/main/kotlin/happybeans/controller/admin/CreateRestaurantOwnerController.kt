@@ -25,7 +25,7 @@ class CreateRestaurantOwnerController(
         val location =
             ServletUriComponentsBuilder
                 .fromCurrentRequest()
-                .path("/{optionId}")
+                .path("restaurant-owner")
                 .buildAndExpand(user.id)
                 .toUri()
         return ResponseEntity.created(location).body(MessageResponse("RestaurantOwner created!"))
