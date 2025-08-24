@@ -14,6 +14,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
+import java.sql.SQLIntegrityConstraintViolationException
 
 @RestControllerAdvice
 class GlobalExceptionHandler {
@@ -89,6 +90,14 @@ class GlobalExceptionHandler {
         request: HttpServletRequest,
     ): ResponseEntity<ErrorResponse> {
         return errorResponse(HttpStatus.CONFLICT, ex.message ?: "Already exists", request)
+    }
+
+    @ExceptionHandler(SQLIntegrityConstraintViolationException::class)
+    fun handleSQLIntegrityConstraintViolationException(
+        ex: SQLIntegrityConstraintViolationException,
+        request: HttpServletRequest,
+    ): ResponseEntity<ErrorResponse> {
+        return errorResponse(HttpStatus.BAD_REQUEST, ex.message ?: "DB Exception", request)
     }
 
     private fun errorResponse(
