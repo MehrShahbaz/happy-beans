@@ -2,8 +2,6 @@ package happybeans.controller.dish
 
 import happybeans.dto.dish.DishCreateRequest
 import happybeans.dto.dish.DishOptionCreateRequest
-import happybeans.dto.dish.DishOptionPatchRequest
-import happybeans.dto.dish.DishOptionUpdateRequest
 import happybeans.dto.dish.DishPatchRequest
 import happybeans.dto.dish.DishResponse
 import happybeans.dto.dish.DishUpdateRequest
@@ -78,7 +76,7 @@ class DishController(
     }
 
     @PostMapping("/dish/{dishId}/options")
-    fun addDishOption(
+    fun createDishOption(
         @RestaurantOwner owner: User,
         @PathVariable dishId: Long,
         @Valid @RequestBody optionRequest: DishOptionCreateRequest,
@@ -90,39 +88,7 @@ class DishController(
                 .path("/{optionId}")
                 .buildAndExpand(dishOption.id)
                 .toUri()
-        return ResponseEntity.created(location).body(MessageResponse("Dish option added successfully"))
-    }
-
-    @PutMapping("/dish/{dishId}/options/{optionId}")
-    fun updateDishOption(
-        @RestaurantOwner owner: User,
-        @PathVariable dishId: Long,
-        @PathVariable optionId: Long,
-        @Valid @RequestBody updateRequest: DishOptionUpdateRequest,
-    ): ResponseEntity<MessageResponse> {
-        dishService.updateDishOption(dishId, optionId, updateRequest, owner)
-        return ResponseEntity.ok(MessageResponse("Option updated"))
-    }
-
-    @PatchMapping("/dish/{dishId}/options/{optionId}")
-    fun patchDishOption(
-        @RestaurantOwner owner: User,
-        @PathVariable dishId: Long,
-        @PathVariable optionId: Long,
-        @Valid @RequestBody patchRequest: DishOptionPatchRequest,
-    ): ResponseEntity<MessageResponse> {
-        dishService.patchDishOption(dishId, optionId, patchRequest, owner)
-        return ResponseEntity.ok(MessageResponse("Option updated"))
-    }
-
-    @DeleteMapping("/dish/{dishId}/options/{optionId}")
-    fun deleteDishOption(
-        @RestaurantOwner owner: User,
-        @PathVariable dishId: Long,
-        @PathVariable optionId: Long,
-    ): ResponseEntity<Void> {
-        dishService.deleteDishOption(dishId, optionId, owner)
-        return ResponseEntity.noContent().build()
+        return ResponseEntity.created(location).body(MessageResponse("Dish option created successfully"))
     }
 
     @DeleteMapping("/dish/{dishId}")

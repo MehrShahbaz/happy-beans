@@ -10,7 +10,9 @@ import happybeans.dto.dish.DishUpdateRequest
 import happybeans.enums.UserRole
 import happybeans.model.Dish
 import happybeans.model.Restaurant
+import happybeans.model.Tag
 import happybeans.model.User
+import happybeans.repository.DishOptionRepository
 import happybeans.repository.DishRepository
 import happybeans.repository.RestaurantRepository
 import happybeans.utils.exception.DishAlreadyExistsException
@@ -37,6 +39,12 @@ class DishServiceTest {
 
     @Mock
     private lateinit var restaurantRepository: RestaurantRepository
+
+    @Mock
+    private lateinit var dishOptionRepository: DishOptionRepository
+
+    @Mock
+    private lateinit var tagService: TagService
 
     @InjectMocks
     private lateinit var dishService: DishService
@@ -636,7 +644,7 @@ class DishServiceTest {
         val dishId = 1L
         val optionId = 1L
         val dish = TestFixture.createMargheritaPizzaWithAllOptions().apply { id = dishId }
-        dish.dishOptions.first().apply { id = optionId }
+        val dishOption = dish.dishOptions.first().apply { id = optionId }
         val updateRequest =
             DishOptionUpdateRequest(
                 name = "Updated Option",
@@ -645,6 +653,7 @@ class DishServiceTest {
                 image = "updated-option.jpg",
                 prepTimeMinutes = 20,
             )
+        given(dishOptionRepository.findById(optionId)).willReturn(Optional.of(dishOption))
         given(dishRepository.findById(dishId)).willReturn(Optional.of(dish))
         given(restaurantRepository.findAll()).willReturn(listOf(TestFixture.createHappyBeansCafe().apply { dishes.add(dish) }))
         given(
@@ -653,7 +662,7 @@ class DishServiceTest {
         given(dishRepository.save(dish)).willReturn(dish)
 
         // When
-        val result = dishService.updateDishOption(dishId, optionId, updateRequest, testOwner)
+        val result = dishService.updateDishOption(optionId, updateRequest, testOwner)
 
         // Then
         assertThat(result.name).isEqualTo("Updated Option")
@@ -676,11 +685,11 @@ class DishServiceTest {
                 image = "updated-option.jpg",
                 prepTimeMinutes = 20,
             )
-        given(dishRepository.findById(dishId)).willReturn(Optional.of(dish))
+        given(dishOptionRepository.findById(optionId)).willReturn(Optional.empty())
 
         // When & Then
         assertThrows<EntityNotFoundException> {
-            dishService.updateDishOption(dishId, optionId, updateRequest, testOwner)
+            dishService.updateDishOption(optionId, updateRequest, testOwner)
         }
     }
 
@@ -701,6 +710,7 @@ class DishServiceTest {
                 image = null,
                 prepTimeMinutes = null,
             )
+        given(dishOptionRepository.findById(optionId)).willReturn(Optional.of(dishOption))
         given(dishRepository.findById(dishId)).willReturn(Optional.of(dish))
         given(restaurantRepository.findAll()).willReturn(listOf(TestFixture.createHappyBeansCafe().apply { dishes.add(dish) }))
         given(
@@ -709,7 +719,7 @@ class DishServiceTest {
         given(dishRepository.save(dish)).willReturn(dish)
 
         // When
-        val result = dishService.patchDishOption(dishId, optionId, patchRequest, testOwner)
+        val result = dishService.patchDishOption(optionId, patchRequest, testOwner)
 
         // Then
         assertThat(result.name).isEqualTo(originalName)
@@ -727,6 +737,7 @@ class DishServiceTest {
         val dish = TestFixture.createMargheritaPizzaWithAllOptions().apply { id = dishId }
         val initialOptionsCount = dish.dishOptions.size
         val dishOption = dish.dishOptions.first().apply { id = optionId }
+        given(dishOptionRepository.findById(optionId)).willReturn(Optional.of(dishOption))
         given(dishRepository.findById(dishId)).willReturn(Optional.of(dish))
         given(restaurantRepository.findAll()).willReturn(listOf(TestFixture.createHappyBeansCafe().apply { dishes.add(dish) }))
         given(
@@ -735,7 +746,7 @@ class DishServiceTest {
         given(dishRepository.save(dish)).willReturn(dish)
 
         // When
-        dishService.deleteDishOption(dishId, optionId, testOwner)
+        dishService.deleteDishOption(optionId, testOwner)
 
         // Then
         assertThat(dish.dishOptions).hasSize(initialOptionsCount - 1)
@@ -748,12 +759,11 @@ class DishServiceTest {
         // Given
         val dishId = 1L
         val optionId = 999L
-        val dish = TestFixture.createMargheritaPizza().apply { id = dishId }
-        given(dishRepository.findById(dishId)).willReturn(Optional.of(dish))
+        given(dishOptionRepository.findById(optionId)).willReturn(Optional.empty())
 
         // When & Then
         assertThrows<EntityNotFoundException> {
-            dishService.deleteDishOption(dishId, optionId, testOwner)
+            dishService.deleteDishOption(optionId, testOwner)
         }
     }
 
@@ -882,5 +892,116 @@ class DishServiceTest {
 
         // Then
         assertThat(result).isFalse()
+    }
+
+    @Test
+    fun `addDishOptionTag should add tag to dish option`() {
+        // Given
+        val dishId = 1L
+        val optionId = 1L
+        val tagName = "spicy"
+        val dish = TestFixture.createMargheritaPizzaWithAllOptions().apply { id = dishId }
+        val dishOption = dish.dishOptions.first().apply { id = optionId }
+        val tag = Tag(name = tagName, id = 1L)
+        val restaurant = TestFixture.createHappyBeansCafe().apply { dishes.add(dish) }
+
+        given(dishOptionRepository.findById(optionId)).willReturn(Optional.of(dishOption))
+        given(dishRepository.findById(dishId)).willReturn(Optional.of(dish))
+        given(restaurantRepository.findAll()).willReturn(listOf(restaurant))
+        given(restaurantRepository.findByIdAndUserId(restaurant.id, testOwner.id)).willReturn(restaurant)
+        given(tagService.findOrCreateByName(tagName)).willReturn(tag)
+        given(dishRepository.save(dish)).willReturn(dish)
+
+        // When
+        val result = dishService.addDishOptionTag(optionId, tagName, testOwner)
+
+        // Then
+        assertThat(result.dishOptionTags).contains(tag)
+        verify(tagService).findOrCreateByName(tagName)
+        verify(dishRepository).save(dish)
+    }
+
+    @Test
+    fun `removeDishOptionTag should remove tag from dish option`() {
+        // Given
+        val dishId = 1L
+        val optionId = 1L
+        val tagName = "spicy"
+        val tag = Tag(name = tagName, id = 1L)
+        val dish = TestFixture.createMargheritaPizzaWithAllOptions().apply { id = dishId }
+        val dishOption =
+            dish.dishOptions.first().apply {
+                id = optionId
+                dishOptionTags.add(tag)
+            }
+        val restaurant = TestFixture.createHappyBeansCafe().apply { dishes.add(dish) }
+
+        given(dishOptionRepository.findById(optionId)).willReturn(Optional.of(dishOption))
+        given(dishRepository.findById(dishId)).willReturn(Optional.of(dish))
+        given(restaurantRepository.findAll()).willReturn(listOf(restaurant))
+        given(restaurantRepository.findByIdAndUserId(restaurant.id, testOwner.id)).willReturn(restaurant)
+        given(tagService.findByName(tagName)).willReturn(tag)
+        given(dishRepository.save(dish)).willReturn(dish)
+
+        // When
+        val result = dishService.removeDishOptionTag(optionId, tagName, testOwner)
+
+        // Then
+        assertThat(result.dishOptionTags).doesNotContain(tag)
+        verify(tagService).findByName(tagName)
+        verify(dishRepository).save(dish)
+    }
+
+    @Test
+    fun `updateDishOptionTags should replace all tags`() {
+        // Given
+        val dishId = 1L
+        val optionId = 1L
+        val tagNames = setOf("spicy", "vegetarian")
+        val spicyTag = Tag(name = "spicy", id = 1L)
+        val vegetarianTag = Tag(name = "vegetarian", id = 2L)
+        val dish = TestFixture.createMargheritaPizzaWithAllOptions().apply { id = dishId }
+        val dishOption = dish.dishOptions.first().apply { id = optionId }
+        val restaurant = TestFixture.createHappyBeansCafe().apply { dishes.add(dish) }
+
+        given(dishOptionRepository.findById(optionId)).willReturn(Optional.of(dishOption))
+        given(dishRepository.findById(dishId)).willReturn(Optional.of(dish))
+        given(restaurantRepository.findAll()).willReturn(listOf(restaurant))
+        given(restaurantRepository.findByIdAndUserId(restaurant.id, testOwner.id)).willReturn(restaurant)
+        given(tagService.findOrCreateByName("spicy")).willReturn(spicyTag)
+        given(tagService.findOrCreateByName("vegetarian")).willReturn(vegetarianTag)
+        given(dishRepository.save(dish)).willReturn(dish)
+
+        // When
+        val result = dishService.updateDishOptionTags(optionId, tagNames, testOwner)
+
+        // Then
+        assertThat(result.dishOptionTags).containsExactlyInAnyOrder(spicyTag, vegetarianTag)
+        verify(tagService).findOrCreateByName("spicy")
+        verify(tagService).findOrCreateByName("vegetarian")
+        verify(dishRepository).save(dish)
+    }
+
+    @Test
+    fun `getDishOptionTags should return all tags for dish option`() {
+        // Given
+        val dishId = 1L
+        val optionId = 1L
+        val spicyTag = Tag(name = "spicy", id = 1L)
+        val vegetarianTag = Tag(name = "vegetarian", id = 2L)
+        val dish = TestFixture.createMargheritaPizzaWithAllOptions().apply { id = dishId }
+        val dishOption =
+            dish.dishOptions.first().apply {
+                id = optionId
+                dishOptionTags.addAll(setOf(spicyTag, vegetarianTag))
+            }
+
+        given(dishOptionRepository.findById(optionId)).willReturn(Optional.of(dishOption))
+
+        // When
+        val result = dishService.getDishOptionTags(optionId)
+
+        // Then
+        assertThat(result).containsExactlyInAnyOrder(spicyTag, vegetarianTag)
     }
 }

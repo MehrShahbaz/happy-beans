@@ -250,4 +250,34 @@ class DishControllerTest : AbstractDocumentTest() {
 
         verify(dishService).deleteDishById(eq(dishId), any())
     }
+
+    @Test
+    @DisplayName("POST /api/restaurant-owner/dish/{dishId}/options -> 201 and success message")
+    fun createDishOption_ok() {
+        val dishId = 1L
+        val optionRequest =
+            DishOptionCreateRequest(
+                name = "Personal Margherita (8\")",
+                description = "Perfect size for one person with light appetite",
+                price = 12.99,
+                image = "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=600&q=80",
+                available = true,
+                prepTimeMinutes = 15,
+            )
+
+        val createdDishOption = TestFixture.createMargheritaPizzaWithAllOptions().dishOptions.first().apply { id = 1L }
+        whenever(dishService.addDishOption(eq(dishId), any(), any())).thenReturn(createdDishOption)
+
+        mockMvc.perform(
+            RestDocumentationRequestBuilders.post("/api/restaurant-owner/dish/{dishId}/options", dishId)
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+                .content(objectMapper.writeValueAsString(optionRequest)),
+        )
+            .andExpect(status().isCreated)
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.message").value("Dish option created successfully"))
+
+        verify(dishService).addDishOption(eq(dishId), any(), any())
+    }
 }

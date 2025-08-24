@@ -9,7 +9,9 @@ import happybeans.dto.dish.DishUpdateRequest
 import happybeans.model.Dish
 import happybeans.model.DishOption
 import happybeans.model.Restaurant
+import happybeans.model.Tag
 import happybeans.model.User
+import happybeans.repository.DishOptionRepository
 import happybeans.repository.DishRepository
 import happybeans.repository.RestaurantRepository
 import happybeans.utils.exception.DishAlreadyExistsException
@@ -24,6 +26,8 @@ import kotlin.collections.map
 class DishService(
     private val dishRepository: DishRepository,
     private val restaurantRepository: RestaurantRepository,
+    private val dishOptionRepository: DishOptionRepository,
+    private val tagService: TagService,
 ) {
     fun findDishesByRestaurant(
         restaurantId: Long,
@@ -51,6 +55,11 @@ class DishService(
 
         return dish.dishOptions.firstOrNull { it.id == dishOptionId }
             ?: throw EntityNotFoundException("Dish with id $dishId and dish option id $dishOptionId not found")
+    }
+
+    fun findDishOptionById(dishOptionId: Long): DishOption {
+        return dishOptionRepository.findById(dishOptionId)
+            .orElseThrow { EntityNotFoundException("Dish option with id $dishOptionId not found") }
     }
 
     @Transactional
@@ -177,12 +186,12 @@ class DishService(
 
     @Transactional
     fun updateDishOption(
-        dishId: Long,
         optionId: Long,
         updateRequest: DishOptionUpdateRequest,
         owner: User,
     ): DishOption {
-        val dishOption = findByIdAndDishOptionId(dishId, optionId)
+        val dishOption = findDishOptionById(optionId)
+        val dishId = dishOption.dish.id
 
         findValidRestaurantByDishId(dishId, owner.id)
 
@@ -198,12 +207,12 @@ class DishService(
 
     @Transactional
     fun patchDishOption(
-        dishId: Long,
         optionId: Long,
         patchRequest: DishOptionPatchRequest,
         owner: User,
     ): DishOption {
-        val dishOption = findByIdAndDishOptionId(dishId, optionId)
+        val dishOption = findDishOptionById(optionId)
+        val dishId = dishOption.dish.id
 
         findValidRestaurantByDishId(dishId, owner.id)
 
@@ -220,15 +229,14 @@ class DishService(
 
     @Transactional
     fun deleteDishOption(
-        dishId: Long,
         optionId: Long,
         owner: User,
     ) {
+        val dishOption = findDishOptionById(optionId)
+        val dishId = dishOption.dish.id
         val dish = findById(dishId)
 
         findValidRestaurantByDishId(dishId, owner.id)
-
-        val dishOption = findByIdAndDishOptionId(dishId, optionId)
 
         dish.removeDishOption(dishOption)
         dishRepository.save(dish)
@@ -292,6 +300,64 @@ class DishService(
     fun isDishAvailable(dishId: Long): Boolean {
         val dish = findById(dishId)
         return dish.hasAvailableOptions()
+    }
+
+    fun addDishOptionTag(
+        optionId: Long,
+        tagName: String,
+        owner: User,
+    ): DishOption {
+        val dishOption = findDishOptionById(optionId)
+        val dishId = dishOption.dish.id
+        findValidRestaurantByDishId(dishId, owner.id)
+
+        val tag = tagService.findOrCreateByName(tagName)
+        dishOption.dishOptionTags.add(tag)
+
+        val dish = findById(dishId)
+        return dishRepository.save(dish).dishOptions.first { it.id == optionId }
+    }
+
+    fun removeDishOptionTag(
+        optionId: Long,
+        tagName: String,
+        owner: User,
+    ): DishOption {
+        val dishOption = findDishOptionById(optionId)
+        val dishId = dishOption.dish.id
+        findValidRestaurantByDishId(dishId, owner.id)
+
+        val tag = tagService.findByName(tagName)
+        if (tag != null) {
+            dishOption.dishOptionTags.remove(tag)
+        }
+
+        val dish = findById(dishId)
+        return dishRepository.save(dish).dishOptions.first { it.id == optionId }
+    }
+
+    fun updateDishOptionTags(
+        optionId: Long,
+        tagNames: Set<String>,
+        owner: User,
+    ): DishOption {
+        val dishOption = findDishOptionById(optionId)
+        val dishId = dishOption.dish.id
+        findValidRestaurantByDishId(dishId, owner.id)
+
+        dishOption.dishOptionTags.clear()
+        tagNames.forEach { tagName ->
+            val tag = tagService.findOrCreateByName(tagName)
+            dishOption.dishOptionTags.add(tag)
+        }
+
+        val dish = findById(dishId)
+        return dishRepository.save(dish).dishOptions.first { it.id == optionId }
+    }
+
+    fun getDishOptionTags(optionId: Long): Set<Tag> {
+        val dishOption = findDishOptionById(optionId)
+        return dishOption.dishOptionTags
     }
 
     private fun findValidRestaurant(
