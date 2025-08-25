@@ -72,7 +72,7 @@ class RestaurantControllerTest {
             RestAssured
                 .given().log().all()
                 .body(body)
-                .header("Authorization", token)
+                .header("Authorization", "Bearer $token")
                 .contentType(ContentType.JSON)
                 .`when`().post("/api/restaurant-owner/restaurants")
                 .then().log().all().extract()
@@ -85,7 +85,7 @@ class RestaurantControllerTest {
         val response =
             RestAssured
                 .given().log().all()
-                .header("Authorization", token)
+                .header("Authorization", "Bearer $token")
                 .contentType(ContentType.JSON)
                 .`when`().get("/api/restaurant-owner/restaurants")
                 .then().log().all().extract()

@@ -95,7 +95,7 @@ class UserCreateRequestDtoTest {
 
         assertThat(violations).anySatisfy { v ->
             assertThat(v.propertyPath.toString()).isEqualTo("firstName")
-            assertThat(v.message).isEqualTo("FirstName must be at least 3 characters")
+            assertThat(v.message).isEqualTo("First Name must be at least 3 characters")
         }
     }
 }
