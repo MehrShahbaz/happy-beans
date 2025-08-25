@@ -23,42 +23,149 @@
 project-root/
 ├── config/
 │   ├── advice/
+│   │   └── GlobalExceptionHandler.kt
 │   ├── argumentResolver/
-│   └── intercepter/
+│   │   ├── LoginMemberArgumentResolver.kt
+│   │   └── RestaurantOwnerArgumentResolver.kt
+│   ├── interceptor/
+│   │   ├── AdminInterceptor.kt
+│   │   ├── BaseAuthInterceptor.kt
+│   │   ├── MemberInterceptor.kt
+│   │   └── RestaurantOwnerInterceptor.kt
+│   ├── DataInitializer.kt
+│   └── WebConfig.kt
 ├── controller/
 │   ├── admin/
+│   ├── dish/
+│   │   └── DishController.kt
+│   ├── guest/
 │   ├── member/
-│   └── restaurantOwner/
+│   │   ├── CartProductController.kt
+│   │   ├── MemberAuthController.kt
+│   │   ├── MemberDishReviewController.kt
+│   │   ├── MemberOrderController.kt
+│   │   └── MemberRestaurantReviewController.kt
+│   ├── restaurant/
+│   │   └── RestaurantController.kt
+│   ├── restaurantOwner/
+│   ├── review/
+│   │   └── ReviewController.kt
+│   └── tag/
+│       └── TagController.kt
 ├── dto/
-│   └── .../
+│   ├── auth/
+│   ├── cart/
+│   ├── dish/
+│   ├── error/
+│   ├── order/
+│   ├── response/
+│   ├── restaurant/
+│   ├── review/
+│   ├── tag/
+│   └── user/
 ├── enums/
-│   └── .../
+│   ├── CreationSource.kt
+│   ├── OrderStatus.kt
+│   ├── PaymentOption.kt
+│   ├── PaymentStatus.kt
+│   └── UserRole.kt
 ├── infrastructure/
-│   ├── JwtProvider.kt
-│   └── StripeClient.kt
+│   └── JwtProvider.kt
 ├── model/
+│   ├── CartProduct.kt
 │   ├── Dish.kt
 │   ├── DishOption.kt
-│   ├── Ingredients.kt
-│   ├── Resetaurant.kt
+│   ├── DishReview.kt
+│   ├── Order.kt
+│   ├── OrderProduct.kt
+│   ├── Payment.kt
+│   ├── Restaurant.kt
+│   ├── RestaurantReview.kt
 │   ├── Review.kt
 │   ├── Tag.kt
-│   ├── TagContainer.kt
-│   └── User.kt
+│   ├── User.kt
+│   └── WorkingDateHour.kt
 ├── repository/
-│   └── .../
+│   ├── CartProductRepository.kt
+│   ├── DishOptionRepository.kt
+│   ├── DishRepository.kt
+│   ├── DishReviewRepository.kt
+│   ├── OrderRepository.kt
+│   ├── PaymentRepository.kt
+│   ├── RestaurantRepository.kt
+│   ├── RestaurantReviewRepository.kt
+│   ├── ReviewRepository.kt
+│   ├── TagRepository.kt
+│   └── UserRepository.kt
 ├── service/
-│   └── .../
+│   ├── CartProductService.kt
+│   ├── DishReviewService.kt
+│   ├── DishService.kt
+│   ├── LoginService.kt
+│   ├── MemberAuthService.kt
+│   ├── MemberOrderService.kt
+│   ├── RestaurantReviewService.kt
+│   ├── RestaurantService.kt
+│   └── TagService.kt
 ├── utils/
 │   ├── annotations/
+│   │   ├── LoginMember.kt
+│   │   └── RestaurantOwner.kt
 │   ├── exception/
-│   ├── extensions/
-│   └── helper/
-├── Applications.kt
+│   │   ├── DishAlreadyExistsException.kt
+│   │   ├── DuplicateEntityException.kt
+│   │   ├── EntityNotFoundException.kt
+│   │   ├── UnauthorisedUserException.kt
+│   │   ├── UserAlreadyExistsException.kt
+│   │   └── UserCredentialException.kt
+│   └── mapper/
+│       └── UserCreateRequestDtoMapper.kt
+├── Application.kt
 ├── resources/
-│   └── .../
+│   └── application.properties
 └── test/
-    └── .../
+    ├── TestFixture.kt
+    ├── config/
+    │   ├── argumentResolver/
+    │   │   └── LoginMemberArgumentResolverTest.kt
+    │   └── interceptor/
+    │       ├── AdminInterceptorTest.kt
+    │       ├── MemberInterceptorTest.kt
+    │       └── RestaurantOwnerInterceptorTest.kt
+    ├── controller/
+    │   ├── dish/
+    │   │   ├── DishControllerTest.kt
+    │   │   └── DishE2ETest.kt
+    │   ├── member/
+    │   │   ├── AbstractDocumentTest.kt
+    │   │   ├── CartProductControllerTest.kt
+    │   │   ├── MemberAuthControllerTest.kt
+    │   │   └── MemberDishReviewControllerTest.kt
+    │   └── restaurant/
+    │       └── RestaurantControllerTest.kt
+    ├── dto/
+    │   ├── auth/
+    │   │   └── LoginRequestDtoTest.kt
+    │   └── user/
+    │       └── UserCreateRequestDtoTest.kt
+    ├── infrastructure/
+    │   └── JwtProviderTest.kt
+    ├── model/
+    │   ├── RestaurantTest.kt
+    │   └── UserTest.kt
+    ├── repository/
+    │   ├── CartProductRepositoryTest.kt
+    │   ├── DishReviewRepositoryTest.kt
+    │   ├── RestaurantReviewRepositoryTest.kt
+    │   └── UserRepositoryTest.kt
+    └── service/
+        ├── CartProductServiceTest.kt
+        ├── DishReviewServiceTest.kt
+        ├── DishServiceTest.kt
+        ├── LoginServiceTest.kt
+        ├── MemberAuthServiceTest.kt
+        ├── RestaurantReviewServiceTest.kt
+        └── RestaurantServiceTest.kt
 ```
 ## Branching Strategy
 
