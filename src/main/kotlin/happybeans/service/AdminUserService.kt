@@ -7,8 +7,10 @@ import happybeans.repository.UserRepository
 import happybeans.utils.exception.DuplicateEntityException
 import happybeans.utils.mapper.toEntity
 import org.springframework.stereotype.Service
+import org.springframework.transaction.annotation.Transactional
 
 @Service
+@Transactional
 class AdminUserService(
     private val userRepository: UserRepository,
 ) {
