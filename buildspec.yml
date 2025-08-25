@@ -7,7 +7,7 @@ phases:
   pre_build:
     commands:
       - ./gradlew clean
-      - rm -rf .env
+#      - rm -rf .env
       - echo "JWT_SECRET=${JWT_SECRET}" > .env
       - echo "JWT_TIME=${JWT_TIME}" >> .env
       - echo ".env file created:"
