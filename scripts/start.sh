@@ -19,4 +19,5 @@ fi
 
 echo ">>> ####### Test #######"
 echo ">>> [ApplicationStart] Starting application: $JAR_FILE"
-sudo java -jar $JAR_FILE > /home/ubuntu/app/app.log 2>&1 &
+export $(grep -v '^#' /home/ubuntu/app/.env | xargs)
+sudo -E java -jar $JAR_FILE > /home/ubuntu/app/app.log 2>&1 &
