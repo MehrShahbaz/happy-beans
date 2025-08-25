@@ -1,21 +1,17 @@
 package happybeans.service
 
 import happybeans.dto.review.ReviewCreateRequestDto
-import happybeans.enums.TagContainerType
+import happybeans.enums.UserRole
 import happybeans.model.Dish
 import happybeans.model.DishOption
 import happybeans.model.Restaurant
 import happybeans.model.RestaurantReview
-import happybeans.model.Tag
-import happybeans.model.TagContainer
 import happybeans.model.User
 import happybeans.model.WorkingDateHour
 import happybeans.repository.DishOptionRepository
 import happybeans.repository.DishRepository
 import happybeans.repository.RestaurantRepository
 import happybeans.repository.RestaurantReviewRepository
-import happybeans.repository.TagContainerRepository
-import happybeans.repository.TagRepository
 import happybeans.repository.UserRepository
 import jakarta.transaction.Transactional
 import org.assertj.core.api.Assertions.assertThat
@@ -46,15 +42,10 @@ class RestaurantReviewServiceTest {
     private lateinit var dishOptionRepository: DishOptionRepository
 
     @Autowired
-    private lateinit var tagContainerRepository: TagContainerRepository
-
-    @Autowired
-    private lateinit var tagRepository: TagRepository
-
-    @Autowired
     private lateinit var dishRepository: DishRepository
 
     private lateinit var member: User
+    private lateinit var owner: User
     private lateinit var restaurant: Restaurant
     private lateinit var dishOption: DishOption
     private lateinit var dish: Dish
@@ -71,8 +62,20 @@ class RestaurantReviewServiceTest {
                 ),
             )
 
+        owner =
+            userRepository.save(
+                User(
+                    email = "owner-login@test.com",
+                    password = "12345678",
+                    firstName = "Test",
+                    lastName = "User",
+                    role = UserRole.RESTAURANT_OWNER,
+                ),
+            )
+
         restaurant =
             Restaurant(
+                user = owner,
                 name = "Cozy Bistro",
                 description = "A charming bistro with a warm atmosphere",
                 image = "https://example.com/cozy-bistro.jpg",
@@ -102,18 +105,6 @@ class RestaurantReviewServiceTest {
         restaurant.addDish(dish)
         dish = dishRepository.save(dish)
 
-        val tag = Tag(name = "Tomato")
-        val savedTag = tagRepository.save(tag)
-
-        val tagContainer =
-            TagContainer(
-                tags = mutableListOf(savedTag),
-                type = TagContainerType.INGREDIENTS,
-                user = null,
-                dish = dish,
-            )
-        val savedTagContainer = tagContainerRepository.save(tagContainer)
-
         dishOption =
             DishOption(
                 dish = dish,
@@ -122,11 +113,9 @@ class RestaurantReviewServiceTest {
                 price = 12.99,
                 image = "https://example.com/regular-portion.jpg",
                 available = true,
-                ingredients = savedTagContainer,
-                rating = 4.0,
                 prepTimeMinutes = 15,
             )
-        dish.dishOption.add(dishOption)
+        dish.dishOptions.add(dishOption)
         dishOption = dishOptionRepository.save(dishOption)
     }
 
@@ -191,6 +180,7 @@ class RestaurantReviewServiceTest {
         val restaurant2 =
             restaurantRepository.save(
                 Restaurant(
+                    user = owner,
                     name = "Cozy Cafe",
                     description = "A charming bistro with a warm atmosphere",
                     image = "https://example.com/cozy-cafe.jpg",

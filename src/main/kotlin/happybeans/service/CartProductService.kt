@@ -6,6 +6,7 @@ import happybeans.dto.cart.CartProductResponse
 import happybeans.model.CartProduct
 import happybeans.model.User
 import happybeans.repository.CartProductRepository
+import happybeans.utils.exception.EntityNotFoundException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -39,6 +40,10 @@ class CartProductService(
 
         val dish = dishService.findById(dishId)
         val dishOption = dishService.findByIdAndDishOptionId(dishId, optionId)
+
+        if (!dishOption.available) {
+            throw EntityNotFoundException("Dish option '${dishOption.name}' is currently unavailable")
+        }
 
         val product =
             cartProductRepository.findByUserIdAndDishOptionId(user.id, optionId)
