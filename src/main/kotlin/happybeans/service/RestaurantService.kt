@@ -28,7 +28,7 @@ class RestaurantService(
             throw DuplicateEntityException("Owner already has a restaurant with name ${restaurantCreateRequest.name}")
         }
 
-        val workingHours = createWorkingHours(restaurantCreateRequest.workingDateHours)
+        val workingDateHours = createWorkingHours(restaurantCreateRequest.workingDateHours)
 
         val newRestaurant =
             Restaurant(
@@ -37,7 +37,7 @@ class RestaurantService(
                 restaurantCreateRequest.description,
                 restaurantCreateRequest.image,
                 restaurantCreateRequest.addressUrl,
-                workingHours.toMutableList(),
+                workingDateHours = workingDateHours.toMutableList(),
             )
 
         return restaurantRepository.save(newRestaurant)
