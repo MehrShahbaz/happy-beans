@@ -7,6 +7,7 @@ import happybeans.model.CartProduct
 import happybeans.model.User
 import happybeans.repository.CartProductRepository
 import mu.KotlinLogging
+import happybeans.utils.exception.EntityNotFoundException
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -44,26 +45,23 @@ class CartProductService(
         val (dishId, optionId) = ids
 
         val dish = dishService.findById(dishId)
-        logger.info { "Attempting to add or update dish: $dishId, option: $optionId for user: ${user.id}" }
         val dishOption = dishService.findByIdAndDishOptionId(dishId, optionId)
 
-        val product = cartProductRepository.findByUserIdAndDishOptionId(user.id, optionId)
-        val cartProduct =
-            if (product != null) {
-                logger.debug { "Product already exists. Updating quantity from ${product.quantity} to ${req.quantity}." }
-                product.apply { quantity = req.quantity }
-            } else {
-                logger.debug { "Product does not exist. Adding new product to cart." }
-                CartProduct(
+        if (!dishOption.available) {
+            throw EntityNotFoundException("Dish option '${dishOption.name}' is currently unavailable")
+        }
+
+        val product =
+            cartProductRepository.findByUserIdAndDishOptionId(user.id, optionId)
+                ?.apply { quantity = req.quantity }
+                ?: CartProduct(
                     user = user,
                     dish = dish,
                     dishOption = dishOption,
                     quantity = req.quantity,
                 )
-            }
 
-        cartProductRepository.save(cartProduct)
-        logger.info { "Cart product for user: ${user.id} with dish: $dishId saved successfully." }
+        cartProductRepository.save(product)
     }
 
     @Transactional
