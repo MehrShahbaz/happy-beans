@@ -6,7 +6,6 @@ phases:
       java: corretto21
   pre_build:
     commands:
-      - echo ">>> Cleaning project..." > logs
       - ./gradlew clean
       - echo "JWT_SECRET=${JWT_SECRET}" > .env
       - echo "JWT_TIME=${JWT_TIME}" >> .env
