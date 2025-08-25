@@ -2,14 +2,14 @@ package happybeans.repository
 
 import happybeans.model.Restaurant
 import org.springframework.data.jpa.repository.JpaRepository
+import org.springframework.stereotype.Repository
 
+@Repository
 interface RestaurantRepository : JpaRepository<Restaurant, Long> {
-//    fun findByRestaurantId(
-//        restaurantId: Long,
-//        pageable: Pageable,
-//    ): List<Restaurant>?
-//
-//    fun findByIdOrNull(restaurantId: Long): Restaurant?
-//
-//    fun findAllOrNull(pageable: Pageable): List<Restaurant>?
+    fun findByIdAndUserId(
+        restaurantId: Long,
+        ownerId: Long,
+    ): Restaurant?
+
+    fun findAllByUserId(userId: Long): List<Restaurant>
 }

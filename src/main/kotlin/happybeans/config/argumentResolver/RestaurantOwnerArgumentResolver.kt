@@ -3,7 +3,7 @@ package happybeans.config.argumentResolver
 import happybeans.enums.UserRole
 import happybeans.model.User
 import happybeans.repository.UserRepository
-import happybeans.utils.annotations.LoginMember
+import happybeans.utils.annotations.RestaurantOwner
 import happybeans.utils.exception.UnauthorisedUserException
 import org.springframework.core.MethodParameter
 import org.springframework.stereotype.Component
@@ -18,7 +18,7 @@ class RestaurantOwnerArgumentResolver(
     private val userRepository: UserRepository,
 ) : HandlerMethodArgumentResolver {
     override fun supportsParameter(parameter: MethodParameter): Boolean {
-        return parameter.hasParameterAnnotation(LoginMember::class.java)
+        return parameter.hasParameterAnnotation(RestaurantOwner::class.java)
     }
 
     override fun resolveArgument(

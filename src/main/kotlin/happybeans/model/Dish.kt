@@ -1,5 +1,6 @@
 package happybeans.model
 
+import happybeans.utils.exception.EntityNotFoundException
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -23,18 +24,55 @@ class Dish(
     @Column(name = "image", nullable = false)
     var image: String,
     @OneToMany(mappedBy = "dish", cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.LAZY)
-    var dishOption: MutableSet<DishOption> = mutableSetOf(),
-    @Column(name = "average_rating")
-    var averageRating: Double? = null,
+    var dishOptions: MutableSet<DishOption> = mutableSetOf(),
     @CreationTimestamp
     val createdAt: LocalDateTime? = null,
     @UpdateTimestamp
     var updatedAt: LocalDateTime? = null,
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    val id: Long = 0L,
+    var id: Long = 0L,
 ) {
-    // if not used, can remove later : equals, hashCode, toString
+    fun addDishOption(option: DishOption) {
+        option.dish = this
+        dishOptions.add(option)
+    }
+
+    fun addDishOptions(dishOptions: List<DishOption>) {
+        dishOptions.forEach { option ->
+            addDishOption(option)
+        }
+    }
+
+    fun removeDishOption(option: DishOption) {
+        dishOptions.remove(option)
+    }
+
+    fun setDishOptionAvailability(
+        optionId: Long,
+        available: Boolean,
+    ) {
+        dishOptions.find { it.id == optionId }?.let { option ->
+            option.available = available
+        } ?: throw EntityNotFoundException("Dish option with id $optionId not found in dish $id")
+    }
+
+    fun enableDishOption(optionId: Long) {
+        setDishOptionAvailability(optionId, true)
+    }
+
+    fun disableDishOption(optionId: Long) {
+        setDishOptionAvailability(optionId, false)
+    }
+
+    fun getAvailableOptions(): List<DishOption> {
+        return dishOptions.filter { it.available }
+    }
+
+    fun hasAvailableOptions(): Boolean {
+        return dishOptions.any { it.available }
+    }
+
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is Dish) return false
