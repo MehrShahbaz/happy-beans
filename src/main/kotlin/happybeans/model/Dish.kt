@@ -23,7 +23,7 @@ class Dish(
     var description: String,
     @Column(name = "image", nullable = false)
     var image: String,
-    @OneToMany(mappedBy = "dish", cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.LAZY)
+    @OneToMany(mappedBy = "dish", cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.EAGER)
     var dishOptions: MutableSet<DishOption> = mutableSetOf(),
     @CreationTimestamp
     val createdAt: LocalDateTime? = null,

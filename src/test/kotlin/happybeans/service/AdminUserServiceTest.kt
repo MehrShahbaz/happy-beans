@@ -2,6 +2,8 @@ package happybeans.service
 
 import happybeans.dto.user.UserCreateRequestDto
 import happybeans.enums.UserRole
+import happybeans.repository.RestaurantRepository
+import happybeans.repository.TagRepository
 import happybeans.repository.UserRepository
 import happybeans.utils.exception.DuplicateEntityException
 import org.assertj.core.api.Assertions.assertThat
@@ -14,6 +16,12 @@ import org.springframework.boot.test.context.SpringBootTest
 @SpringBootTest
 class AdminUserServiceTest {
     @Autowired
+    private lateinit var restaurantRepository: RestaurantRepository
+
+    @Autowired
+    private lateinit var tagRepository: TagRepository
+
+    @Autowired
     lateinit var adminUserService: AdminUserService
 
     @Autowired
@@ -21,6 +29,8 @@ class AdminUserServiceTest {
 
     @AfterEach
     fun clean() {
+        tagRepository.deleteAll()
+        restaurantRepository.deleteAll()
         userRepository.deleteAll()
     }
 

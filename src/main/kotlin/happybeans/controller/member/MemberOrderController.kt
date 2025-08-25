@@ -2,9 +2,9 @@ package happybeans.controller.member
 
 import happybeans.dto.order.OrderListResponse
 import happybeans.dto.order.OrderResponse
-import happybeans.dto.response.MessageResponse
 import happybeans.model.User
 import happybeans.service.MemberOrderService
+import happybeans.service.OrderPaymentService
 import happybeans.utils.annotations.LoginMember
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/member/orders")
 class MemberOrderController(
     private val orderService: MemberOrderService,
+    private val orderPaymentService: OrderPaymentService,
 ) {
     @GetMapping("")
     fun getAllOrders(
@@ -36,26 +37,15 @@ class MemberOrderController(
     @PostMapping("/cart-checkout")
     fun createCheckoutCartIntent(
         @LoginMember user: User,
-    ): ResponseEntity<MessageResponse> {
-        orderService.createCheckoutCartIntent(user)
-        return ResponseEntity.ok(MessageResponse("Cart Checkout"))
-    }
-
-    @PostMapping("/confirm-checkout/{orderId}")
-    fun confirmCheckout(
-        @LoginMember user: User,
-        @PathVariable orderId: Long,
-    ): ResponseEntity<MessageResponse> {
-        orderService.createCheckoutCartIntent(user)
-        return ResponseEntity.ok(MessageResponse("confirm-checkout/$orderId"))
+    ): ResponseEntity<Map<String, String>> {
+        return ResponseEntity.ok(mapOf("paymentUrl" to orderPaymentService.handleCartCheckout(user)))
     }
 
     @PostMapping("/buy-dish/{dishOptionId}")
     fun buyProduct(
         @LoginMember user: User,
         @PathVariable dishOptionId: Long,
-    ): ResponseEntity<MessageResponse> {
-        orderService.buyProduct(user, dishOptionId)
-        return ResponseEntity.ok(MessageResponse("buy-product/$dishOptionId"))
+    ): ResponseEntity<Map<String, String>> {
+        return ResponseEntity.ok(mapOf("paymentUrl" to orderPaymentService.handleBuyDish(user, dishOptionId)))
     }
 }

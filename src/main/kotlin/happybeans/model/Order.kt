@@ -23,15 +23,15 @@ import java.time.LocalDateTime
 class Order(
     @OneToMany(cascade = [CascadeType.ALL], fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "orders_id", nullable = false)
-    val orderProducts: List<OrderProduct> = listOf(),
+    val orderProducts: MutableList<OrderProduct> = mutableListOf(),
     @Column(name = "user_id", nullable = false)
     var userId: Long,
     @Column(name = "user_email", nullable = false)
     var userEmail: String,
     @Column(name = "payment_id", nullable = false)
-    val paymentId: String,
+    val paymentId: String? = null,
     @Column(name = "total_amount", nullable = false)
-    var totalAmount: Double,
+    var totalAmount: Double = 0.0,
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
     var status: OrderStatus = OrderStatus.PENDING,

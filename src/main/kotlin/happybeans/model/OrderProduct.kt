@@ -12,9 +12,9 @@ import java.time.LocalDateTime
 @Entity
 class OrderProduct(
     @Column(name = "dish_option_id")
-    var dishId: Long,
+    var dishOptionId: Long,
     @Column(name = "dish_name")
-    var dishName: String,
+    var dishOptionName: String,
     @Column(name = "price", nullable = false)
     var price: Double,
     @Column(name = "quantity", nullable = false)
