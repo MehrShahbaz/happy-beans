@@ -23,7 +23,7 @@ class MemberAuthService(
         }
         val member = userRepository.save(userCreateRequestDto.toEntity())
         val authTokenPayload = jwtProvider.createToken(AuthTokenPayload(member.email))
-        return UserCreateResponse(URI.create("/api/member/$member.id"), "Bearer $authTokenPayload")
+        return UserCreateResponse(URI.create("/api/member/$member.id"), authTokenPayload)
     }
 
     fun login(loginRequestDto: LoginRequestDto): String {
