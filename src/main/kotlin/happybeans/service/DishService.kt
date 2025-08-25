@@ -5,7 +5,9 @@ import happybeans.dto.dish.DishOptionCreateRequest
 import happybeans.dto.dish.DishOptionPatchRequest
 import happybeans.dto.dish.DishOptionUpdateRequest
 import happybeans.dto.dish.DishPatchRequest
+import happybeans.dto.dish.DishResponse
 import happybeans.dto.dish.DishUpdateRequest
+import happybeans.dto.dish.toResponse
 import happybeans.model.Dish
 import happybeans.model.DishOption
 import happybeans.model.Restaurant
@@ -30,8 +32,8 @@ class DishService(
     private val tagService: TagService,
 ) {
     @Transactional(readOnly = true)
-    fun getAllDishes(): List<Dish> {
-        return dishRepository.findAll()
+    fun getAllDishes(): List<DishResponse> {
+        return dishRepository.findAll().map { it.toResponse()}
     }
 
     @Transactional(readOnly = true)

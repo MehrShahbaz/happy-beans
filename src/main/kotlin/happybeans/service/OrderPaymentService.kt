@@ -22,7 +22,7 @@ class OrderPaymentService(
     ): String {
         val order = memberOrderService.buyProduct(member, dishOptionId)
         val session = stripePaymentService.createSession(order)
-        paymentService.createPayment(session.paymentIntent, order)
+        paymentService.createPayment(session.id, order)
         return session.url
     }
 }
