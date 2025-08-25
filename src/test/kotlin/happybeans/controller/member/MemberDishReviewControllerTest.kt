@@ -1,6 +1,7 @@
 package happybeans.controller.member
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import happybeans.controller.AbstractRestDocsMockMvcTest
 import happybeans.service.DishReviewService
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
@@ -29,7 +30,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-class MemberDishReviewControllerTest : AbstractDocumentTest() {
+class MemberDishReviewControllerTest : AbstractRestDocsMockMvcTest() {
     @MockitoBean
     private lateinit var dishReviewService: DishReviewService
 

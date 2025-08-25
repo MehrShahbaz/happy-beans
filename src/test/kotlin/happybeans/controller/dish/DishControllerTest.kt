@@ -4,7 +4,7 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import happybeans.TestFixture
 import happybeans.config.argumentResolver.RestaurantOwnerArgumentResolver
 import happybeans.config.interceptor.RestaurantOwnerInterceptor
-import happybeans.controller.member.AbstractDocumentTest
+import happybeans.controller.AbstractRestDocsMockMvcTest
 import happybeans.dto.dish.DishCreateRequest
 import happybeans.dto.dish.DishOptionCreateRequest
 import happybeans.dto.dish.DishUpdateRequest
@@ -36,7 +36,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-class DishControllerTest : AbstractDocumentTest() {
+class DishControllerTest : AbstractRestDocsMockMvcTest() {
     @MockitoBean
     private lateinit var dishService: DishService
 
