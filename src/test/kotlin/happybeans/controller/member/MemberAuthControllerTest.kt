@@ -1,47 +1,23 @@
 package happybeans.controller.member
 
+import happybeans.controller.AbstractRestDocsRestAssuredTest
+import happybeans.dto.auth.LoginRequestDto
 import happybeans.dto.user.UserCreateRequestDto
 import io.restassured.RestAssured
-import io.restassured.builder.RequestSpecBuilder
 import io.restassured.http.ContentType
-import io.restassured.specification.RequestSpecification
 import org.assertj.core.api.Assertions.assertThat
-import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
-import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.boot.test.autoconfigure.restdocs.AutoConfigureRestDocs
 import org.springframework.boot.test.context.SpringBootTest
-import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.http.HttpStatus
-import org.springframework.restdocs.RestDocumentationContextProvider
-import org.springframework.restdocs.RestDocumentationExtension
 import org.springframework.restdocs.payload.JsonFieldType
 import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.restassured.RestAssuredRestDocumentation.document
-import org.springframework.restdocs.restassured.RestAssuredRestDocumentation.documentationConfiguration
-import org.springframework.test.context.junit.jupiter.SpringExtension
 
 @AutoConfigureRestDocs
-@ExtendWith(SpringExtension::class, RestDocumentationExtension::class)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class MemberAuthControllerTest {
-    @LocalServerPort
-    private val port = 0
-
-    private lateinit var spec: RequestSpecification
-
-    @BeforeEach
-    fun setUp(restDocumentation: RestDocumentationContextProvider) {
-        // Set the base URI and port for RestAssured
-        RestAssured.baseURI = "http://localhost"
-        RestAssured.port = port
-        this.spec =
-            RequestSpecBuilder()
-                .addFilter(documentationConfiguration(restDocumentation))
-                .build()
-    }
-
+class MemberAuthControllerTest : AbstractRestDocsRestAssuredTest() {
     @Test
     fun `sign-up User`() {
         val user =
@@ -51,14 +27,15 @@ class MemberAuthControllerTest {
                 "First",
                 "Last",
             )
+
         val response =
             RestAssured
-                .given(this.spec).log().all() // Use the pre-configured 'spec'
-                .body(user)
+                .given(spec).port(port).log().all()
                 .contentType(ContentType.JSON)
+                .body(user)
                 .filter(
                     document(
-                        "sign-up-user",
+                        "member-auth-sign-up",
                         responseFields(
                             fieldWithPath("token")
                                 .type(JsonFieldType.STRING)
@@ -67,9 +44,50 @@ class MemberAuthControllerTest {
                     ),
                 )
                 .`when`().post("/api/member/auth/sign-up")
-                .then().log().all().extract()
+                .then().log().all()
+                .statusCode(HttpStatus.CREATED.value())
+                .extract()
 
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value())
-        assertThat(response.body().jsonPath().get<String>("token")).isNotEmpty
+        assertThat(response.body().jsonPath().get<String>("token")).isNotBlank()
+    }
+
+    @Test
+    fun `login User`() {
+        val email = "test-${System.nanoTime()}@ex.com"
+        val password = "12345678"
+
+        RestAssured.given(spec).port(port)
+            .contentType(ContentType.JSON)
+            .body(
+                UserCreateRequestDto(
+                    email = email,
+                    password = password,
+                    firstName = "John",
+                    lastName = "Doe",
+                ),
+            )
+            .`when`().post("/api/member/auth/sign-up")
+            .then().statusCode(HttpStatus.CREATED.value())
+
+        val response =
+            RestAssured.given(spec).port(port).log().all()
+                .contentType(ContentType.JSON)
+                .body(LoginRequestDto(email, password))
+                .filter(
+                    document(
+                        "member-auth-login",
+                        responseFields(
+                            fieldWithPath("token")
+                                .type(JsonFieldType.STRING)
+                                .description("Authentication token"),
+                        ),
+                    ),
+                )
+                .`when`().post("/api/member/auth/login")
+                .then().log().all()
+                .statusCode(HttpStatus.OK.value())
+                .extract()
+
+        assertThat(response.body().jsonPath().get<String>("token")).isNotBlank()
     }
 }

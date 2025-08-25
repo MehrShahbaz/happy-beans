@@ -42,6 +42,7 @@ dependencies {
     implementation("io.github.cdimascio:dotenv-java:3.0.0")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("org.springframework.boot:spring-boot-starter-mail")
+    implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
 
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.6")
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.6")
@@ -63,10 +64,9 @@ dependencies {
 //    testImplementation("com.epages:restdocs-api-spec-mockmvc:0.17.1")
 
     asciidoctorExt("org.springframework.restdocs:spring-restdocs-asciidoctor")
+    testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
     testImplementation("org.springframework.restdocs:spring-restdocs-core")
     testImplementation("org.springframework.restdocs:spring-restdocs-restassured")
-//    testImplementation("org.springframework.restdocs:spring-restdocs-webtestclient")
-    implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
 }
 
 kotlin {
