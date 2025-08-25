@@ -44,10 +44,10 @@ class AdminRestaurantE2ETest(
         val restaurantOwner = TestFixture.createRestaurantOwner()
         val request = TestFixture.createRestaurantCreateRequest()
 
-        // when: create restaurant
+        // when: create the restaurant
         val restaurant = restaurantService.createRestaurant(request, restaurantOwner)
 
-        // then: restaurant exist in DB
+        // then: the restaurant exists in DB
         assertThat(restaurantRepository.findById(restaurant.id)).isPresent
 
         // when: delete restaurant
@@ -63,7 +63,7 @@ class AdminRestaurantE2ETest(
         val restaurantOwner = TestFixture.createRestaurantOwner()
         val request = TestFixture.createRestaurantCreateRequest()
 
-        // when: create restaurant
+        // when: create the restaurant
         val restaurant = restaurantService.createRestaurant(request, restaurantOwner)
         assertThat(restaurant.status).isEqualTo(RestaurantStatus.ACTIVE)
 
