@@ -57,12 +57,13 @@ dependencies {
     testImplementation("org.hibernate.validator:hibernate-validator:8.0.1.Final")
     testImplementation("io.mockk:mockk:1.13.11")
     testImplementation("org.mockito.kotlin:mockito-kotlin:5.2.1")
-    testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
 
 //    testImplementation("com.epages:restdocs-api-spec-mockmvc:0.17.1")
 
     asciidoctorExt("org.springframework.restdocs:spring-restdocs-asciidoctor")
     testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
+    testImplementation("org.springframework.restdocs:spring-restdocs-core")
+    testImplementation("org.springframework.restdocs:spring-restdocs-restassured")
 }
 
 kotlin {
