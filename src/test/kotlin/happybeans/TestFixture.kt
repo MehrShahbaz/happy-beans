@@ -1,5 +1,8 @@
 package happybeans
 
+import happybeans.dto.restaurant.RestaurantCreateRequest
+import happybeans.dto.restaurant.WorkingDateHourRequest
+import happybeans.enums.UserRole
 import happybeans.model.Dish
 import happybeans.model.DishOption
 import happybeans.model.Restaurant
@@ -233,4 +236,53 @@ object TestFixture {
             description = "Crisp romaine lettuce with parmesan cheese, croutons, and our homemade Caesar dressing.",
             image = "https://images.unsplash.com/photo-1546793665-c74683f339c1?w=800&q=80",
         )
+
+    fun createRestaurantOwner(): User {
+        return User(
+            email = "owner@gmail.com",
+            password = "password",
+            firstName = "Sushi",
+            lastName = "Master",
+            role = UserRole.RESTAURANT_OWNER,
+        )
+    }
+
+    val workingDateHoursDefault =
+        listOf<WorkingDateHourRequest>(
+            WorkingDateHourRequest(
+                dayOfWeek = DayOfWeek.TUESDAY,
+                openTime = LocalTime.of(9, 0),
+                closeTime = LocalTime.of(18, 0),
+            ),
+            WorkingDateHourRequest(
+                dayOfWeek = DayOfWeek.WEDNESDAY,
+                openTime = LocalTime.of(9, 0),
+                closeTime = LocalTime.of(18, 0),
+            ),
+            WorkingDateHourRequest(
+                dayOfWeek = DayOfWeek.THURSDAY,
+                openTime = LocalTime.of(9, 0),
+                closeTime = LocalTime.of(18, 0),
+            ),
+            WorkingDateHourRequest(
+                dayOfWeek = DayOfWeek.FRIDAY,
+                openTime = LocalTime.of(9, 0),
+                closeTime = LocalTime.of(18, 0),
+            ),
+            WorkingDateHourRequest(
+                dayOfWeek = DayOfWeek.SATURDAY,
+                openTime = LocalTime.of(9, 0),
+                closeTime = LocalTime.of(18, 0),
+            ),
+        )
+
+    fun createRestaurantCreateRequest(): RestaurantCreateRequest {
+        return RestaurantCreateRequest(
+            name = "Ishin",
+            description = "We offer fresh Sushi for the reasonable price",
+            image = "https://images.unsplash.com/photo-1725122194872-ace87e5a1a8d",
+            addressUrl = "https://maps.app.goo.gl/WjjdsCZm8eyv9tvd8",
+            workingDateHours = workingDateHoursDefault,
+        )
+    }
 }
