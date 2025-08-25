@@ -1,5 +1,6 @@
 package happybeans.controller.member
 
+import happybeans.controller.AbstractRestDocsRestAssuredTest
 import happybeans.dto.auth.LoginRequestDto
 import happybeans.dto.user.UserCreateRequestDto
 import io.restassured.RestAssured

@@ -1,6 +1,7 @@
 package happybeans.controller.member
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import happybeans.controller.AbstractRestDocsMockMvcTest
 import happybeans.service.DishReviewService
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test

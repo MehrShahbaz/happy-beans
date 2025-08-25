@@ -1,6 +1,7 @@
 package happybeans.controller.member
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import happybeans.controller.AbstractRestDocsMockMvcTest
 import happybeans.dto.order.OrderIntentResponse
 import happybeans.dto.order.OrderProductResponse
 import happybeans.dto.order.OrderResponse

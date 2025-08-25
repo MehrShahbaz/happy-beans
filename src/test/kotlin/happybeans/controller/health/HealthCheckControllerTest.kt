@@ -1,6 +1,6 @@
 package happybeans.controller.health
 
-import happybeans.controller.member.AbstractRestDocsRestAssuredTest
+import happybeans.controller.AbstractRestDocsRestAssuredTest
 import io.restassured.RestAssured
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test

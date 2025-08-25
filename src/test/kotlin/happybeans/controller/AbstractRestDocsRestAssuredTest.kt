@@ -1,4 +1,4 @@
-package happybeans.controller.member
+package happybeans.controller
 
 import io.restassured.RestAssured
 import io.restassured.builder.RequestSpecBuilder
@@ -8,8 +8,8 @@ import org.junit.jupiter.api.extension.ExtendWith
 import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.restdocs.RestDocumentationContextProvider
 import org.springframework.restdocs.RestDocumentationExtension
-import org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint
-import org.springframework.restdocs.restassured.RestAssuredRestDocumentation.documentationConfiguration
+import org.springframework.restdocs.operation.preprocess.Preprocessors
+import org.springframework.restdocs.restassured.RestAssuredRestDocumentation
 
 @ExtendWith(RestDocumentationExtension::class)
 abstract class AbstractRestDocsRestAssuredTest {
@@ -23,10 +23,10 @@ abstract class AbstractRestDocsRestAssuredTest {
         spec =
             RequestSpecBuilder()
                 .addFilter(
-                    documentationConfiguration(restDocumentation)
+                    RestAssuredRestDocumentation.documentationConfiguration(restDocumentation)
                         .operationPreprocessors()
-                        .withRequestDefaults(prettyPrint())
-                        .withResponseDefaults(prettyPrint()),
+                        .withRequestDefaults(Preprocessors.prettyPrint())
+                        .withResponseDefaults(Preprocessors.prettyPrint()),
                 )
                 .build()
     }

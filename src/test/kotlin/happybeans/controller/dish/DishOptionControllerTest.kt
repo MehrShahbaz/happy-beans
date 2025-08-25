@@ -4,7 +4,7 @@ import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import happybeans.TestFixture
 import happybeans.config.argumentResolver.RestaurantOwnerArgumentResolver
 import happybeans.config.interceptor.RestaurantOwnerInterceptor
-import happybeans.controller.member.AbstractRestDocsMockMvcTest
+import happybeans.controller.AbstractRestDocsMockMvcTest
 import happybeans.dto.dish.DishOptionPatchRequest
 import happybeans.dto.dish.DishOptionUpdateRequest
 import happybeans.enums.UserRole

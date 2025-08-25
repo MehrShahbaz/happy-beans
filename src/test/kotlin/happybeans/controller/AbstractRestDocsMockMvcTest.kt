@@ -1,4 +1,4 @@
-package happybeans.controller.member
+package happybeans.controller
 
 import happybeans.config.argumentResolver.LoginMemberArgumentResolver
 import happybeans.config.interceptor.MemberInterceptor
