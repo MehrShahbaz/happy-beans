@@ -11,15 +11,16 @@ import org.springframework.restdocs.restassured.RestAssuredRestDocumentation.doc
 
 @AutoConfigureRestDocs
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-class HealthCheckControllerTest : AbstractRestDocsRestAssuredTest(){
+class HealthCheckControllerTest : AbstractRestDocsRestAssuredTest() {
     @Test
     fun `health returns OK`() {
-        val response = RestAssured
-            .given(spec).port(port).log().all()
-            .filter(document("health-check"))
-            .`when`().get("/api/health")
-            .then().log().all()
-            .extract()
+        val response =
+            RestAssured
+                .given(spec).port(port).log().all()
+                .filter(document("health-check"))
+                .`when`().get("/api/health")
+                .then().log().all()
+                .extract()
 
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value())
         assertThat(response.body().asString()).isEqualTo("OK")
