@@ -13,13 +13,13 @@ import java.time.LocalDateTime
 
 @Entity
 class JoinRequest(
-    @Column(name = "email", unique = true)
+    @Column(name = "email")
     val email: String,
-    @Column(name = "first_name", unique = true)
+    @Column(name = "first_name")
     val firstName: String,
-    @Column(name = "last_name", unique = true)
+    @Column(name = "last_name")
     val lastName: String,
-    @Column(name = "message", unique = true)
+    @Column(name = "message")
     val message: String,
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)

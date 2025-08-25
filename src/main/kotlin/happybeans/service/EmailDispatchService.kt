@@ -8,6 +8,7 @@ import org.springframework.stereotype.Service
 class EmailDispatchService(
     private val mailSender: JavaMailSender,
 ) {
+    // TODO Create Email Templates
     fun sendRestaurantOwnerWelcomeEmail(
         to: String,
         password: String,
@@ -30,8 +31,9 @@ class EmailDispatchService(
         mailSender.send(message)
     }
 
+    // TODO fix the messages
     companion object {
         private const val RESTAURANT_OWNER_EMAIL_MESSAGE = "Welcome to Happy Beans"
-        private const val REJECT_INVITE_SUBJECT = ""
+        private const val REJECT_INVITE_SUBJECT = "Hello, you were Rejected"
     }
 }
