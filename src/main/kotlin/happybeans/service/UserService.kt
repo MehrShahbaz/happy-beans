@@ -13,6 +13,7 @@ class UserService(
     private val userRepository: UserRepository,
     private val tagService: TagService,
 ) {
+    @Transactional(readOnly = true)
     fun findById(userId: Long): User {
         return userRepository.findById(userId)
             .orElseThrow { EntityNotFoundException("User with id '$userId' not found") }
@@ -108,11 +109,13 @@ class UserService(
         return userRepository.save(user)
     }
 
+    @Transactional(readOnly = true)
     fun getUserLikes(userId: Long): Set<Tag> {
         val user = findById(userId)
         return user.likes
     }
 
+    @Transactional(readOnly = true)
     fun getUserDislikes(userId: Long): Set<Tag> {
         val user = findById(userId)
         return user.dislikes
