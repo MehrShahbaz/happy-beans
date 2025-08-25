@@ -10,6 +10,8 @@ phases:
       - ./gradlew clean
       - echo "JWT_SECRET=${JWT_SECRET}" > .env
       - echo "JWT_TIME=${JWT_TIME}" >> .env
+      - echo ".env file created:"
+
   build:
     commands:
       - echo ">>> Building jar..."
