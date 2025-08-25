@@ -13,7 +13,7 @@ echo "Starting application with environment variables..."
 
 sudo java -jar "$JAR_FILE" \
     --spring.profiles.active=prod \
-    -Djwt.secret="$JWT_SECRET" \
-    -Djwt.time="$JWT_TIME" \
-    -Dstripe.secret.key="$STRIPE_SECRET_KEY" \
+    -DJWT_SECRET="$JWT_SECRET" \
+    -DJWT_TIME="$JWT_TIME" \
+    -DSTRIPE_SECRET_KEY="$STRIPE_SECRET_KEY" \
     > /home/ubuntu/app/app.log 2>&1 &
