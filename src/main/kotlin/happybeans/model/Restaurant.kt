@@ -1,6 +1,7 @@
 package happybeans.model
 
 import happybeans.dto.restaurant.RestaurantPatchRequest
+import happybeans.enums.RestaurantStatus
 import jakarta.persistence.CascadeType
 import jakarta.persistence.CollectionTable
 import jakarta.persistence.Column
@@ -32,6 +33,8 @@ class Restaurant(
     var image: String,
     @Column(name = "address_url")
     var addressUrl: String,
+    @Column(name = "status", nullable = false)
+    var status: RestaurantStatus = RestaurantStatus.ACTIVE,
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(
         name = "restaurant_working_dates_hours",
