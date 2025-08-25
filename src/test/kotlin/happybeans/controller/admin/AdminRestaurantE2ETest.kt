@@ -3,6 +3,7 @@ package happybeans.controller.admin
 import happybeans.TestFixture
 import happybeans.enums.RestaurantStatus
 import happybeans.repository.RestaurantRepository
+import happybeans.repository.UserRepository
 import happybeans.service.AdminRestaurantService
 import happybeans.service.RestaurantService
 import jakarta.transaction.Transactional
@@ -17,6 +18,7 @@ import org.springframework.boot.test.context.SpringBootTest
 class AdminRestaurantE2ETest(
     @Autowired private val restaurantService: RestaurantService,
     @Autowired private val restaurantRepository: RestaurantRepository,
+    @Autowired private val userRepository: UserRepository,
     @Autowired private val adminRestaurantService: AdminRestaurantService,
 ) {
     @Test
@@ -28,7 +30,7 @@ class AdminRestaurantE2ETest(
 
     @Test
     fun `get all restaurants returns created restaurant`() {
-        val restaurantOwner = TestFixture.createRestaurantOwner()
+        val restaurantOwner = userRepository.save(TestFixture.createRestaurantOwner())
         val request = TestFixture.createRestaurantCreateRequest()
         val restaurant = restaurantService.createRestaurant(request, restaurantOwner)
 
@@ -41,7 +43,7 @@ class AdminRestaurantE2ETest(
     @Test
     fun `create and delete restaurant`() {
         // given: a restaurant owner + create request
-        val restaurantOwner = TestFixture.createRestaurantOwner()
+        val restaurantOwner = userRepository.save(TestFixture.createRestaurantOwner())
         val request = TestFixture.createRestaurantCreateRequest()
 
         // when: create the restaurant
@@ -60,7 +62,7 @@ class AdminRestaurantE2ETest(
     @Test
     fun `deactivate restaurant status`() {
         // given: a restaurant owner + create request
-        val restaurantOwner = TestFixture.createRestaurantOwner()
+        val restaurantOwner = userRepository.save(TestFixture.createRestaurantOwner())
         val request = TestFixture.createRestaurantCreateRequest()
 
         // when: create the restaurant
@@ -68,7 +70,7 @@ class AdminRestaurantE2ETest(
         assertThat(restaurant.status).isEqualTo(RestaurantStatus.ACTIVE)
 
         // when & then: restaurant status is updated
-        adminRestaurantService.updateRestaurantStatus(restaurant.id, RestaurantStatus.INACTIVE)
-        assertThat(restaurant.status).isEqualTo(RestaurantStatus.INACTIVE)
+        val updatedRestaurant = adminRestaurantService.updateRestaurantStatus(restaurant.id, RestaurantStatus.INACTIVE)
+        assertThat(updatedRestaurant.status).isEqualTo(RestaurantStatus.INACTIVE)
     }
 }

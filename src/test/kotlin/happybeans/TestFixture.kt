@@ -244,7 +244,7 @@ object TestFixture {
             firstName = "Sushi",
             lastName = "Master",
             role = UserRole.RESTAURANT_OWNER,
-        ).apply { id = 1L }
+        )
     }
 
     val workingDateHoursDefault =
