@@ -2,6 +2,7 @@ package happybeans.config.advice
 
 import com.fasterxml.jackson.databind.exc.MismatchedInputException
 import happybeans.dto.error.ErrorResponse
+import happybeans.utils.exception.DuplicateEntityException
 import happybeans.utils.exception.EntityNotFoundException
 import happybeans.utils.exception.UnauthorisedUserException
 import happybeans.utils.exception.UserAlreadyExistsException
@@ -13,6 +14,7 @@ import org.springframework.http.converter.HttpMessageNotReadableException
 import org.springframework.web.bind.MethodArgumentNotValidException
 import org.springframework.web.bind.annotation.ExceptionHandler
 import org.springframework.web.bind.annotation.RestControllerAdvice
+import java.sql.SQLIntegrityConstraintViolationException
 
 @RestControllerAdvice
 class GlobalExceptionHandler {
@@ -80,6 +82,22 @@ class GlobalExceptionHandler {
         request: HttpServletRequest,
     ): ResponseEntity<ErrorResponse> {
         return errorResponse(HttpStatus.UNAUTHORIZED, ex.message ?: "Already exists", request)
+    }
+
+    @ExceptionHandler(DuplicateEntityException::class)
+    fun handleDuplicateEntityException(
+        ex: DuplicateEntityException,
+        request: HttpServletRequest,
+    ): ResponseEntity<ErrorResponse> {
+        return errorResponse(HttpStatus.CONFLICT, ex.message ?: "Already exists", request)
+    }
+
+    @ExceptionHandler(SQLIntegrityConstraintViolationException::class)
+    fun handleSQLIntegrityConstraintViolationException(
+        ex: SQLIntegrityConstraintViolationException,
+        request: HttpServletRequest,
+    ): ResponseEntity<ErrorResponse> {
+        return errorResponse(HttpStatus.BAD_REQUEST, ex.message ?: "DB Exception", request)
     }
 
     private fun errorResponse(

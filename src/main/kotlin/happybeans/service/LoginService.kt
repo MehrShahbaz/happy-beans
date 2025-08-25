@@ -32,6 +32,6 @@ class LoginService(
             jwtProvider.createToken(
                 AuthTokenPayload(user.email),
             )
-        return "Bearer $token"
+        return token
     }
 }
