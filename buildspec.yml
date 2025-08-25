@@ -20,7 +20,7 @@ phases:
 
 artifacts:
   files:
+    - .env
     - build/libs/*.jar
     - appspec.yml
     - scripts/**/*
-  discard-paths: no
