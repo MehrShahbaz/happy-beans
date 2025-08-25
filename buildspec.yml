@@ -10,8 +10,8 @@ phases:
       - ./gradlew clean
   build:
     commands:
-      - echo ">>> Building jar..."
-      - ./gradlew bootJar --no-daemon
+      - echo ">>> Building jar with environment variables..."
+      - ./gradlew bootJar --no-daemon -Djwt.secret=$JWT_SECRET -Djwt.time=$JWT_TIME -Dstripe.secret.key=$STRIPE_SECRET_KEY
   post_build:
     commands:
       - echo ">>> Build completed. Packaging for deployment..."
