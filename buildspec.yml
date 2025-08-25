@@ -21,4 +21,5 @@ artifacts:
     - build/libs/*.jar
     - appspec.yml
     - scripts/**/*
+    - Dockerfile
   discard-paths: no
