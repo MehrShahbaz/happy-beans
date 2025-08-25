@@ -2,6 +2,7 @@ package happybeans.service
 
 import happybeans.dto.order.OrderProductResponse
 import happybeans.dto.order.OrderResponse
+import happybeans.enums.OrderStatus
 import happybeans.model.CartProduct
 import happybeans.model.DishOption
 import happybeans.model.Order
@@ -32,6 +33,23 @@ class MemberOrderService(
         }.toOrderResponse()
     }
 
+    @Transactional(readOnly = true)
+    fun getOrder(orderId: Long): Order {
+        return orderRepository.findById(orderId).orElseThrow {
+            EntityNotFoundException("Order with id $orderId not found")
+        }
+    }
+
+    @Transactional
+    fun updateStatus(
+        order: Order,
+        status: OrderStatus,
+    ) {
+        order.status = status
+        orderRepository.save(order)
+    }
+
+    @Transactional
     fun checkoutCart(member: User): Order {
         val cartProducts = cartProductRepository.findAllByUserId(member.id)
         if (cartProducts.isEmpty()) {
@@ -45,6 +63,7 @@ class MemberOrderService(
         return order
     }
 
+    @Transactional
     fun buyProduct(
         member: User,
         dishOptionId: Long,

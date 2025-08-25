@@ -2,7 +2,6 @@ package happybeans.controller.member
 
 import happybeans.dto.order.OrderListResponse
 import happybeans.dto.order.OrderResponse
-import happybeans.dto.response.MessageResponse
 import happybeans.model.User
 import happybeans.service.MemberOrderService
 import happybeans.service.OrderPaymentService
@@ -38,9 +37,8 @@ class MemberOrderController(
     @PostMapping("/cart-checkout")
     fun createCheckoutCartIntent(
         @LoginMember user: User,
-    ): ResponseEntity<MessageResponse> {
-        orderService.checkoutCart(user)
-        return ResponseEntity.ok(MessageResponse("Cart Checkout"))
+    ): ResponseEntity<Map<String, String>> {
+        return ResponseEntity.ok(mapOf("paymentUrl" to orderPaymentService.handleCartCheckout(user)))
     }
 
     @PostMapping("/buy-dish/{dishOptionId}")

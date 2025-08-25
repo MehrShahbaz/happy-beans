@@ -15,6 +15,10 @@ class StripePaymentService() {
                 .setSuccessUrl("http://localhost:80/payment-success.html")
                 .setCancelUrl("http://localhost:80/payment-failed.html")
                 .putMetadata("orderId", "${order.id}")
+                .setPaymentIntentData(
+                    SessionCreateParams.PaymentIntentData.builder()
+                        .putMetadata("orderId", "${order.id}").build(),
+                )
                 .addAllLineItem(order.orderProducts.map { it.toLineItem() })
                 .build()
 
