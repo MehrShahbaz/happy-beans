@@ -51,7 +51,7 @@ class AdminRestaurantControllerTest {
         val response =
             RestAssured
                 .given().log().all()
-                .header("Authorization", token)
+                .header("Authorization", "Bearer $token")
                 .contentType(ContentType.JSON)
                 .`when`().get("/api/admin/restaurants")
                 .then().log().all().extract()

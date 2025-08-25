@@ -60,7 +60,7 @@ class CreateAdminControllerTest {
             RestAssured
                 .given().log().all()
                 .body(request)
-                .header("Authorization", token)
+                .header("Authorization", "Bearer $token")
                 .contentType(ContentType.JSON)
                 .`when`().post("/api/admin/create-admin")
                 .then().log().all().extract()

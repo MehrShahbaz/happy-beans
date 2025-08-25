@@ -67,7 +67,7 @@ class AdminJoinRequestControllerTest {
         val response =
             RestAssured
                 .given().log().all()
-                .header("Authorization", token)
+                .header("Authorization", "Bearer $token")
                 .contentType(ContentType.JSON)
                 .`when`().get("/api/admin/join-request")
                 .then().log().all().extract()

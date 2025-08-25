@@ -7,7 +7,6 @@ import happybeans.model.User
 import happybeans.repository.UserRepository
 import happybeans.utils.exception.UnauthorisedUserException
 import happybeans.utils.exception.UserCredentialException
-import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertDoesNotThrow
 import org.junit.jupiter.api.assertThrows
@@ -44,8 +43,7 @@ class LoginServiceTest {
             )
 
         val token = loginService.login(loginRequestDto)
-        assertThat(token).startsWith("Bearer ")
-        assertDoesNotThrow { jwtProvider.validateToken(token.removePrefix("Bearer ").trim()) }
+        assertDoesNotThrow { jwtProvider.validateToken(token) }
     }
 
     @Test
