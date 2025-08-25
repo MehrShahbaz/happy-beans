@@ -8,6 +8,8 @@ phases:
     commands:
       - echo ">>> Cleaning project..."
       - ./gradlew clean
+      - echo "JWT_SECRET=${JWT_SECRET}" > .env
+      - echo "JWT_TIME=${JWT_TIME}" >> .env
   build:
     commands:
       - echo ">>> Building jar..."
