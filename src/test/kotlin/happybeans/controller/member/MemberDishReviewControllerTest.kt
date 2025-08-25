@@ -29,7 +29,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.header
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-class MemberDishReviewControllerTest : AbstractDocumentTest() {
+class MemberDishReviewControllerTest : AbstractRestDocsMockMvcTest() {
     @MockitoBean
     private lateinit var dishReviewService: DishReviewService
 

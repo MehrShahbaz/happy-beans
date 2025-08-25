@@ -18,7 +18,7 @@ import org.springframework.test.web.servlet.MockMvc
 @SpringBootTest
 @AutoConfigureMockMvc
 @AutoConfigureRestDocs
-abstract class AbstractDocumentTest {
+abstract class AbstractRestDocsMockMvcTest {
     @Autowired
     lateinit var mockMvc: MockMvc
 
