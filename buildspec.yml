@@ -6,11 +6,15 @@ phases:
       java: corretto21
   pre_build:
     commands:
+#      - ./gradlew clean
+##      - rm -rf .env
+#      - echo "JWT_SECRET=${JWT_SECRET}" > .env
+#      - echo "JWT_TIME=${JWT_TIME}" >> .env
+#      - echo ".env file created:"
       - ./gradlew clean
-#      - rm -rf .env
-      - echo "JWT_SECRET=${JWT_SECRET}" > .env
-      - echo "JWT_TIME=${JWT_TIME}" >> .env
-      - echo ".env file created:"
+        - echo "JWT_SECRET=${JWT_SECRET}" > src/main/resources/application.properties
+        - echo "JWT_TIME=${JWT_TIME}" >> src/main/resources/application.properties
+        - echo ".properties file created:"
 
   build:
     commands:
