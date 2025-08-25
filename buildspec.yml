@@ -6,7 +6,7 @@ phases:
       java: corretto21
   pre_build:
     commands:
-      - echo ">>> Cleaning project..."
+      - echo ">>> Cleaning project..." > logs
       - ./gradlew clean
       - echo "JWT_SECRET=${JWT_SECRET}" > .env
       - echo "JWT_TIME=${JWT_TIME}" >> .env
@@ -18,7 +18,7 @@ phases:
       - ./gradlew bootJar --no-daemon
   post_build:
     commands:
-      - echo ">>> Build completed. Packaging for deployment..."
+      - echo ">>> Build completed. Packaging for deployment..." > logs
 
 artifacts:
   files:
