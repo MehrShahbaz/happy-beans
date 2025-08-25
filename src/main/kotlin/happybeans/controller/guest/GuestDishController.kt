@@ -1,7 +1,6 @@
 package happybeans.controller.guest
 
 import happybeans.dto.dish.DishResponse
-import happybeans.model.Dish
 import happybeans.model.Restaurant
 import happybeans.service.DishService
 import happybeans.service.RestaurantService
@@ -15,7 +14,7 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/guest")
 class GuestDishController(
     private val dishService: DishService,
-    private val restaurantService: RestaurantService
+    private val restaurantService: RestaurantService,
 ) {
     @GetMapping("/{restaurantId}/dishes")
     fun getAllDishes(

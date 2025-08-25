@@ -33,7 +33,7 @@ class DishService(
 ) {
     @Transactional(readOnly = true)
     fun getAllDishes(): List<DishResponse> {
-        return dishRepository.findAll().map { it.toResponse()}
+        return dishRepository.findAll().map { it.toResponse() }
     }
 
     @Transactional(readOnly = true)
