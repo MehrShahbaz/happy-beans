@@ -37,26 +37,16 @@ class MemberOrderController(
     fun createCheckoutCartIntent(
         @LoginMember user: User,
     ): ResponseEntity<MessageResponse> {
-        val response = orderService.createCheckoutCartIntent(user)
+        orderService.checkoutCart(user)
         return ResponseEntity.ok(MessageResponse("Cart Checkout"))
     }
 
-    @PostMapping("/confirm-checkout/{orderId}")
-    fun confirmCheckout(
-        @LoginMember user: User,
-        @PathVariable orderId: Long,
-    ): ResponseEntity<MessageResponse> {
-        val response = orderService.createCheckoutCartIntent(user)
-        return ResponseEntity.ok(MessageResponse("confirm-checkout/$orderId"))
-    }
-
-    @PostMapping("/buy-dish/{dishId}/{dishOptionId}")
+    @PostMapping("/buy-dish/{dishOptionId}")
     fun buyProduct(
         @LoginMember user: User,
-        @PathVariable dishId: Long,
         @PathVariable dishOptionId: Long,
     ): ResponseEntity<MessageResponse> {
-        val response = orderService.buyProduct(user, dishId, dishOptionId)
+        val response = orderService.buyProduct(user, dishOptionId)
         return ResponseEntity.ok(MessageResponse("buy-product/$dishOptionId"))
     }
 }

@@ -19,16 +19,14 @@ class Payment(
     val paymentId: String,
     @Column(name = "amount", nullable = false)
     val amount: Double,
-    @Column(name = "currency", nullable = false)
-    val currency: String,
     @Column(name = "order_id", nullable = false)
-    val orderId: String,
-    @Column(name = "payment_option", nullable = false)
-    @Enumerated(EnumType.STRING)
-    var paymentOption: PaymentOption = PaymentOption.STRIPE,
+    val orderId: Long,
     @Column(name = "status", nullable = false)
     @Enumerated(EnumType.STRING)
     var status: PaymentStatus = PaymentStatus.IN_PROGRESS,
+    @Column(name = "payment_option", nullable = false)
+    @Enumerated(EnumType.STRING)
+    var paymentOption: PaymentOption = PaymentOption.STRIPE,
     @CreationTimestamp
     var createdAt: LocalDateTime? = null,
     @UpdateTimestamp

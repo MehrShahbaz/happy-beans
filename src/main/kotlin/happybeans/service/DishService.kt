@@ -30,6 +30,11 @@ class DishService(
     private val tagService: TagService,
 ) {
     @Transactional(readOnly = true)
+    fun getAllDishes(): List<Dish> {
+        return dishRepository.findAll()
+    }
+
+    @Transactional(readOnly = true)
     fun findDishesByRestaurant(
         restaurantId: Long,
         pageable: Pageable,

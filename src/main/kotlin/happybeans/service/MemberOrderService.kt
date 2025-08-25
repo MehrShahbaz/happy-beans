@@ -1,14 +1,14 @@
 package happybeans.service
 
-import happybeans.dto.order.OrderIntentResponse
 import happybeans.dto.order.OrderProductResponse
 import happybeans.dto.order.OrderResponse
-import happybeans.enums.OrderStatus
-import happybeans.model.Dish
+import happybeans.model.CartProduct
 import happybeans.model.DishOption
 import happybeans.model.Order
 import happybeans.model.OrderProduct
 import happybeans.model.User
+import happybeans.repository.CartProductRepository
+import happybeans.repository.DishOptionRepository
 import happybeans.repository.OrderRepository
 import happybeans.utils.exception.EntityNotFoundException
 import org.springframework.stereotype.Service
@@ -17,6 +17,8 @@ import org.springframework.transaction.annotation.Transactional
 @Service
 class MemberOrderService(
     private val orderRepository: OrderRepository,
+    private val cartProductRepository: CartProductRepository,
+    private val dishOptionRepository: DishOptionRepository,
 ) {
     @Transactional(readOnly = true)
     fun getAllUserOrders(userId: Long): List<OrderResponse> {
@@ -30,85 +32,58 @@ class MemberOrderService(
         }.toOrderResponse()
     }
 
-    fun createCheckoutCartIntent(member: User): OrderIntentResponse {
-        // TODO cart items
-        // TODO create payment Intent
-        // TODO Create Payment entity
-        val order = createCartOrder(member)
-        return OrderIntentResponse("paymentIntentId", order.id)
-    }
-
-    fun confirmCheckout(
-        member: User,
-        orderId: Long,
-    ) {
-        val order = findOrder(orderId)
-        // TODO Check cart products
-        try {
-            // TODO confirm payment
-            // TODO empty cart
-            order.changeStatus(OrderStatus.COMPLETED)
-        } catch (e: RuntimeException) {
-            // TODO Reject Payment
-            order.changeStatus(OrderStatus.REJECTED)
-            throw IllegalArgumentException()
+    fun checkoutCart(member: User): Order {
+        val cartProducts = cartProductRepository.findAllByUserId(member.id)
+        if (cartProducts.isEmpty()) {
+            throw EntityNotFoundException("No cart-product found")
         }
+
+        val order = createOrder(member)
+        order.orderProducts.addAll(cartProducts.map { it.toOrderEntity() })
+        order.totalAmount = order.orderProducts.sumOf { it.price }
+        orderRepository.save(order)
+        return order
     }
 
     fun buyProduct(
         member: User,
-        dishId: Long,
         dishOptionId: Long,
-    ) {
-        // TODO find dish
-        // TODO Create Order
-        // TODO Buy Product via stripe
+    ): Order {
+        val dishOption =
+            dishOptionRepository.findById(dishOptionId).orElseThrow {
+                EntityNotFoundException("dish-option $dishOptionId not found")
+            }
+        val order = createOrder(member)
+        order.orderProducts.add(dishOption.toOrderEntity())
+        order.totalAmount = dishOption.price
+        orderRepository.save(order)
+        return order
     }
 
-    private fun createOrderProduct(
-        dishOption: DishOption,
-        dish: Dish,
-        quantity: Int = 1,
-    ): OrderProduct {
+    private fun createOrder(member: User): Order {
+        return Order(
+            userId = member.id,
+            userEmail = member.email,
+            paymentId = "paymentId",
+        )
+    }
+
+    private fun CartProduct.toOrderEntity(): OrderProduct {
         return OrderProduct(
             dishOption.id,
             dishOption.name,
-            dish.id,
             dishOption.price,
             quantity,
         )
     }
 
-    private fun createProductOrder(
-        member: User,
-        dishOption: DishOption,
-        dish: Dish,
-    ): Order {
-        val orderProduct = listOf(createOrderProduct(dishOption, dish))
-        return Order(
-            orderProduct,
-            member.id,
-            member.email,
-            "paymentId",
-            0.0,
+    private fun DishOption.toOrderEntity(): OrderProduct {
+        return OrderProduct(
+            id,
+            name,
+            price,
+            1,
         )
-    }
-
-    private fun createCartOrder(member: User): Order {
-        // TODO list of OrderProducts from cart products
-        return Order(
-            listOf(),
-            member.id,
-            member.email,
-            "paymentId",
-            0.0,
-        )
-    }
-
-    private fun findOrder(orderId: Long): Order {
-        return orderRepository.findById(orderId).orElseThrow {
-            throw EntityNotFoundException("Order with id $orderId not found")
-        }
     }
 
     private fun Order.toOrderResponse(): OrderResponse {
@@ -117,7 +92,7 @@ class MemberOrderService(
             createdAt!!,
             status,
             totalAmount,
-            paymentId,
+            paymentId!!,
             orderProducts.map { it.toResponse() },
         )
     }

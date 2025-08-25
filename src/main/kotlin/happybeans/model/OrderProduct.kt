@@ -13,10 +13,8 @@ import java.time.LocalDateTime
 class OrderProduct(
     @Column(name = "dish_option_id")
     var dishOptionId: Long,
-    @Column(name = "dish_option_name")
+    @Column(name = "dish_name")
     var dishOptionName: String,
-    @Column(name = "dish_id")
-    var dishId: Long,
     @Column(name = "price", nullable = false)
     var price: Double,
     @Column(name = "quantity", nullable = false)
