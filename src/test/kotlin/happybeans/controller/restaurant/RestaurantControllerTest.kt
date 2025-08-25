@@ -1,5 +1,6 @@
 package happybeans.controller.restaurant
 
+import happybeans.TestFixture
 import happybeans.dto.auth.LoginRequestDto
 import happybeans.dto.restaurant.RestaurantCreateRequest
 import happybeans.enums.UserRole
@@ -7,6 +8,7 @@ import happybeans.model.User
 import happybeans.repository.RestaurantRepository
 import happybeans.repository.UserRepository
 import happybeans.service.LoginService
+import happybeans.service.RestaurantService
 import io.restassured.RestAssured
 import io.restassured.http.ContentType
 import org.assertj.core.api.Assertions.assertThat
@@ -21,6 +23,9 @@ import org.springframework.http.HttpStatus
 class RestaurantControllerTest {
     @Autowired
     private lateinit var loginService: LoginService
+
+    @Autowired
+    private lateinit var restaurantService: RestaurantService
 
     @Autowired
     private lateinit var userRepository: UserRepository
@@ -71,6 +76,25 @@ class RestaurantControllerTest {
                 .then().log().all().extract()
 
         assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value())
+    }
+
+    @Test
+    fun `create and delete restaurant`() {
+        // given: a restaurant owner + create request
+        val restaurantOwner = TestFixture.createRestaurantOwner()
+        val request = TestFixture.createRestaurantCreateRequest()
+
+        // when: create restaurant
+        val restaurant = restaurantService.createRestaurant(request, restaurantOwner)
+
+        // then: restaurant exist in DB
+        assertThat(restaurantRepository.findById(restaurant.id)).isPresent
+
+        // when: delete restaurant
+        restaurantService.deleteRestaurant(restaurant.id, restaurantOwner.id)
+
+        // then: restaurant removed
+        assertThat(restaurantRepository.findById(restaurant.id)).isEmpty
     }
 
     @Test

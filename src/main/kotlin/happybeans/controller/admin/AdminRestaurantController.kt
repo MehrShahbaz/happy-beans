@@ -1,5 +1,6 @@
 package happybeans.controller.admin
 
+import happybeans.dto.response.MessageResponse
 import happybeans.dto.restaurant.RestaurantStatusUpdateRequest
 import happybeans.model.Restaurant
 import happybeans.service.AdminRestaurantService
@@ -22,7 +23,6 @@ class AdminRestaurantController(
         return ResponseEntity.ok().body(adminRestaurantService.getAllRestaurants())
     }
 
-    //TODO write tests
     @DeleteMapping("/{restaurantId}")
     fun deleteRestaurant(
         @PathVariable restaurantId: Long,
@@ -31,13 +31,12 @@ class AdminRestaurantController(
         return ResponseEntity.noContent().build()
     }
 
-    //TODO check return val
     @PatchMapping("/{restaurantId}/status")
     fun updateRestaurantStatus(
         @PathVariable restaurantId: Long,
         @RequestBody request: RestaurantStatusUpdateRequest,
-    ): ResponseEntity<Restaurant> {
-        val updatedRestaurant = adminRestaurantService.updateRestaurantStatus(restaurantId, request.status)
-        return ResponseEntity.ok(updatedRestaurant)
+    ): ResponseEntity<MessageResponse> {
+        adminRestaurantService.updateRestaurantStatus(restaurantId, request.status)
+        return ResponseEntity.ok(MessageResponse("Restaurant status is updated."))
     }
 }
