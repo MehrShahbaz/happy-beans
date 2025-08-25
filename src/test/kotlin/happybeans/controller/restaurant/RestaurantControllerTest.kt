@@ -5,6 +5,7 @@ import happybeans.dto.restaurant.RestaurantCreateRequest
 import happybeans.enums.UserRole
 import happybeans.model.User
 import happybeans.repository.RestaurantRepository
+import happybeans.repository.TagRepository
 import happybeans.repository.UserRepository
 import happybeans.service.LoginService
 import io.restassured.RestAssured
@@ -19,6 +20,9 @@ import org.springframework.http.HttpStatus
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 class RestaurantControllerTest {
+    @Autowired
+    private lateinit var tagRepository: TagRepository
+
     @Autowired
     private lateinit var loginService: LoginService
 
@@ -47,6 +51,7 @@ class RestaurantControllerTest {
 
     @AfterEach
     fun cleanup() {
+        tagRepository.deleteAll()
         restaurantRepository.deleteAll()
         userRepository.deleteAll()
     }
