@@ -16,38 +16,39 @@ import org.junit.jupiter.api.BeforeEach
 import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
+import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.http.HttpStatus
-import org.springframework.transaction.annotation.Transactional
+import org.springframework.test.context.ActiveProfiles
 
-@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
+@ActiveProfiles("test")
+@SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class RestaurantControllerTest {
-    @Autowired
-    private lateinit var tagRepository: TagRepository
+    @LocalServerPort
+    private var port: Int = 0
 
-    @Autowired
-    private lateinit var loginService: LoginService
+    @Autowired private lateinit var tagRepository: TagRepository
 
-    @Autowired
-    private lateinit var userRepository: UserRepository
+    @Autowired private lateinit var loginService: LoginService
 
-    @Autowired
-    private lateinit var restaurantRepository: RestaurantRepository
+    @Autowired private lateinit var userRepository: UserRepository
 
-    lateinit var token: String
+    @Autowired private lateinit var restaurantRepository: RestaurantRepository
+
+    private lateinit var token: String
 
     @BeforeEach
-    @Transactional
     fun setup() {
         val user =
-            userRepository.save(
+            userRepository.saveAndFlush(
                 User(
-                    "owner@test.com",
-                    "123456789",
-                    "Test",
-                    "Owner",
-                    UserRole.RESTAURANT_OWNER,
+                    email = "owner@test.com",
+                    password = "123456789",
+                    firstName = "Test",
+                    lastName = "Owner",
+                    role = UserRole.RESTAURANT_OWNER,
                 ),
             )
+
         token = loginService.login(LoginRequestDto(user.email, user.password), UserRole.RESTAURANT_OWNER)
     }
 
@@ -70,10 +71,10 @@ class RestaurantControllerTest {
 
         val response =
             RestAssured
-                .given().log().all()
-                .body(body)
+                .given().port(port).log().all()
                 .header("Authorization", "Bearer $token")
                 .contentType(ContentType.JSON)
+                .body(body)
                 .`when`().post("/api/restaurant-owner/restaurants")
                 .then().log().all().extract()
 
@@ -84,9 +85,9 @@ class RestaurantControllerTest {
     fun getAllRestaurants() {
         val response =
             RestAssured
-                .given().log().all()
+                .given().port(port).log().all()
                 .header("Authorization", "Bearer $token")
-                .contentType(ContentType.JSON)
+                .accept(ContentType.JSON)
                 .`when`().get("/api/restaurant-owner/restaurants")
                 .then().log().all().extract()
 
