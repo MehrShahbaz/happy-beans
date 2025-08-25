@@ -81,7 +81,7 @@ class RestaurantControllerTest {
     @Test
     fun `create and delete restaurant`() {
         // given: a restaurant owner + create request
-        val restaurantOwner = TestFixture.createRestaurantOwner()
+        val restaurantOwner = userRepository.save(TestFixture.createRestaurantOwner())
         val request = TestFixture.createRestaurantCreateRequest()
 
         // when: create restaurant
