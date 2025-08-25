@@ -84,10 +84,10 @@ class RestaurantControllerTest {
         val restaurantOwner = userRepository.save(TestFixture.createRestaurantOwner())
         val request = TestFixture.createRestaurantCreateRequest()
 
-        // when: create restaurant
+        // when: create the restaurant
         val restaurant = restaurantService.createRestaurant(request, restaurantOwner)
 
-        // then: restaurant exist in DB
+        // then: the restaurant exists in DB
         assertThat(restaurantRepository.findById(restaurant.id)).isPresent
 
         // when: delete restaurant
