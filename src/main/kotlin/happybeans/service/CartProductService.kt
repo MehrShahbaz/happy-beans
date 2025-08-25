@@ -7,8 +7,11 @@ import happybeans.model.CartProduct
 import happybeans.model.User
 import happybeans.repository.CartProductRepository
 import happybeans.utils.exception.EntityNotFoundException
+import mu.KotlinLogging
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
+
+private val logger = KotlinLogging.logger {}
 
 @Service
 class CartProductService(
@@ -17,11 +20,14 @@ class CartProductService(
 ) {
     @Transactional
     fun clear(user: User) {
+        logger.info { "Clearing cart for user: ${user.id}" }
         cartProductRepository.deleteAllByUserId(user.id)
+        logger.info { "Cart for user: ${user.id} cleared successfully." }
     }
 
     @Transactional(readOnly = true)
     fun findAllByUserId(user: User): List<CartProduct> {
+        logger.debug { "Finding all cart products for user: ${user.id}" }
         return cartProductRepository.findAllByUserId(user.id)
     }
 
@@ -63,7 +69,9 @@ class CartProductService(
         user: User,
         dishOptionId: Long,
     ) {
+        logger.info { "Deleting product from cart for user: ${user.id} with dish option: $dishOptionId" }
         cartProductRepository.deleteByUserIdAndDishOptionId(user.id, dishOptionId)
+        logger.info { "Product with dish option: $dishOptionId deleted for user: ${user.id}" }
     }
 
     @Transactional
@@ -72,6 +80,7 @@ class CartProductService(
         dishOptionId: Long,
         newQuantity: Int,
     ) {
+        logger.info { "Updating quantity for user: ${user.id}, dish option: $dishOptionId to $newQuantity" }
         require(newQuantity > 0) { "Quantity must be greater than zero" }
 
         val cartProduct =
@@ -82,5 +91,6 @@ class CartProductService(
 
         cartProduct.quantity = newQuantity
         cartProductRepository.save(cartProduct)
+        logger.info { "Quantity for dish option: $dishOptionId updated successfully for user: ${user.id}" }
     }
 }

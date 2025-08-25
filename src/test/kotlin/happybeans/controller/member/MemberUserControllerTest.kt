@@ -1,6 +1,7 @@
 package happybeans.controller.member
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import happybeans.controller.AbstractRestDocsMockMvcTest
 import happybeans.model.Tag
 import happybeans.service.UserService
 import org.junit.jupiter.api.DisplayName
@@ -23,7 +24,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-class MemberUserControllerTest : AbstractDocumentTest() {
+class MemberUserControllerTest : AbstractRestDocsMockMvcTest() {
     @MockitoBean
     private lateinit var userService: UserService
 
