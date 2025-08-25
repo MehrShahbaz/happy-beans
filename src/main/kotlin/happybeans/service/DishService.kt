@@ -29,6 +29,7 @@ class DishService(
     private val dishOptionRepository: DishOptionRepository,
     private val tagService: TagService,
 ) {
+    @Transactional(readOnly = true)
     fun findDishesByRestaurant(
         restaurantId: Long,
         pageable: Pageable,
@@ -47,6 +48,7 @@ class DishService(
         return dishRepository.findById(dishId).orElseThrow { EntityNotFoundException("Dish with id $dishId not found") }
     }
 
+    @Transactional(readOnly = true)
     fun findByIdAndDishOptionId(
         dishId: Long,
         dishOptionId: Long,
@@ -292,16 +294,19 @@ class DishService(
         return findByIdAndDishOptionId(dishId, optionId)
     }
 
+    @Transactional(readOnly = true)
     fun getAvailableDishOptions(dishId: Long): List<DishOption> {
         val dish = findById(dishId)
         return dish.getAvailableOptions()
     }
 
+    @Transactional(readOnly = true)
     fun isDishAvailable(dishId: Long): Boolean {
         val dish = findById(dishId)
         return dish.hasAvailableOptions()
     }
 
+    @Transactional
     fun addDishOptionTag(
         optionId: Long,
         tagName: String,
@@ -318,6 +323,7 @@ class DishService(
         return dishRepository.save(dish).dishOptions.first { it.id == optionId }
     }
 
+    @Transactional
     fun removeDishOptionTag(
         optionId: Long,
         tagName: String,
@@ -336,6 +342,7 @@ class DishService(
         return dishRepository.save(dish).dishOptions.first { it.id == optionId }
     }
 
+    @Transactional
     fun updateDishOptionTags(
         optionId: Long,
         tagNames: Set<String>,
@@ -355,6 +362,7 @@ class DishService(
         return dishRepository.save(dish).dishOptions.first { it.id == optionId }
     }
 
+    @Transactional(readOnly = true)
     fun getDishOptionTags(optionId: Long): Set<Tag> {
         val dishOption = findDishOptionById(optionId)
         return dishOption.dishOptionTags
