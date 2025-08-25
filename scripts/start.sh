@@ -1,19 +1,11 @@
 #!/bin/bash
-
-DEPLOYMENT_DIR="/home/ubuntu/app"
-
-JAR_FILE=$(find "$DEPLOYMENT_DIR/build/libs" -name "*.jar")
+JAR_FILE=$(ls /home/ubuntu/app/build/libs/*.jar | head -n 1)
 
 if [ -z "$JAR_FILE" ]; then
-    echo "Error: JAR file not found in $DEPLOYMENT_DIR/build/libs"
-    exit 1
+  echo ">>> [ApplicationStart] No JAR file found!"
+  exit 1
 fi
 
-echo "Starting application with environment variables..."
-
-sudo java -jar "$JAR_FILE" \
-    --spring.profiles.active=prod \
-    -DJWT_SECRET="$JWT_SECRET" \
-    -DJWT_TIME="$JWT_TIME" \
-    -DSTRIPE_SECRET_KEY="$STRIPE_SECRET_KEY" \
-    > /home/ubuntu/app/app.log 2>&1 &
+echo ">>> ####### Test #######"
+echo ">>> [ApplicationStart] Starting application: $JAR_FILE"
+sudo java -jar $JAR_FILE > /home/ubuntu/app/app.log 2>&1 &
