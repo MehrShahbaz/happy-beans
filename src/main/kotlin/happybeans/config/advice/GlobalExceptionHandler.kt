@@ -5,6 +5,7 @@ import happybeans.dto.error.ErrorResponse
 import happybeans.utils.exception.EntityNotFoundException
 import happybeans.utils.exception.UnauthorisedUserException
 import happybeans.utils.exception.UserAlreadyExistsException
+import happybeans.utils.exception.UserCredentialException
 import jakarta.servlet.http.HttpServletRequest
 import mu.KotlinLogging
 import org.springframework.http.HttpStatus
@@ -85,6 +86,14 @@ class GlobalExceptionHandler {
     ): ResponseEntity<ErrorResponse> {
         logger.error(ex) { "An uncaught exception occurred at ${request.method} ${request.requestURI}" }
         return errorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "An internal server error occurred", request)
+    }
+
+    @ExceptionHandler(UserCredentialException::class)
+    fun handleUserCredentialException(
+        ex: UserCredentialException,
+        request: HttpServletRequest,
+    ): ResponseEntity<ErrorResponse> {
+        return errorResponse(HttpStatus.UNAUTHORIZED, ex.message ?: "Already exists", request)
     }
 
     private fun errorResponse(
