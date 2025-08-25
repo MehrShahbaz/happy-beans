@@ -1,5 +1,6 @@
 package happybeans.repository
 
+import happybeans.enums.UserRole
 import happybeans.model.User
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.stereotype.Repository
@@ -15,4 +16,9 @@ interface UserRepository : JpaRepository<User, Long> {
     ): Optional<User>
 
     fun existsByEmail(email: String): Boolean
+
+    fun existsByEmailAndRole(
+        email: String,
+        role: UserRole,
+    ): Boolean
 }

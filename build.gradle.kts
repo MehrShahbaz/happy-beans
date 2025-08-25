@@ -42,6 +42,7 @@ dependencies {
     implementation("io.github.cdimascio:dotenv-java:3.0.0")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("com.stripe:stripe-java:29.4.0")
+    implementation("org.springframework.boot:spring-boot-starter-mail")
 
     runtimeOnly("io.jsonwebtoken:jjwt-impl:0.12.6")
     runtimeOnly("io.jsonwebtoken:jjwt-jackson:0.12.6")
