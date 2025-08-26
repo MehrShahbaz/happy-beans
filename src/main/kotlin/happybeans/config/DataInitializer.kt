@@ -9,12 +9,15 @@ import happybeans.repository.DishRepository
 import happybeans.repository.RestaurantRepository
 import happybeans.repository.UserRepository
 import happybeans.service.DishService
+import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.CommandLineRunner
 import org.springframework.stereotype.Component
 
 @Component
 class DataInitializer() : CommandLineRunner {
+    private val logger = KotlinLogging.logger {}
+
     @Autowired
     private lateinit var restaurantRepository: RestaurantRepository
 
@@ -29,6 +32,7 @@ class DataInitializer() : CommandLineRunner {
 
     override fun run(vararg args: String?) {
         if (userRepository.count() == 0L) {
+            logger.info("Creating an Admin")
             userRepository.save(
                 User(
                     "admin@admin.com",
@@ -40,6 +44,7 @@ class DataInitializer() : CommandLineRunner {
             )
         }
         if (dishRepository.count() == 0L) {
+            logger.info("Creating a restaurant owner")
             val owner =
                 userRepository.save(
                     User(
@@ -50,6 +55,7 @@ class DataInitializer() : CommandLineRunner {
                         UserRole.RESTAURANT_OWNER,
                     ),
                 )
+            logger.info("Creating a restaurant")
             val restaurant =
                 restaurantRepository.save(
                     Restaurant(
@@ -60,6 +66,7 @@ class DataInitializer() : CommandLineRunner {
                         "Restaurant",
                     ),
                 )
+            logger.info("Creating a dish")
             dishService.createDish(
                 restaurant.id,
                 DishCreateRequest(
@@ -79,6 +86,7 @@ class DataInitializer() : CommandLineRunner {
                 ),
                 owner,
             )
+            logger.info("Creating a dish")
             dishService.createDish(
                 restaurant.id,
                 DishCreateRequest(

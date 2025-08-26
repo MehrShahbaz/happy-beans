@@ -6,6 +6,7 @@ import happybeans.model.User
 import happybeans.service.MemberOrderService
 import happybeans.service.OrderPaymentService
 import happybeans.utils.annotations.LoginMember
+import mu.KotlinLogging
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PathVariable
@@ -19,10 +20,13 @@ class MemberOrderController(
     private val orderService: MemberOrderService,
     private val orderPaymentService: OrderPaymentService,
 ) {
+    private val logger = KotlinLogging.logger {}
+
     @GetMapping("")
     fun getAllOrders(
         @LoginMember user: User,
     ): ResponseEntity<OrderListResponse> {
+        logger.info("GET all orders for user: ${user.id}")
         return ResponseEntity.ok(orderService.getAllUserOrders(user.id))
     }
 
@@ -30,6 +34,7 @@ class MemberOrderController(
     fun getOrderById(
         @PathVariable orderId: Long,
     ): ResponseEntity<OrderResponse> {
+        logger.info("GET order with id: $orderId")
         return ResponseEntity.ok(orderService.getOrderById(orderId))
     }
 
@@ -37,6 +42,7 @@ class MemberOrderController(
     fun createCheckoutCartIntent(
         @LoginMember user: User,
     ): ResponseEntity<Map<String, String>> {
+        logger.info("POST cart checkout for user: ${user.id}")
         return ResponseEntity.ok(mapOf("paymentUrl" to orderPaymentService.handleCartCheckout(user)))
     }
 
@@ -45,6 +51,7 @@ class MemberOrderController(
         @LoginMember user: User,
         @PathVariable dishOptionId: Long,
     ): ResponseEntity<Map<String, String>> {
+        logger.info("POST Buy dish for user: ${user.id} dishOptionId: $dishOptionId")
         return ResponseEntity.ok(mapOf("paymentUrl" to orderPaymentService.handleBuyDish(user, dishOptionId)))
     }
 }

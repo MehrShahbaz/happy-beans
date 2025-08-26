@@ -6,12 +6,15 @@ import happybeans.repository.UserRepository
 import happybeans.utils.exception.UnauthorisedUserException
 import jakarta.servlet.http.HttpServletRequest
 import jakarta.servlet.http.HttpServletResponse
+import mu.KotlinLogging
 import org.springframework.web.servlet.HandlerInterceptor
 
 abstract class BaseAuthInterceptor(
     val jwtProvider: JwtProvider,
     val userRepository: UserRepository,
 ) : HandlerInterceptor {
+    private val logger = KotlinLogging.logger {}
+
     override fun preHandle(
         request: HttpServletRequest,
         response: HttpServletResponse,
@@ -19,6 +22,7 @@ abstract class BaseAuthInterceptor(
     ): Boolean {
         val bearer = request.getHeader("Authorization") ?: throw UnauthorisedUserException()
         if (!bearer.startsWith("Bearer ")) {
+            logger.error("Authorization header is missing")
             throw UnauthorisedUserException("Invalid Authorization header format")
         }
 
@@ -29,6 +33,7 @@ abstract class BaseAuthInterceptor(
 
         val user =
             userRepository.findByEmail(payload.email).orElseThrow {
+                logger.error("User not found with email ${payload.email}")
                 throw UnauthorisedUserException("User not found")
             }
 
