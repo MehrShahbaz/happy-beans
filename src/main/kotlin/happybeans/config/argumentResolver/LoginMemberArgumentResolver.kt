@@ -5,6 +5,7 @@ import happybeans.model.User
 import happybeans.repository.UserRepository
 import happybeans.utils.annotations.LoginMember
 import happybeans.utils.exception.UnauthorisedUserException
+import mu.KotlinLogging
 import org.springframework.core.MethodParameter
 import org.springframework.stereotype.Component
 import org.springframework.web.bind.support.WebDataBinderFactory
@@ -17,6 +18,8 @@ import org.springframework.web.method.support.ModelAndViewContainer
 class LoginMemberArgumentResolver(
     private val userRepository: UserRepository,
 ) : HandlerMethodArgumentResolver {
+    private val logger = KotlinLogging.logger {}
+
     override fun supportsParameter(parameter: MethodParameter): Boolean {
         return parameter.hasParameterAnnotation(LoginMember::class.java)
     }
@@ -28,11 +31,18 @@ class LoginMemberArgumentResolver(
         binderFactory: WebDataBinderFactory?,
     ): User {
         val request = (webRequest as ServletWebRequest).request
+
+        logger.info("Loading email from request")
         val email = request.getAttribute("email") as String
 
+        logger.info("Finding user with email: $email")
         val user =
-            userRepository.findByEmail(email).orElseThrow { UnauthorisedUserException("User not found") }
+            userRepository.findByEmail(email).orElseThrow {
+                logger.error("Error finding user with email $email")
+                UnauthorisedUserException("User not found")
+            }
         if (user.role != UserRole.USER) {
+            logger.error("User role not valid User:${user.id}")
             throw UnauthorisedUserException("User role not valid")
         }
 

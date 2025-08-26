@@ -9,9 +9,9 @@ import happybeans.model.User
 import happybeans.repository.RestaurantRepository
 import happybeans.repository.RestaurantReviewRepository
 import jakarta.persistence.EntityNotFoundException
+import mu.KotlinLogging
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
-import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import java.math.RoundingMode
@@ -22,13 +22,17 @@ class RestaurantReviewService(
     private val restaurantReviewRepository: RestaurantReviewRepository,
     private val restaurantRepository: RestaurantRepository,
 ) {
+    private val logger = KotlinLogging.logger {}
+
     fun createRestaurantReview(
         member: User,
         dto: ReviewCreateRequestDto,
     ): Long {
         val restaurant =
-            restaurantRepository.findByIdOrNull(dto.entityId)
-                ?: throw IllegalArgumentException("Restaurant with ID ${dto.entityId} not found")
+            restaurantRepository.findById(dto.entityId).orElseThrow {
+                logger.error("Restaurant not found for ${dto.entityId}")
+                throw IllegalArgumentException("Restaurant with ID ${dto.entityId} not found")
+            }
 
         val review =
             RestaurantReview(
@@ -49,8 +53,10 @@ class RestaurantReviewService(
         member: User,
     ) {
         val review =
-            restaurantReviewRepository.findByIdOrNull(id)
-                ?: throw EntityNotFoundException("Review with ID $id not found")
+            restaurantReviewRepository.findById(id).orElseThrow {
+                logger.error("Restaurant not found to update for $id")
+                EntityNotFoundException("Review with ID $id not found")
+            }
 
         review.message = dto.message
 
@@ -59,6 +65,7 @@ class RestaurantReviewService(
 
     fun deleteReviewById(id: Long) {
         if (!restaurantReviewRepository.existsById(id)) {
+            logger.error("Review with ID $id does not exist")
             throw EntityNotFoundException("Review with ID $id not found")
         }
         restaurantReviewRepository.deleteById(id)

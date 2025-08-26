@@ -11,6 +11,7 @@ import happybeans.model.User
 import happybeans.service.DishService
 import happybeans.utils.annotations.RestaurantOwner
 import jakarta.validation.Valid
+import mu.KotlinLogging
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -29,10 +30,13 @@ import java.net.URI
 class DishController(
     private val dishService: DishService,
 ) {
+    private val logger = KotlinLogging.logger {}
+
     @GetMapping("/dish/{dishId}")
     fun getDishById(
         @PathVariable dishId: Long,
     ): ResponseEntity<DishResponse> {
+        logger.info("GET Get Dish by dishId: $dishId")
         val dish = dishService.findById(dishId)
         return ResponseEntity.ok(dish.toResponse())
     }
@@ -43,6 +47,7 @@ class DishController(
         @PathVariable restaurantId: Long,
         @Valid @RequestBody dishRequest: DishCreateRequest,
     ): ResponseEntity<MessageResponse> {
+        logger.info("POST Create Dish by restaurantId: $restaurantId Owner: ${owner.id}")
         val savedDish = dishService.createDish(restaurantId, dishRequest, owner)
 
         val location: URI =
@@ -61,6 +66,7 @@ class DishController(
         @PathVariable dishId: Long,
         @Valid @RequestBody updateRequest: DishUpdateRequest,
     ): ResponseEntity<MessageResponse> {
+        logger.info("PUT Update Dish by dishId: $dishId of owner: ${owner.id}")
         dishService.updateDish(dishId, updateRequest, owner)
         return ResponseEntity.ok(MessageResponse("Dish updated successfully"))
     }
@@ -71,6 +77,7 @@ class DishController(
         @PathVariable dishId: Long,
         @Valid @RequestBody patchRequest: DishPatchRequest,
     ): ResponseEntity<MessageResponse> {
+        logger.info("PATCH Dish by dishId: $dishId of owner: ${owner.id}")
         dishService.patchDish(dishId, patchRequest, owner)
         return ResponseEntity.ok(MessageResponse("Dish updated successfully"))
     }
@@ -81,6 +88,7 @@ class DishController(
         @PathVariable dishId: Long,
         @Valid @RequestBody optionRequest: DishOptionCreateRequest,
     ): ResponseEntity<MessageResponse> {
+        logger.info("POST Create Option Dish by dishId: $dishId of owner: ${owner.id}")
         val dishOption = dishService.addDishOption(dishId, optionRequest, owner)
         val location: URI =
             ServletUriComponentsBuilder
@@ -96,6 +104,7 @@ class DishController(
         @RestaurantOwner owner: User,
         @PathVariable dishId: Long,
     ): ResponseEntity<Void> {
+        logger.info("DELETE Option Dish by dishId: $dishId of owner: ${owner.id}")
         dishService.deleteDishById(dishId, owner)
         return ResponseEntity.noContent().build()
     }

@@ -12,19 +12,18 @@ import mu.KotlinLogging
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
-private val logger = KotlinLogging.logger {}
-
 @Service
 class CartProductService(
     private val cartProductRepository: CartProductRepository,
     private val dishService: DishService,
     private val userRepository: UserRepository,
 ) {
+    private val logger = KotlinLogging.logger {}
+
     @Transactional
     fun clear(user: User) {
         logger.info { "Clearing cart for user: ${user.id}" }
         cartProductRepository.deleteAllByUserId(user.id)
-        logger.info { "Cart for user: ${user.id} cleared successfully." }
     }
 
     @Transactional
@@ -47,6 +46,7 @@ class CartProductService(
 
     @Transactional(readOnly = true)
     fun findAllByUserId2(user: User): CartProductListResponse {
+        logger.debug { "Finding all cart products for user: ${user.id}" }
         return CartProductListResponse(findAllByUserId(user).map { CartProductResponse(it) })
     }
 
@@ -62,6 +62,7 @@ class CartProductService(
         val dishOption = dishService.findByIdAndDishOptionId(dishId, optionId)
 
         if (!dishOption.available) {
+            logger.error("Cannot add unavailable dish for user: ${user.id} dishId: $dishId")
             throw EntityNotFoundException("Dish option '${dishOption.name}' is currently unavailable")
         }
 
@@ -85,7 +86,6 @@ class CartProductService(
     ) {
         logger.info { "Deleting product from cart for user: ${user.id} with dish option: $dishOptionId" }
         cartProductRepository.deleteByUserIdAndDishOptionId(user.id, dishOptionId)
-        logger.info { "Product with dish option: $dishOptionId deleted for user: ${user.id}" }
     }
 
     @Transactional
@@ -105,6 +105,5 @@ class CartProductService(
 
         cartProduct.quantity = newQuantity
         cartProductRepository.save(cartProduct)
-        logger.info { "Quantity for dish option: $dishOptionId updated successfully for user: ${user.id}" }
     }
 }

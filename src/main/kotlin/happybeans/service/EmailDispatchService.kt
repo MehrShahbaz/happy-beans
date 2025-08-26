@@ -1,6 +1,7 @@
 package happybeans.service
 
 import happybeans.model.Order
+import mu.KotlinLogging
 import org.springframework.mail.javamail.JavaMailSender
 import org.springframework.mail.javamail.MimeMessageHelper
 import org.springframework.stereotype.Service
@@ -9,11 +10,14 @@ import org.springframework.stereotype.Service
 class EmailDispatchService(
     private val mailSender: JavaMailSender,
 ) {
+    private val logger = KotlinLogging.logger {}
+
     fun sendRestaurantOwnerWelcomeEmail(
         to: String,
         password: String,
         subject: String = RESTAURANT_OWNER_EMAIL_SUBJECT,
     ) {
+        logger.info { "Sending email to $to for $subject" }
         val html =
             """
             <div style="font-family: Arial, sans-serif; padding:20px; color:#333;">
@@ -27,9 +31,11 @@ class EmailDispatchService(
             </div>
             """.trimIndent()
         sendHtmlMessage(to, subject, html)
+        logger.info { "Email sent to $to for $subject" }
     }
 
     fun sendJoinRequestRejectEmail(to: String) {
+        logger.info { "Sending email to $to for $REJECT_INVITE_SUBJECT" }
         val html =
             """
             <div style="font-family: Arial, sans-serif; padding:20px; color:#333;">
@@ -41,9 +47,11 @@ class EmailDispatchService(
             </div>
             """.trimIndent()
         sendHtmlMessage(to, REJECT_INVITE_SUBJECT, html)
+        logger.info { "Email sent to $to for $REJECT_INVITE_SUBJECT" }
     }
 
     fun sendOrderConfirmationEmail(order: Order) {
+        logger.info { "Sending confirm email to ${order.userEmail} for ${order.id}" }
         val itemsHtml = buildOrderItemsTable(order)
         val html =
             """
@@ -58,9 +66,11 @@ class EmailDispatchService(
             </div>
             """.trimIndent()
         sendHtmlMessage(order.userEmail, CONFIRM_ORDER_SUBJECT, html)
+        logger.info("Confirm Email sent to ${order.userEmail} for ${order.id}")
     }
 
     fun sendOrderFailEmail(order: Order) {
+        logger.info { "Sending fail email to ${order.userEmail} for ${order.id}" }
         val itemsHtml = buildOrderItemsTable(order)
         val html =
             """
@@ -75,6 +85,7 @@ class EmailDispatchService(
             </div>
             """.trimIndent()
         sendHtmlMessage(order.userEmail, FAILED_ORDER_SUBJECT, html)
+        logger.info("Fail Email sent to ${order.userEmail} for ${order.id}")
     }
 
     private fun buildOrderItemsTable(order: Order): String {
