@@ -4,6 +4,7 @@ import happybeans.dto.response.MessageResponse
 import happybeans.dto.user.UserCreateRequestDto
 import happybeans.service.AdminUserService
 import jakarta.validation.Valid
+import mu.KotlinLogging
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -16,10 +17,13 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 class CreateAdminController(
     private val adminUserService: AdminUserService,
 ) {
+    private val logger = KotlinLogging.logger {}
+
     @PostMapping
     fun createAdmin(
         @Valid @RequestBody userCreateRequestDto: UserCreateRequestDto,
     ): ResponseEntity<MessageResponse> {
+        logger.info("POST Admin created a new Admin with email: ${userCreateRequestDto.email}")
         val user = adminUserService.createAdmin(userCreateRequestDto)
         val location =
             ServletUriComponentsBuilder

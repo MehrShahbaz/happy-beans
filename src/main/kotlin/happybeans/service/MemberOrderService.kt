@@ -12,6 +12,7 @@ import happybeans.repository.CartProductRepository
 import happybeans.repository.DishOptionRepository
 import happybeans.repository.OrderRepository
 import happybeans.utils.exception.EntityNotFoundException
+import mu.KotlinLogging
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -21,6 +22,8 @@ class MemberOrderService(
     private val cartProductRepository: CartProductRepository,
     private val dishOptionRepository: DishOptionRepository,
 ) {
+    private val logger = KotlinLogging.logger {}
+
     @Transactional(readOnly = true)
     fun getAllUserOrders(userId: Long): List<OrderResponse> {
         return orderRepository.findAllByUserId(userId).map { it.toOrderResponse() }
@@ -29,6 +32,7 @@ class MemberOrderService(
     @Transactional(readOnly = true)
     fun getOrderById(orderId: Long): OrderResponse {
         return orderRepository.findById(orderId).orElseThrow {
+            logger.error { "Order with ID $orderId does not exist." }
             EntityNotFoundException("Order with id $orderId not found")
         }.toOrderResponse()
     }
@@ -36,6 +40,7 @@ class MemberOrderService(
     @Transactional(readOnly = true)
     fun getOrder(orderId: Long): Order {
         return orderRepository.findById(orderId).orElseThrow {
+            logger.error { "Order with ID $orderId does not exist." }
             EntityNotFoundException("Order with id $orderId not found")
         }
     }
@@ -53,6 +58,7 @@ class MemberOrderService(
     fun checkoutCart(member: User): Order {
         val cartProducts = cartProductRepository.findAllByUserId(member.id)
         if (cartProducts.isEmpty()) {
+            logger.error { "No cart product for ${member.id} for creating order" }
             throw EntityNotFoundException("No cart-product found")
         }
 
@@ -70,6 +76,7 @@ class MemberOrderService(
     ): Order {
         val dishOption =
             dishOptionRepository.findById(dishOptionId).orElseThrow {
+                logger.error { "dish option with ID $dishOptionId does not exist." }
                 EntityNotFoundException("dish-option $dishOptionId not found")
             }
         val order = createOrder(member)

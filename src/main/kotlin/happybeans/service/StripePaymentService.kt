@@ -4,11 +4,15 @@ import com.stripe.model.checkout.Session
 import com.stripe.param.checkout.SessionCreateParams
 import happybeans.model.Order
 import happybeans.model.OrderProduct
+import mu.KotlinLogging
 import org.springframework.stereotype.Service
 
 @Service
 class StripePaymentService() {
+    private val logger = KotlinLogging.logger {}
+
     fun createSession(order: Order): Session {
+        logger.info { "Creating session for order: ${order.id}" }
         val params =
             SessionCreateParams.builder()
                 .setMode(SessionCreateParams.Mode.PAYMENT)
