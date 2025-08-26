@@ -16,7 +16,7 @@ class OrderPaymentService(
     fun handleCartCheckout(member: User): String {
         val order = memberOrderService.checkoutCart(member)
         val session = stripePaymentService.createSession(order)
-        paymentService.createPayment(session.paymentIntent, order)
+        paymentService.createPayment(session.id, order)
         return session.url
     }
 

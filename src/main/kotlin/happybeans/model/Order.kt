@@ -21,7 +21,7 @@ import java.time.LocalDateTime
 @Entity
 @Table(name = "orders")
 class Order(
-    @OneToMany(cascade = [CascadeType.ALL], fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(cascade = [CascadeType.ALL], fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinColumn(name = "orders_id", nullable = false)
     val orderProducts: MutableList<OrderProduct> = mutableListOf(),
     @Column(name = "user_id", nullable = false)

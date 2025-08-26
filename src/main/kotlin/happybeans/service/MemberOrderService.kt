@@ -58,7 +58,7 @@ class MemberOrderService(
 
         val order = createOrder(member)
         order.orderProducts.addAll(cartProducts.map { it.toOrderEntity() })
-        order.totalAmount = order.orderProducts.sumOf { it.price }
+        order.totalAmount = order.orderProducts.sumOf { it.price * it.quantity }
         orderRepository.save(order)
         return order
     }

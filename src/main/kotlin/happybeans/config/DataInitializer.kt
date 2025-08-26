@@ -79,6 +79,25 @@ class DataInitializer() : CommandLineRunner {
                 ),
                 owner,
             )
+            dishService.createDish(
+                restaurant.id,
+                DishCreateRequest(
+                    "Dish 2",
+                    "Dish Desc",
+                    "",
+                    mutableSetOf(
+                        DishOptionCreateRequest(
+                            "Dish-2 Option-1",
+                            "Dish Option Desc",
+                            20.5,
+                            "",
+                            true,
+                            25,
+                        ),
+                    ),
+                ),
+                owner,
+            )
         }
     }
 }

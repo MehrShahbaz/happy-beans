@@ -15,8 +15,8 @@ import java.time.LocalDateTime
 
 @Entity
 class Payment(
-    @Column(name = "payment_id", nullable = false)
-    val paymentId: String,
+    @Column(name = "session_id", nullable = false)
+    val sessionId: String,
     @Column(name = "amount", nullable = false)
     val amount: Double,
     @Column(name = "order_id", nullable = false)
