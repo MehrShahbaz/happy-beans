@@ -6,6 +6,7 @@ import happybeans.enums.UserRole
 import happybeans.model.JoinRequest
 import happybeans.model.User
 import happybeans.repository.JoinRequestRepository
+import happybeans.repository.RestaurantRepository
 import happybeans.repository.UserRepository
 import happybeans.service.AdminAuthService
 import happybeans.service.EmailDispatchService
@@ -38,6 +39,8 @@ import org.springframework.test.context.bean.override.mockito.MockitoBean
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class AdminJoinRequestControllerTest : AbstractRestDocsRestAssuredTest() {
     @Autowired private lateinit var userRepository: UserRepository
+
+    @Autowired lateinit var restaurantRepository: RestaurantRepository
 
     @Autowired private lateinit var joinRequestRepository: JoinRequestRepository
 
@@ -77,6 +80,7 @@ class AdminJoinRequestControllerTest : AbstractRestDocsRestAssuredTest() {
 
     @AfterEach
     fun tearDown() {
+        restaurantRepository.deleteAll()
         joinRequestRepository.deleteAll()
         userRepository.deleteAll()
     }

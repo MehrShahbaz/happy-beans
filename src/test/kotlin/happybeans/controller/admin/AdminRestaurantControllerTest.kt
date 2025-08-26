@@ -3,6 +3,7 @@ package happybeans.controller.admin
 import happybeans.dto.auth.LoginRequestDto
 import happybeans.enums.UserRole
 import happybeans.model.User
+import happybeans.repository.RestaurantRepository
 import happybeans.repository.UserRepository
 import happybeans.service.AdminAuthService
 import io.restassured.RestAssured
@@ -19,6 +20,8 @@ import org.springframework.http.HttpStatus
 class AdminRestaurantControllerTest {
     private lateinit var token: String
     private lateinit var user: User
+
+    @Autowired lateinit var restaurantRepository: RestaurantRepository
 
     @Autowired
     private lateinit var userRepository: UserRepository
@@ -43,6 +46,7 @@ class AdminRestaurantControllerTest {
 
     @AfterEach
     fun tearDown() {
+        restaurantRepository.deleteAll()
         userRepository.deleteAll()
     }
 

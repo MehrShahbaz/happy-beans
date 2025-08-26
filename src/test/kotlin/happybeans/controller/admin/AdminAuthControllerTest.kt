@@ -4,8 +4,11 @@ import happybeans.controller.AbstractRestDocsRestAssuredTest
 import happybeans.dto.auth.LoginRequestDto
 import happybeans.enums.UserRole
 import happybeans.model.User
+import happybeans.repository.RestaurantRepository
 import happybeans.repository.UserRepository
 import io.restassured.http.ContentType
+import jakarta.persistence.EntityManager
+import jakarta.persistence.PersistenceContext
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.AfterEach
 import org.junit.jupiter.api.BeforeEach
@@ -27,6 +30,7 @@ import org.springframework.test.context.ActiveProfiles
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class AdminAuthControllerTest : AbstractRestDocsRestAssuredTest() {
     @Autowired lateinit var userRepository: UserRepository
+    @Autowired lateinit var restaurantRepository: RestaurantRepository
 
     private val rawPassword = "12345678"
     private lateinit var adminEmail: String
@@ -47,6 +51,7 @@ class AdminAuthControllerTest : AbstractRestDocsRestAssuredTest() {
 
     @AfterEach
     fun tearDown() {
+        restaurantRepository.deleteAll()
         userRepository.deleteAll()
     }
 
