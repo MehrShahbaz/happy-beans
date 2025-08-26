@@ -7,6 +7,7 @@ import com.stripe.net.Webhook
 import happybeans.dto.stripe.StripeEventDto
 import happybeans.service.OrderPaymentService
 import jakarta.servlet.http.HttpServletRequest
+import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -20,17 +21,25 @@ class WebhookController(
     private val endpointSecret: String,
     private val orderPaymentService: OrderPaymentService,
 ) {
+    private val logger = KotlinLogging.logger {}
+
     @PostMapping
     fun handleWebhook(
         @RequestBody payload: String,
         request: HttpServletRequest,
     ): String {
-        val sigHeader = request.getHeader("Stripe-Signature") ?: return "Missing signature"
+        val sigHeader = request.getHeader("Stripe-Signature")
+
+        if (sigHeader == null) {
+            logger.error { "Missing 'Stripe-Signature' header" }
+            return "Missing signature"
+        }
 
         val event =
             try {
                 Webhook.constructEvent(payload, sigHeader, endpointSecret)
             } catch (e: Exception) {
+                logger.error(e) { "Error creating webhook" }
                 return "Invalid signature"
             }
 
@@ -42,18 +51,19 @@ class WebhookController(
             try {
                 mapper.readValue<StripeEventDto>(payload)
             } catch (e: Exception) {
+                logger.warn(e) { "Error parsing webhook" }
                 println("Error parsing Stripe webhook payload: ${e.message}")
                 null
             }
 
         when (event.type) {
             "payment_intent.succeeded" -> {
+                logger.info { "Successfully sent PaymentIntent for ${event.id}" }
                 orderPaymentService.handlePaymentSuccess(stripeEvent)
-                println("✅ Payment succeeded")
             }
             "payment_intent.payment_failed" -> {
+                logger.info { "Payment failed for ${event.id}" }
                 orderPaymentService.handlePaymentFailure(stripeEvent)
-                println("❌ Payment failed")
             }
         }
 

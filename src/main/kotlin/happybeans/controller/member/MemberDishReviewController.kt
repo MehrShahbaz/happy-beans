@@ -8,6 +8,7 @@ import happybeans.model.User
 import happybeans.service.DishReviewService
 import happybeans.utils.annotations.LoginMember
 import jakarta.validation.Valid
+import mu.KotlinLogging
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -23,11 +24,14 @@ import java.net.URI
 @RequestMapping("/api/member/review/dishOption")
 class MemberDishReviewController
 (private val dishReviewService: DishReviewService) {
+    private val logger = KotlinLogging.logger {}
+
     @PostMapping("")
     fun createDishReview(
         @Valid @RequestBody dto: ReviewCreateRequestDto,
         @LoginMember member: User,
     ): ResponseEntity<MessageResponse> {
+        logger.info("POST Member review for ${member.id}")
         val dishReviewId = dishReviewService.createDishReview(member, dto)
         return ResponseEntity.created(URI.create("$dishReviewId")).body(MessageResponse("Dish review created"))
     }
@@ -38,6 +42,7 @@ class MemberDishReviewController
         @Valid @RequestBody dto: ReviewUpdateRequestDto,
         @LoginMember member: User,
     ): ResponseEntity<MessageResponse> {
+        logger.info("PATCH Member review for ${member.id} DishReviewId: $dishReviewId")
         dishReviewService.updateDishReview(dishReviewId, dto, member)
         return ResponseEntity.ok(MessageResponse("Updated dish Review"))
     }
@@ -46,6 +51,7 @@ class MemberDishReviewController
     fun getDishReviewsByUserId(
         @LoginMember member: User,
     ): List<DishReviewDto> {
+        logger.info("GET all Member reviews for ${member.id}")
         return dishReviewService.getReviewsByUserId(member.id)
     }
 
@@ -53,6 +59,7 @@ class MemberDishReviewController
     fun getDishReviewsByDishOptionId(
         @PathVariable dishOptionId: Long,
     ): List<DishReviewDto> {
+        logger.info("GET option reviews for $dishOptionId")
         return dishReviewService.getReviewsByDishOptionId(dishOptionId)
     }
 
@@ -60,6 +67,7 @@ class MemberDishReviewController
     fun getDishReviewsByDishId(
         @PathVariable dishId: Long,
     ): List<DishReviewDto> {
+        logger.info("GET dish reviews for $dishId")
         return dishReviewService.getReviewsByDishId(dishId)
     }
 
@@ -67,6 +75,7 @@ class MemberDishReviewController
     fun deleteDishReviewById(
         @PathVariable dishReviewId: Long,
     ): ResponseEntity<Unit> {
+        logger.info("DELETE dish review for $dishReviewId")
         dishReviewService.deleteReview(dishReviewId)
         return ResponseEntity.noContent().build()
     }
