@@ -32,13 +32,13 @@ class Restaurant(
     var image: String,
     @Column(name = "address_url")
     var addressUrl: String,
-    @ElementCollection(fetch = FetchType.LAZY)
+    @ElementCollection(fetch = FetchType.EAGER)
     @CollectionTable(
         name = "restaurant_working_dates_hours",
         joinColumns = [JoinColumn(name = "restaurant_id")],
     )
     var workingDateHours: MutableList<WorkingDateHour> = mutableListOf(),
-    @OneToMany(cascade = [(CascadeType.ALL)], fetch = FetchType.LAZY, orphanRemoval = true)
+    @OneToMany(cascade = [(CascadeType.ALL)], fetch = FetchType.EAGER, orphanRemoval = true)
     @JoinColumn(name = "restaurant_id")
     val dishes: MutableList<Dish> = mutableListOf(),
     @CreationTimestamp
