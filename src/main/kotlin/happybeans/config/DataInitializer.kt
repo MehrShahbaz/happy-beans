@@ -1,9 +1,6 @@
 package happybeans.config
 
-import happybeans.dto.dish.DishCreateRequest
-import happybeans.dto.dish.DishOptionCreateRequest
 import happybeans.enums.UserRole
-import happybeans.model.Restaurant
 import happybeans.model.User
 import happybeans.repository.DishRepository
 import happybeans.repository.RestaurantRepository
@@ -37,66 +34,6 @@ class DataInitializer() : CommandLineRunner {
                     "Admin",
                     UserRole.ADMIN,
                 ),
-            )
-        }
-        if (dishRepository.count() == 0L) {
-            val owner =
-                userRepository.save(
-                    User(
-                        "res-owner@owner.com",
-                        "12345678",
-                        "Restaurant",
-                        "Owner",
-                        UserRole.RESTAURANT_OWNER,
-                    ),
-                )
-            val restaurant =
-                restaurantRepository.save(
-                    Restaurant(
-                        owner,
-                        "Restaurant 1",
-                        "Restaurant Desc",
-                        "",
-                        "Restaurant",
-                    ),
-                )
-            dishService.createDish(
-                restaurant.id,
-                DishCreateRequest(
-                    "Dish 1",
-                    "Dish Desc",
-                    "",
-                    mutableSetOf(
-                        DishOptionCreateRequest(
-                            "Dish Option 1",
-                            "Dish Option Desc",
-                            15.3,
-                            "",
-                            true,
-                            25,
-                        ),
-                    ),
-                ),
-                owner,
-            )
-            dishService.createDish(
-                restaurant.id,
-                DishCreateRequest(
-                    "Dish 2",
-                    "Dish Desc",
-                    "",
-                    mutableSetOf(
-                        DishOptionCreateRequest(
-                            "Dish-2 Option-1",
-                            "Dish Option Desc",
-                            20.5,
-                            "",
-                            true,
-                            25,
-                        ),
-                    ),
-                ),
-                owner,
             )
         }
     }
