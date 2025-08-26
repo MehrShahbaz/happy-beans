@@ -23,7 +23,6 @@ import org.springframework.test.web.servlet.get
 import java.time.LocalDateTime
 
 class GuestDishControllerTest : AbstractRestDocsMockMvcTest() {
-
     @MockitoBean
     lateinit var dishService: DishService
 
@@ -34,14 +33,15 @@ class GuestDishControllerTest : AbstractRestDocsMockMvcTest() {
     fun `GET guest dishes by restaurant - returns DishResponse list & docs`() {
         val restaurantId = 10L
 
-        val dish = DishResponse(
-            id = 11L,
-            name = "Pho Bo",
-            description = "Vietnamese beef noodle soup",
-            image = "https://cdn.example/pho-bo.jpg",
-            restaurantId = restaurantId,
-            dishOptions = emptySet()
-        )
+        val dish =
+            DishResponse(
+                id = 11L,
+                name = "Pho Bo",
+                description = "Vietnamese beef noodle soup",
+                image = "https://cdn.example/pho-bo.jpg",
+                restaurantId = restaurantId,
+                dishOptions = emptySet(),
+            )
         whenever(dishService.getAllDishes()).thenReturn(listOf(dish))
 
         mockMvc.get("/api/guest/{restaurantId}/dishes", restaurantId) {
@@ -75,26 +75,28 @@ class GuestDishControllerTest : AbstractRestDocsMockMvcTest() {
 
     @Test
     fun `GET guest restaurants - returns Restaurant list & docs`() {
-        val owner = User(
-            id = 2L,
-            firstName = "Owner",
-            lastName = "User",
-            email = "owner@example.com",
-            password = "secret"
-        )
+        val owner =
+            User(
+                id = 2L,
+                firstName = "Owner",
+                lastName = "User",
+                email = "owner@example.com",
+                password = "secret",
+            )
 
-        val restaurant = Restaurant(
-            user = owner,
-            name = "Happy Beans",
-            description = "Fresh & tasty bowls",
-            image = "https://cdn.example/hb-logo.png",
-            addressUrl = "https://maps.example/hb",
-            workingDateHours = mutableListOf(),
-            dishes = mutableListOf(),
-            createdAt = LocalDateTime.now(),
-            updatedAt = LocalDateTime.now(),
-            id = 5L
-        )
+        val restaurant =
+            Restaurant(
+                user = owner,
+                name = "Happy Beans",
+                description = "Fresh & tasty bowls",
+                image = "https://cdn.example/hb-logo.png",
+                addressUrl = "https://maps.example/hb",
+                workingDateHours = mutableListOf(),
+                dishes = mutableListOf(),
+                createdAt = LocalDateTime.now(),
+                updatedAt = LocalDateTime.now(),
+                id = 5L,
+            )
 
         whenever(restaurantService.getALlRestaurants()).thenReturn(listOf(restaurant))
 
