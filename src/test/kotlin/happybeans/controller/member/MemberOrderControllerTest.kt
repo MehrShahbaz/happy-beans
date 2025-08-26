@@ -1,0 +1,3 @@
+package happybeans.controller.member
+
+class MemberOrderControllerTest

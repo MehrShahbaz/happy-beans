@@ -5,6 +5,7 @@ import happybeans.utils.exception.UnauthorisedUserException
 import io.jsonwebtoken.JwtException
 import io.jsonwebtoken.Jwts
 import io.jsonwebtoken.security.Keys
+import mu.KotlinLogging
 import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Component
 import java.nio.charset.StandardCharsets
@@ -21,10 +22,13 @@ class JwtProvider(
     @Value("\${security.jwt.token.expire-length}")
     private val validityInMilliseconds: Long,
 ) {
+    private val logger = KotlinLogging.logger {}
+
     private val secretKey: SecretKey =
         Keys.hmacShaKeyFor(secret.toByteArray(StandardCharsets.UTF_8))
 
     fun createToken(authTokenPayload: AuthTokenPayload): String {
+        logger.debug { "Creating token for ${authTokenPayload.email}" }
         val now = Date()
         val expirationDate = Date(now.time + validityInMilliseconds)
         return Jwts.builder()
@@ -36,6 +40,7 @@ class JwtProvider(
     }
 
     fun getPayload(token: String): AuthTokenPayload {
+        logger.debug { "Getting token for $token" }
         val claims =
             Jwts.parser()
                 .verifyWith(secretKey)
@@ -44,6 +49,7 @@ class JwtProvider(
                 .payload
 
         val email = claims.get("email", String::class.java)
+        logger.debug { "Email from token: $email" }
         return AuthTokenPayload(email)
     }
 
@@ -57,8 +63,10 @@ class JwtProvider(
                     .parseSignedClaims(token)
             claims.payload.expiration.before(Date())
         } catch (_: JwtException) {
+            logger.debug { "Token validation failed: $token UnauthorisedUserException" }
             throw UnauthorisedUserException("Token not valid")
         } catch (_: IllegalArgumentException) {
+            logger.debug { "Token validation failed: $token IllegalArgumentException" }
             throw kotlin.IllegalArgumentException("Invalid JWT token")
         }
     }

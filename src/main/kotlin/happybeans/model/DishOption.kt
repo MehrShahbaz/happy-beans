@@ -1,5 +1,6 @@
 package happybeans.model
 
+import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
 import jakarta.persistence.FetchType
@@ -7,6 +8,8 @@ import jakarta.persistence.GeneratedValue
 import jakarta.persistence.GenerationType
 import jakarta.persistence.Id
 import jakarta.persistence.JoinColumn
+import jakarta.persistence.JoinTable
+import jakarta.persistence.ManyToMany
 import jakarta.persistence.ManyToOne
 import jakarta.persistence.Table
 import org.hibernate.annotations.CreationTimestamp
@@ -29,22 +32,23 @@ class DishOption(
     var image: String,
     @Column(name = "available", nullable = false)
     var available: Boolean = true,
-    @ManyToOne(fetch = FetchType.LAZY)
-    @JoinColumn(name = "tag_containers_id")
-    var ingredients: TagContainer,
     @Column(name = "prep_time_minute")
     var prepTimeMinutes: Int = 0,
-    @Column(name = "rating", nullable = false)
-    var rating: Double,
     @CreationTimestamp
     var createdAt: LocalDateTime? = null,
     @UpdateTimestamp
     var updatedAt: LocalDateTime? = null,
+    @ManyToMany(cascade = [CascadeType.PERSIST, CascadeType.MERGE], fetch = FetchType.LAZY)
+    @JoinTable(
+        name = "dish_option_tags",
+        joinColumns = [JoinColumn(name = "dish_option_id")],
+        inverseJoinColumns = [JoinColumn(name = "tag_id")],
+    )
+    val dishOptionTags: MutableSet<Tag> = mutableSetOf(),
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     var id: Long = 0L,
 ) {
-    // if not used, can remove later : equals, hashCode, toString
     override fun equals(other: Any?): Boolean {
         if (this === other) return true
         if (other !is DishOption) return false

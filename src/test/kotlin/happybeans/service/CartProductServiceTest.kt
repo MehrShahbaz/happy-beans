@@ -4,9 +4,9 @@ import happybeans.dto.cart.CartProductRequest
 import happybeans.model.CartProduct
 import happybeans.model.Dish
 import happybeans.model.DishOption
-import happybeans.model.TagContainer
 import happybeans.model.User
 import happybeans.repository.CartProductRepository
+import happybeans.repository.UserRepository
 import io.mockk.every
 import io.mockk.impl.annotations.InjectMockKs
 import io.mockk.impl.annotations.MockK
@@ -33,7 +33,7 @@ class CartProductServiceTest {
     private lateinit var dishService: DishService
 
     @MockK
-    private lateinit var tagContainer: TagContainer
+    private lateinit var userRepository: UserRepository
 
     private lateinit var user: User
     private lateinit var dish: Dish
@@ -67,8 +67,6 @@ class CartProductServiceTest {
                 description = "A large cup of coffee.",
                 price = 3.00,
                 image = "large_coffee.jpg",
-                ingredients = tagContainer,
-                rating = 4.5,
             )
 
         cartProduct = CartProduct(user, dish, dishOption).apply { quantity = 2 }

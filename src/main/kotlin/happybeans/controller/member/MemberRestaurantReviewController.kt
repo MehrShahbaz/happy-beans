@@ -8,6 +8,7 @@ import happybeans.model.User
 import happybeans.service.RestaurantReviewService
 import happybeans.utils.annotations.LoginMember
 import jakarta.validation.Valid
+import mu.KotlinLogging
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -24,11 +25,14 @@ import java.net.URI
 class MemberRestaurantReviewController(
     private val restaurantReviewService: RestaurantReviewService,
 ) {
+    private val logger = KotlinLogging.logger {}
+
     @PostMapping("")
     fun createRestaurantReview(
         @Valid @RequestBody dto: ReviewCreateRequestDto,
         @LoginMember member: User,
     ): ResponseEntity<MessageResponse> {
+        logger.info { "POST Creating review for ${member.id}" }
         val restaurantReviewId = restaurantReviewService.createRestaurantReview(member, dto)
         return ResponseEntity.created(
             URI.create("$restaurantReviewId"),
@@ -41,6 +45,7 @@ class MemberRestaurantReviewController(
         @Valid @RequestBody dto: ReviewUpdateRequestDto,
         @LoginMember member: User,
     ): ResponseEntity<MessageResponse> {
+        logger.info { "Patching review for ${member.id} reviewId: $restaurantReviewId" }
         restaurantReviewService.updateRestaurantReview(restaurantReviewId, dto, member)
         return ResponseEntity.ok(MessageResponse("Updated Restaurant Review"))
     }
@@ -48,22 +53,25 @@ class MemberRestaurantReviewController(
     @GetMapping("/{restaurantId}")
     fun getRestaurantReviewsByRestaurantId(
         @PathVariable restaurantId: Long,
-    ): List<RestaurantReviewDto> {
-        return restaurantReviewService.getReviewsByRestaurantId(restaurantId)
+    ): ResponseEntity<List<RestaurantReviewDto>> {
+        logger.info { "Getting all restaurantReviews for $restaurantId" }
+        return ResponseEntity.ok(restaurantReviewService.getReviewsByRestaurantId(restaurantId))
     }
 
-    @GetMapping("/{userId}")
+    @GetMapping("/user/{userId}")
     fun getRestaurantReviewsByUserId(
         @PathVariable userId: Long,
         @LoginMember member: User,
-    ): List<RestaurantReviewDto> {
-        return restaurantReviewService.getReviewsByUserId(member.id)
+    ): ResponseEntity<List<RestaurantReviewDto>> {
+        logger.info { "Getting all restaurantReviews for $userId" }
+        return ResponseEntity.ok(restaurantReviewService.getReviewsByUserId(member.id))
     }
 
     @DeleteMapping("/{restaurantId}")
     fun deleteRestaurantReviewById(
         @PathVariable restaurantId: Long,
     ): ResponseEntity<Unit> {
+        logger.info { "Deleting review for $restaurantId" }
         restaurantReviewService.deleteReviewById(restaurantId)
         return ResponseEntity.noContent().build()
     }

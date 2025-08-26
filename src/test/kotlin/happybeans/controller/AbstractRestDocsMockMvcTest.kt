@@ -1,4 +1,4 @@
-package happybeans.controller.member
+package happybeans.controller
 
 import happybeans.config.argumentResolver.LoginMemberArgumentResolver
 import happybeans.config.interceptor.MemberInterceptor
@@ -18,7 +18,7 @@ import org.springframework.test.web.servlet.MockMvc
 @SpringBootTest
 @AutoConfigureMockMvc
 @AutoConfigureRestDocs
-abstract class AbstractDocumentTest {
+abstract class AbstractRestDocsMockMvcTest {
     @Autowired
     lateinit var mockMvc: MockMvc
 

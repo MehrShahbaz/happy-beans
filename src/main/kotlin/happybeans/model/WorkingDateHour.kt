@@ -13,7 +13,7 @@ data class WorkingDateHour(
     @Enumerated(EnumType.STRING)
     val dayOfWeek: DayOfWeek,
     @Column(name = "open_time", nullable = false)
-    val openTime: LocalTime,
+    var openTime: LocalTime,
     @Column(name = "close_time", nullable = false)
-    val closeTime: LocalTime,
+    var closeTime: LocalTime,
 )

@@ -7,6 +7,7 @@ import happybeans.model.User
 import happybeans.service.CartProductService
 import happybeans.utils.annotations.LoginMember
 import jakarta.validation.Valid
+import mu.KotlinLogging
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -17,16 +18,22 @@ import org.springframework.web.bind.annotation.RequestBody
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
+private val logger = KotlinLogging.logger {}
+
 @RestController
 @RequestMapping("/api/member/cart")
 class CartProductController(
     private val cartProductService: CartProductService,
 ) {
+    private val logger = KotlinLogging.logger {}
+
     @GetMapping("")
     fun getCartProducts(
         @LoginMember user: User,
     ): ResponseEntity<CartProductListResponse> {
-        return ResponseEntity.ok(cartProductService.findAllByUserId2(user))
+        logger.info { "GET request received for user: ${user.id}'s cart." }
+        val response = cartProductService.findAllByUserId2(user)
+        return ResponseEntity.ok(response)
     }
 
     @PostMapping("/dish/{dishId}/dish-option/{dishOptionId}")
@@ -36,6 +43,7 @@ class CartProductController(
         @PathVariable("dishOptionId") dishOptionId: Long,
         @Valid @RequestBody cartProductRequest: CartProductRequest,
     ): ResponseEntity<MessageResponse> {
+        logger.info { "POST request to add to cart for user: ${user.id}, dish: $dishId, option: $dishOptionId" }
         cartProductService
             .addOrUpdateCartProduct(
                 user,
@@ -51,6 +59,7 @@ class CartProductController(
         @PathVariable("dishOptionId") dishOptionId: Long,
         @Valid @RequestBody request: CartProductRequest,
     ): ResponseEntity<MessageResponse> {
+        logger.info { "PATCH request to update quantity for user: ${user.id}, dish option: $dishOptionId." }
         cartProductService.updateQuantity(user, dishOptionId, request.quantity)
         return ResponseEntity.ok(MessageResponse("Option updated"))
     }
@@ -60,6 +69,7 @@ class CartProductController(
         @LoginMember user: User,
         @PathVariable("dishOptionId") dishOptionId: Long,
     ): ResponseEntity<Unit> {
+        logger.info { "DELETE request to remove item for user: ${user.id}, dish option: $dishOptionId." }
         cartProductService.deleteFromCart(user, dishOptionId)
         return ResponseEntity.noContent().build()
     }
@@ -68,6 +78,7 @@ class CartProductController(
     fun clearCart(
         @LoginMember user: User,
     ): ResponseEntity<Unit> {
+        logger.info { "DELETE request to clear cart for user: ${user.id}." }
         cartProductService.clear(user)
         return ResponseEntity.noContent().build()
     }
