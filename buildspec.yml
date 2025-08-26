@@ -6,11 +6,19 @@ phases:
       java: corretto21
   pre_build:
     commands:
+      - export $(grep -v '^#' ./.env | xargs)
       - ./gradlew clean
-#      - rm -rf .env
-#      - echo "JWT_SECRET=${JWT_SECRET}" > .env
-#      - echo "JWT_TIME=${JWT_TIME}" >> .env
-#      - echo ".env file created:"
+      - echo ">>> Creating .env file..."
+      - echo "JWT_SECRET=${JWT_SECRET}" > .env
+      - echo "JWT_TIME=${JWT_TIME}" >> .env
+      - echo "SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}" >> .env
+      - echo "SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME}" >> .env
+      - echo "SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}" >> .env
+      - echo "STRIPE_WEBHOOK_KEY=${STRIPE_WEBHOOK_KEY}" >> .env
+      - echo "STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}" >> .env
+      - echo "EMAIL_USERNAME=${EMAIL_USERNAME}" >> .env
+      - echo "EMAIL_PASSWORD=${EMAIL_PASSWORD}" >> .env
+      - echo ".env file created:"
 
   build:
     commands:
