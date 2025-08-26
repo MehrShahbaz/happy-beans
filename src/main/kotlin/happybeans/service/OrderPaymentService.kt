@@ -12,6 +12,7 @@ class OrderPaymentService(
     private val stripePaymentService: StripePaymentService,
     private val paymentService: PaymentService,
     private val emailDispatchService: EmailDispatchService,
+    private val cartProductService: CartProductService,
 ) {
     fun handleCartCheckout(member: User): String {
         val order = memberOrderService.checkoutCart(member)
@@ -37,6 +38,8 @@ class OrderPaymentService(
 
         paymentService.updateStatus(payment, PaymentStatus.COMPLETED)
         memberOrderService.updateStatus(order, OrderStatus.COMPLETED)
+
+        cartProductService.clearPaymentSuccess(order.userId)
 
         emailDispatchService.sendOrderConfirmationEmail(order)
     }

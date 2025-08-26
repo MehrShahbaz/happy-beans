@@ -6,6 +6,7 @@ import happybeans.dto.cart.CartProductResponse
 import happybeans.model.CartProduct
 import happybeans.model.User
 import happybeans.repository.CartProductRepository
+import happybeans.repository.UserRepository
 import happybeans.utils.exception.EntityNotFoundException
 import mu.KotlinLogging
 import org.springframework.stereotype.Service
@@ -17,9 +18,22 @@ private val logger = KotlinLogging.logger {}
 class CartProductService(
     private val cartProductRepository: CartProductRepository,
     private val dishService: DishService,
+    private val userRepository: UserRepository,
 ) {
     @Transactional
     fun clear(user: User) {
+        logger.info { "Clearing cart for user: ${user.id}" }
+        cartProductRepository.deleteAllByUserId(user.id)
+        logger.info { "Cart for user: ${user.id} cleared successfully." }
+    }
+
+    @Transactional
+    fun clearPaymentSuccess(userId: Long) {
+        val user =
+            userRepository.findById(userId).orElseThrow {
+                logger.error { "User with id $userId not found" }
+                EntityNotFoundException("User with id $userId not found")
+            }
         logger.info { "Clearing cart for user: ${user.id}" }
         cartProductRepository.deleteAllByUserId(user.id)
         logger.info { "Cart for user: ${user.id} cleared successfully." }
