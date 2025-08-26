@@ -56,7 +56,7 @@ class RestaurantController(
         @Valid @RequestBody request: RestaurantPatchRequest,
     ): ResponseEntity<MessageResponse> {
         restaurantService.patchRestaurant(request, restaurantId, user.id)
-        return ResponseEntity.ok(MessageResponse("Created successfully!"))
+        return ResponseEntity.ok(MessageResponse("Patched successfully!"))
     }
 
     @DeleteMapping("/{restaurantId}")
