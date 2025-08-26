@@ -23,6 +23,6 @@ class HealthCheckControllerTest : AbstractRestDocsRestAssuredTest() {
                 .extract()
 
         assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value())
-        assertThat(response.body().asString()).isEqualTo("OK it Works")
+        assertThat(response.body().asString()).isEqualTo("OK")
     }
 }
