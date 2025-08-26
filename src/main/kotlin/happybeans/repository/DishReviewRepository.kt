@@ -5,6 +5,7 @@ import happybeans.model.DishReview
 import org.springframework.data.jpa.repository.JpaRepository
 import org.springframework.data.jpa.repository.Query
 import org.springframework.data.repository.query.Param
+import java.util.Optional
 
 interface DishReviewRepository : JpaRepository<DishReview, Long> {
     fun findByUserId(userId: Long): List<DishReview>
@@ -46,4 +47,9 @@ interface DishReviewRepository : JpaRepository<DishReview, Long> {
     fun findAverageDishOptionRating(
         @Param("dishOptionId") dishOptionId: Long,
     ): Double?
+
+    fun findByUserIdAndId(
+        userId: Long,
+        reviewId: Long,
+    ): Optional<DishReview>
 }

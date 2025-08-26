@@ -9,6 +9,7 @@ import happybeans.model.User
 import happybeans.repository.DishOptionRepository
 import happybeans.repository.DishReviewRepository
 import jakarta.persistence.EntityNotFoundException
+import mu.KotlinLogging
 import org.springframework.data.repository.findByIdOrNull
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
@@ -20,13 +21,18 @@ class DishReviewService(
     private val dishReviewRepository: DishReviewRepository,
     private val dishOptionRepository: DishOptionRepository,
 ) {
+    private val logger = KotlinLogging.logger {}
+
     fun createDishReview(
         member: User,
         dto: ReviewCreateRequestDto,
     ): Long {
-        val dishOption =
-            dishOptionRepository.findByIdOrNull(dto.entityId)
-                ?: throw EntityNotFoundException("Dish option with ID ${dto.entityId} not found")
+        val dishOption = dishOptionRepository.findByIdOrNull(dto.entityId)
+
+        if (dishOption == null) {
+            logger.error { "Dish review does not exists for ${dto.entityId}" }
+            throw EntityNotFoundException("Dish option with ID ${dto.entityId} not found")
+        }
 
         val review =
             DishReview(
@@ -48,8 +54,11 @@ class DishReviewService(
         member: User,
     ) {
         val review =
-            dishReviewRepository.findById(id)
-                .orElseThrow { EntityNotFoundException("Review with ID $id not found") }
+            dishReviewRepository.findByUserIdAndId(member.id, id)
+                .orElseThrow {
+                    logger.error { "Dish review does not exists for ${member.id} and review id $id" }
+                    EntityNotFoundException("Review with ID $id not found")
+                }
 
         review.message = dto.message
         dishReviewRepository.save(review)
@@ -57,6 +66,7 @@ class DishReviewService(
 
     fun deleteReview(id: Long) {
         if (!dishReviewRepository.existsById(id)) {
+            logger.error { "Review with ID $id does not exist" }
             throw EntityNotFoundException("Review with ID $id not found")
         }
         dishReviewRepository.deleteById(id)

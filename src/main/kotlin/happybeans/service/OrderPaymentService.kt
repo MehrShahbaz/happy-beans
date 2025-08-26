@@ -4,6 +4,7 @@ import happybeans.dto.stripe.StripeEventDto
 import happybeans.enums.OrderStatus
 import happybeans.enums.PaymentStatus
 import happybeans.model.User
+import mu.KotlinLogging
 import org.springframework.stereotype.Service
 
 @Service
@@ -13,6 +14,8 @@ class OrderPaymentService(
     private val paymentService: PaymentService,
     private val emailDispatchService: EmailDispatchService,
 ) {
+    private val logger = KotlinLogging.logger {}
+
     fun handleCartCheckout(member: User): String {
         val order = memberOrderService.checkoutCart(member)
         val session = stripePaymentService.createSession(order)
@@ -31,7 +34,10 @@ class OrderPaymentService(
     }
 
     fun handlePaymentSuccess(event: StripeEventDto?) {
-        if (event == null) return
+        if (event == null) {
+            logger.error { "event not found" }
+            return
+        }
         val order = memberOrderService.getOrder(getOrderId(event))
         val payment = paymentService.getPaymentByOrderId(order.id)
 
@@ -42,7 +48,10 @@ class OrderPaymentService(
     }
 
     fun handlePaymentFailure(event: StripeEventDto?) {
-        if (event == null) return
+        if (event == null) {
+            logger.error { "event not found" }
+            return
+        }
         val order = memberOrderService.getOrder(getOrderId(event))
         val payment = paymentService.getPaymentByOrderId(order.id)
 

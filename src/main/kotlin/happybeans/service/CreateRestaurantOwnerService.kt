@@ -4,6 +4,8 @@ import happybeans.dto.user.RestaurantOwnerRequestDto
 import happybeans.enums.UserRole
 import happybeans.model.User
 import happybeans.repository.UserRepository
+import happybeans.utils.exception.DuplicateEntityException
+import mu.KotlinLogging
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -12,10 +14,12 @@ import org.springframework.transaction.annotation.Transactional
 class CreateRestaurantOwnerService(
     private val userRepository: UserRepository,
 ) {
+    private val logger = KotlinLogging.logger {}
+
     fun createRestaurantOwner(request: RestaurantOwnerRequestDto): User {
         if (userRepository.existsByEmailAndRole(request.email, UserRole.RESTAURANT_OWNER)) {
-            // TODO use DuplicateEntityException in Jin's PR
-            throw IllegalArgumentException("User already exists")
+            logger.error { "Restaurant owner with email: ${request.email} already exists" }
+            throw DuplicateEntityException("Restaurant owner with email: ${request.email} already exists")
         }
         return userRepository.save(
             User(

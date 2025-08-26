@@ -2,6 +2,7 @@ package happybeans.service
 
 import happybeans.model.Tag
 import happybeans.repository.TagRepository
+import mu.KotlinLogging
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -10,6 +11,8 @@ import org.springframework.transaction.annotation.Transactional
 class TagService(
     private val tagRepository: TagRepository,
 ) {
+    private val logger = KotlinLogging.logger {}
+
     fun createTag(tagName: String): Tag {
         return tagRepository.save(Tag(tagName))
     }
