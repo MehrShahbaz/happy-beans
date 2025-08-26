@@ -1,6 +1,7 @@
 package happybeans.controller.member
 
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
+import happybeans.controller.AbstractRestDocsMockMvcTest
 import happybeans.dto.cart.CartProductListResponse
 import happybeans.dto.cart.CartProductResponse
 import happybeans.service.CartProductService
@@ -29,7 +30,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
-class CartProductControllerTest : AbstractDocumentTest() {
+class CartProductControllerTest : AbstractRestDocsMockMvcTest() {
     @MockitoBean
     private lateinit var cartProductService: CartProductService
 

@@ -48,16 +48,16 @@ class MemberRestaurantReviewController(
     @GetMapping("/{restaurantId}")
     fun getRestaurantReviewsByRestaurantId(
         @PathVariable restaurantId: Long,
-    ): List<RestaurantReviewDto> {
-        return restaurantReviewService.getReviewsByRestaurantId(restaurantId)
+    ): ResponseEntity<List<RestaurantReviewDto>> {
+        return ResponseEntity.ok(restaurantReviewService.getReviewsByRestaurantId(restaurantId))
     }
 
-    @GetMapping("/{userId}")
+    @GetMapping("/user/{userId}")
     fun getRestaurantReviewsByUserId(
         @PathVariable userId: Long,
         @LoginMember member: User,
-    ): List<RestaurantReviewDto> {
-        return restaurantReviewService.getReviewsByUserId(member.id)
+    ): ResponseEntity<List<RestaurantReviewDto>> {
+        return ResponseEntity.ok(restaurantReviewService.getReviewsByUserId(member.id))
     }
 
     @DeleteMapping("/{restaurantId}")

@@ -6,14 +6,20 @@ import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
+@Transactional
 class TagService(
     private val tagRepository: TagRepository,
 ) {
-    @Transactional
-    fun findOrCreateTags(ingredientNames: Set<String>): Set<Tag> {
-        return ingredientNames.map { name ->
-            tagRepository.findByName(name)
-                ?: Tag(name = name)
-        }.toSet()
+    fun createTag(tagName: String): Tag {
+        return tagRepository.save(Tag(tagName))
+    }
+
+    @Transactional(readOnly = true)
+    fun findByName(tagName: String): Tag? {
+        return tagRepository.findByName(tagName)
+    }
+
+    fun findOrCreateByName(tagName: String): Tag {
+        return findByName(tagName) ?: createTag(tagName)
     }
 }

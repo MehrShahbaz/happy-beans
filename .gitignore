@@ -41,3 +41,6 @@ out/
 .kotlin
 
 /src/main/resources/static/docs/index.html
+
+### Logs ###
+/logs/**
