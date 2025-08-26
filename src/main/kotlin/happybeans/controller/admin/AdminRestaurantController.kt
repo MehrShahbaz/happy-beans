@@ -1,6 +1,6 @@
 package happybeans.controller.admin
 
-import happybeans.model.Restaurant
+import happybeans.dto.restaurant.RestaurantResponse
 import happybeans.service.AdminRestaurantService
 import mu.KotlinLogging
 import org.springframework.http.ResponseEntity
@@ -16,8 +16,10 @@ class AdminRestaurantController(
     private val logger = KotlinLogging.logger {}
 
     @GetMapping
-    fun getAllRestaurants(): ResponseEntity<List<Restaurant>> {
+    fun getAllRestaurants(): ResponseEntity<List<RestaurantResponse>> {
         logger.info("GET Getting all restaurants for Admin")
-        return ResponseEntity.ok().body(adminRestaurantService.getAllRestaurants())
+        return ResponseEntity
+            .ok()
+            .body(adminRestaurantService.getAllRestaurants().map { RestaurantResponse(it) })
     }
 }
