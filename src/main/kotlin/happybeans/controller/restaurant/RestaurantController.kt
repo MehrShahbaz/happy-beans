@@ -8,6 +8,7 @@ import happybeans.model.User
 import happybeans.service.RestaurantService
 import happybeans.utils.annotations.RestaurantOwner
 import jakarta.validation.Valid
+import mu.KotlinLogging
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -24,11 +25,14 @@ import java.net.URI
 class RestaurantController(
     private val restaurantService: RestaurantService,
 ) {
+    private val logger = KotlinLogging.logger {}
+
     @GetMapping("/{restaurantId}")
     fun getRestaurantById(
         @RestaurantOwner user: User,
         @PathVariable restaurantId: Long,
     ): ResponseEntity<Restaurant> {
+        logger.info("GET restaurant with id $restaurantId for user ${user.id}")
         return ResponseEntity.ok(restaurantService.getRestaurantByIdAndOwnerId(restaurantId, user.id))
     }
 
@@ -36,6 +40,7 @@ class RestaurantController(
     fun getAllRestaurants(
         @RestaurantOwner user: User,
     ): ResponseEntity<List<Restaurant>> {
+        logger.info("GET all restaurants for user ${user.id}")
         return ResponseEntity.ok(restaurantService.getAllOwnedRestaurants(user.id))
     }
 
@@ -44,6 +49,7 @@ class RestaurantController(
         @RestaurantOwner user: User,
         @Valid @RequestBody request: RestaurantCreateRequest,
     ): ResponseEntity<MessageResponse> {
+        logger.info("POST restaurant for owner ${user.id}")
         val savedRestaurant = restaurantService.createRestaurant(request, user)
         val uri = URI.create("/restaurants/${savedRestaurant.id}")
         return ResponseEntity.created(uri).body(MessageResponse("Created successfully!"))
@@ -55,6 +61,7 @@ class RestaurantController(
         @PathVariable restaurantId: Long,
         @Valid @RequestBody request: RestaurantPatchRequest,
     ): ResponseEntity<MessageResponse> {
+        logger.info("PATCH restaurant: $restaurantId for user ${user.id}")
         restaurantService.patchRestaurant(request, restaurantId, user.id)
         return ResponseEntity.ok(MessageResponse("Created successfully!"))
     }
@@ -64,6 +71,7 @@ class RestaurantController(
         @RestaurantOwner user: User,
         @PathVariable restaurantId: Long,
     ): ResponseEntity<Void> {
+        logger.info("DELETE restaurant: $restaurantId for user ${user.id}")
         restaurantService.deleteRestaurant(restaurantId, user.id)
         return ResponseEntity.noContent().build()
     }

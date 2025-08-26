@@ -5,14 +5,18 @@ import happybeans.model.Order
 import happybeans.model.Payment
 import happybeans.repository.PaymentRepository
 import happybeans.utils.exception.EntityNotFoundException
+import mu.KotlinLogging
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
 @Service
 @Transactional
 class PaymentService(private val paymentRepository: PaymentRepository) {
+    private val logger = KotlinLogging.logger {}
+
     fun getPaymentByOrderId(orderId: Long): Payment {
         return paymentRepository.findByOrderId(orderId).orElseThrow {
+            logger.error { "Payment not found for orderId=$orderId" }
             EntityNotFoundException("Payment with id $orderId not found")
         }
     }
@@ -22,6 +26,7 @@ class PaymentService(private val paymentRepository: PaymentRepository) {
         payment: Payment,
         status: PaymentStatus,
     ) {
+        logger.info { "Updating status for payment=${payment.id} from status=${payment.status} to status=$status" }
         payment.status = status
         paymentRepository.save(payment)
     }
@@ -30,6 +35,7 @@ class PaymentService(private val paymentRepository: PaymentRepository) {
         paymentId: String,
         order: Order,
     ): Payment {
+        logger.info { "Creating payment for order: ${order.id}" }
         return paymentRepository.save(
             Payment(
                 paymentId,
