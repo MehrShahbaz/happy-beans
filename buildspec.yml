@@ -6,7 +6,7 @@ phases:
       java: corretto21
   pre_build:
     commands:
-      - export $(grep -v '^#' ./.env | xargs)
+#      - export $(grep -v '^#' ./.env | xargs)
       - ./gradlew clean
       - echo ">>> Creating .env file..."
       - echo "JWT_SECRET=${JWT_SECRET}" > .env
