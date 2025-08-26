@@ -18,6 +18,10 @@ import kotlin.collections.map
 class RestaurantService(
     private val restaurantRepository: RestaurantRepository,
 ) {
+    fun getALlRestaurants(): List<Restaurant> {
+        return restaurantRepository.findAll()
+    }
+
     fun createRestaurant(
         restaurantCreateRequest: RestaurantCreateRequest,
         restaurantOwner: User,

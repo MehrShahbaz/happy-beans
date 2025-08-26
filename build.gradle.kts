@@ -41,6 +41,7 @@ dependencies {
     implementation("io.jsonwebtoken:jjwt-api:0.12.6")
     implementation("io.github.cdimascio:dotenv-java:3.0.0")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
+    implementation("com.stripe:stripe-java:29.4.0")
     implementation("org.springframework.boot:spring-boot-starter-mail")
     implementation("io.github.microutils:kotlin-logging-jvm:3.0.5")
 
