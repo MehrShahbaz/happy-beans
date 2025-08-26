@@ -7,6 +7,7 @@ phases:
   pre_build:
     commands:
 #      - export $(grep -v '^#' ./.env | xargs)
+      - chmod +x gradlew
       - ./gradlew clean
       - echo ">>> Creating .env file..."
       - echo "JWT_SECRET=${JWT_SECRET}" > .env
