@@ -61,7 +61,7 @@ class GuestJoinRequestControllerTest : AbstractRestDocsRestAssuredTest() {
                 .then().log().all()
                 .extract()
 
-        assertThat(response.statusCode()).isEqualTo(HttpStatus.OK.value())
+        assertThat(response.statusCode()).isEqualTo(HttpStatus.CREATED.value())
         assertThat(response.body().jsonPath().getString("message")).isEqualTo("Request sent successfully")
     }
 
