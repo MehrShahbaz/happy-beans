@@ -1,5 +1,6 @@
 package happybeans.service
 
+import happybeans.dto.order.OrderListResponse
 import happybeans.dto.order.OrderProductResponse
 import happybeans.dto.order.OrderResponse
 import happybeans.enums.OrderStatus
@@ -22,8 +23,8 @@ class MemberOrderService(
     private val dishOptionRepository: DishOptionRepository,
 ) {
     @Transactional(readOnly = true)
-    fun getAllUserOrders(userId: Long): List<OrderResponse> {
-        return orderRepository.findAllByUserId(userId).map { it.toOrderResponse() }
+    fun getAllUserOrders(userId: Long): OrderListResponse {
+        return OrderListResponse(orderRepository.findAllByUserId(userId).map { it.toOrderResponse() })
     }
 
     @Transactional(readOnly = true)

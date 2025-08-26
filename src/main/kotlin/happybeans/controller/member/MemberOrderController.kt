@@ -23,8 +23,7 @@ class MemberOrderController(
     fun getAllOrders(
         @LoginMember user: User,
     ): ResponseEntity<OrderListResponse> {
-        val response = OrderListResponse(orderService.getAllUserOrders(user.id))
-        return ResponseEntity.ok(response)
+        return ResponseEntity.ok(orderService.getAllUserOrders(user.id))
     }
 
     @GetMapping("/{orderId}")
