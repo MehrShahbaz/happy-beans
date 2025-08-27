@@ -85,6 +85,10 @@ class DishService(
             }
     }
 
+    fun getFilteredDishesByUser(user: User): List<Dish> {
+
+    }
+
     @Transactional
     fun createDish(
         restaurantId: Long,
