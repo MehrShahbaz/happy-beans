@@ -2,7 +2,7 @@
 set -e
 
 # Log file path
-LOG_FILE="/home/ubuntu/app/logs/script.log"
+LOG_FILE="/home/ubuntu/app/logs"
 
 # Define a simple logging function with a timestamp
 log() {
