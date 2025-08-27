@@ -47,7 +47,7 @@ cd /home/ubuntu/app || { log "ERROR: Failed to change directory to /home/ubuntu/
 log "Starting the Spring Boot application with private IP address"
 nohup authbind --deep java -jar /home/ubuntu/app/build/libs/happy-beans-0.0.1-SNAPSHOT.jar \
 --spring.profiles.active=prod \
---spring.datasource.url=jdbc:postgresql://10.0.100.46:5432/happy_beans \
+#--spring.datasource.url=jdbc:postgresql://10.0.100.46:5432/happy_beans \
 > "$LOG_DIR/app.log" 2>&1 &
 
 # Get the PID of the new process
