@@ -15,14 +15,16 @@ class TagService(
     private val logger = KotlinLogging.logger {}
 
     fun createTag(tagName: String): Tag {
+        logger.info { "Creating tag: $tagName" }
         if (tagRepository.existsByName(tagName)) {
-            logger.warn { "Tag already exists!" }
+            logger.warn { "Tag already exists: $tagName" }
             throw DuplicateEntityException("Tag already exists!")
         }
         return tagRepository.save(Tag(tagName))
     }
 
     fun getAllTags(): List<Tag> {
+        logger.info { "Getting all tags" }
         return tagRepository.findAll()
     }
 

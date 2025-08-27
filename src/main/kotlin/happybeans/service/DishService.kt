@@ -47,6 +47,7 @@ class DishService(
         return dishRepository.findDishesByRestaurant(restaurantId, pageable)
     }
 
+    @Transactional(readOnly = true)
     fun findByNameAndRestaurant(
         name: String,
         restaurantId: Long,
@@ -54,6 +55,7 @@ class DishService(
         return dishRepository.findByNameAndRestaurantId(name, restaurantId)
     }
 
+    @Transactional(readOnly = true)
     fun findById(dishId: Long): Dish {
         return dishRepository.findById(dishId).orElseThrow {
             logger.error { "Entity with ID $dishId does not exist." }
@@ -77,12 +79,28 @@ class DishService(
         return dishOption
     }
 
+    @Transactional(readOnly = true)
     fun findDishOptionById(dishOptionId: Long): DishOption {
         return dishOptionRepository.findById(dishOptionId)
             .orElseThrow {
                 logger.error { "Entity with ID $dishOptionId does not exist." }
                 EntityNotFoundException("Dish option with id $dishOptionId not found")
             }
+    }
+
+    @Transactional(readOnly = true)
+    fun getFilteredDishOptionsByUser(user: User): List<DishOption> {
+        val userDislikesNames: Set<String> = user.dislikes.map { it.name }.toSet()
+        val userLikesNames: Set<String> = user.likes.map { it.name }.toSet()
+
+        if (userDislikesNames.isEmpty() && userLikesNames.isEmpty()) {
+            return dishOptionRepository.findAll()
+        }
+
+        val dislikesForQuery = userDislikesNames.ifEmpty { setOf("__NEVER_MATCH__") }
+        val likesForQuery = userLikesNames.ifEmpty { setOf("__NEVER_MATCH__") }
+
+        return dishOptionRepository.findFilteredByUserPreferences(dislikesForQuery, likesForQuery)
     }
 
     @Transactional
