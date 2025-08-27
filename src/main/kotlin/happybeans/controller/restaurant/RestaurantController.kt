@@ -63,7 +63,7 @@ class RestaurantController(
     ): ResponseEntity<MessageResponse> {
         logger.info("PATCH restaurant: $restaurantId for user ${user.id}")
         restaurantService.patchRestaurant(request, restaurantId, user.id)
-        return ResponseEntity.ok(MessageResponse("Created successfully!"))
+        return ResponseEntity.ok(MessageResponse("Patched successfully!"))
     }
 
     @DeleteMapping("/{restaurantId}")
