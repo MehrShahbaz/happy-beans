@@ -22,7 +22,7 @@ cd /home/ubuntu/app
 # Ensure the logs directory exists and has correct permissions
 LOG_DIR="/home/ubuntu/app/logs"
 log "Ensuring logs directory exists at $LOG_DIR"
-mkdir -p "$LOG_DIR"
+mkdir -p /home/ubuntu/app/logs
 log "Fixing ownership of log directory"
 sudo chown -R ubuntu:ubuntu "$LOG_DIR"
 
