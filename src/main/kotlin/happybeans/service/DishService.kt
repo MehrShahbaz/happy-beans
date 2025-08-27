@@ -90,10 +90,11 @@ class DishService(
         val userDislikesNames: Set<String> = user.dislikes.map { it.name }.toSet()
         val userLikesNames: Set<String> = user.likes.map { it.name }.toSet()
 
-        val nonDislikedDishOptions = allDishOptions.filter { dishOption ->
-            val dishTagNames = dishOption.dishOptionTags.map { it.name }.toSet()
-            userDislikesNames.none { it in dishTagNames }
-        }
+        val nonDislikedDishOptions =
+            allDishOptions.filter { dishOption ->
+                val dishTagNames = dishOption.dishOptionTags.map { it.name }.toSet()
+                userDislikesNames.none { it in dishTagNames }
+            }
 
         return nonDislikedDishOptions.sortedByDescending { dishOption ->
             val dishOptionTagNames = dishOption.dishOptionTags.map { it.name }.toSet()

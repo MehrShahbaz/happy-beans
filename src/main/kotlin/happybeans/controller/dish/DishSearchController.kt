@@ -14,14 +14,15 @@ import org.springframework.web.bind.annotation.RestController
 @RequestMapping("/api/dishes/search")
 class DishSearchController(
     private val dishService: DishService,
-    ) {
+) {
     private val logger = KotlinLogging.logger {}
-        @GetMapping("/users")
-        fun getFilteredDishOptionsByUser(
-            @LoginMember user: User
-        ): ResponseEntity<List<DishOption>> {
-            logger.info("GET Dishes by user tags for user: ${user.id}")
-            val filteredDishOptions = dishService.getFilteredDishOptionsByUser(user)
-            return ResponseEntity.ok(filteredDishOptions)
-        }
+
+    @GetMapping("/users")
+    fun getFilteredDishOptionsByUser(
+        @LoginMember user: User,
+    ): ResponseEntity<List<DishOption>> {
+        logger.info("GET Dishes by user tags for user: ${user.id}")
+        val filteredDishOptions = dishService.getFilteredDishOptionsByUser(user)
+        return ResponseEntity.ok(filteredDishOptions)
+    }
 }
