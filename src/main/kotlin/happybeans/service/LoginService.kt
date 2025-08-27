@@ -7,6 +7,7 @@ import happybeans.infrastructure.JwtProvider
 import happybeans.repository.UserRepository
 import happybeans.utils.exception.UnauthorisedUserException
 import happybeans.utils.exception.UserCredentialException
+import mu.KotlinLogging
 import org.springframework.stereotype.Service
 
 @Service
@@ -14,6 +15,8 @@ class LoginService(
     private val userRepository: UserRepository,
     private val jwtProvider: JwtProvider,
 ) {
+    private val logger = KotlinLogging.logger {}
+
     fun login(
         loginRequestDto: LoginRequestDto,
         expectedRole: UserRole = UserRole.USER,
@@ -25,6 +28,7 @@ class LoginService(
             ).orElseThrow { UserCredentialException() }
 
         if (user.role != expectedRole) {
+            logger.warn { "user: ${user.id}, ${user.role} doesn't match expected role $expectedRole" }
             throw UnauthorisedUserException("Incorrect role for this endpoint")
         }
 

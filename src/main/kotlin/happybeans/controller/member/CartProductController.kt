@@ -25,13 +25,14 @@ private val logger = KotlinLogging.logger {}
 class CartProductController(
     private val cartProductService: CartProductService,
 ) {
+    private val logger = KotlinLogging.logger {}
+
     @GetMapping("")
     fun getCartProducts(
         @LoginMember user: User,
     ): ResponseEntity<CartProductListResponse> {
         logger.info { "GET request received for user: ${user.id}'s cart." }
         val response = cartProductService.findAllByUserId2(user)
-        logger.info { "Successfully retrieved cart products for user: ${user.id}." }
         return ResponseEntity.ok(response)
     }
 
@@ -49,7 +50,6 @@ class CartProductController(
                 Pair(dishId, dishOptionId),
                 cartProductRequest,
             )
-        logger.info { "Successfully added to cart for user: ${user.id}." }
         return ResponseEntity.ok(MessageResponse("Successfully added to cart!"))
     }
 
@@ -61,7 +61,6 @@ class CartProductController(
     ): ResponseEntity<MessageResponse> {
         logger.info { "PATCH request to update quantity for user: ${user.id}, dish option: $dishOptionId." }
         cartProductService.updateQuantity(user, dishOptionId, request.quantity)
-        logger.info { "Quantity updated for user: ${user.id}, dish option: $dishOptionId." }
         return ResponseEntity.ok(MessageResponse("Option updated"))
     }
 
@@ -72,7 +71,6 @@ class CartProductController(
     ): ResponseEntity<Unit> {
         logger.info { "DELETE request to remove item for user: ${user.id}, dish option: $dishOptionId." }
         cartProductService.deleteFromCart(user, dishOptionId)
-        logger.info { "Item with dish option: $dishOptionId deleted for user: ${user.id}." }
         return ResponseEntity.noContent().build()
     }
 
@@ -82,7 +80,6 @@ class CartProductController(
     ): ResponseEntity<Unit> {
         logger.info { "DELETE request to clear cart for user: ${user.id}." }
         cartProductService.clear(user)
-        logger.info { "Cart cleared for user: ${user.id}." }
         return ResponseEntity.noContent().build()
     }
 }

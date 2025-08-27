@@ -5,7 +5,9 @@ import happybeans.dto.dish.DishOptionCreateRequest
 import happybeans.dto.dish.DishOptionPatchRequest
 import happybeans.dto.dish.DishOptionUpdateRequest
 import happybeans.dto.dish.DishPatchRequest
+import happybeans.dto.dish.DishResponse
 import happybeans.dto.dish.DishUpdateRequest
+import happybeans.dto.dish.toResponse
 import happybeans.model.Dish
 import happybeans.model.DishOption
 import happybeans.model.Restaurant
@@ -16,6 +18,7 @@ import happybeans.repository.DishRepository
 import happybeans.repository.RestaurantRepository
 import happybeans.utils.exception.DishAlreadyExistsException
 import happybeans.utils.exception.EntityNotFoundException
+import mu.KotlinLogging
 import org.springframework.data.domain.Page
 import org.springframework.data.domain.Pageable
 import org.springframework.stereotype.Service
@@ -29,6 +32,13 @@ class DishService(
     private val dishOptionRepository: DishOptionRepository,
     private val tagService: TagService,
 ) {
+    private val logger = KotlinLogging.logger {}
+
+    @Transactional(readOnly = true)
+    fun getAllDishes(): List<DishResponse> {
+        return dishRepository.findAll().map { it.toResponse() }
+    }
+
     @Transactional(readOnly = true)
     fun findDishesByRestaurant(
         restaurantId: Long,
@@ -45,7 +55,10 @@ class DishService(
     }
 
     fun findById(dishId: Long): Dish {
-        return dishRepository.findById(dishId).orElseThrow { EntityNotFoundException("Dish with id $dishId not found") }
+        return dishRepository.findById(dishId).orElseThrow {
+            logger.error { "Entity with ID $dishId does not exist." }
+            EntityNotFoundException("Dish with id $dishId not found")
+        }
     }
 
     @Transactional(readOnly = true)
@@ -55,13 +68,21 @@ class DishService(
     ): DishOption {
         val dish = findById(dishId)
 
-        return dish.dishOptions.firstOrNull { it.id == dishOptionId }
-            ?: throw EntityNotFoundException("Dish with id $dishId and dish option id $dishOptionId not found")
+        val dishOption = dish.dishOptions.firstOrNull { it.id == dishOptionId }
+        if (dishOption == null) {
+            logger.error { "Entity with ID $dishId does not exist." }
+            throw EntityNotFoundException("Dish with id $dishId and dish option id $dishOptionId not found")
+        }
+
+        return dishOption
     }
 
     fun findDishOptionById(dishOptionId: Long): DishOption {
         return dishOptionRepository.findById(dishOptionId)
-            .orElseThrow { EntityNotFoundException("Dish option with id $dishOptionId not found") }
+            .orElseThrow {
+                logger.error { "Entity with ID $dishOptionId does not exist." }
+                EntityNotFoundException("Dish option with id $dishOptionId not found")
+            }
     }
 
     @Transactional
@@ -74,6 +95,7 @@ class DishService(
 
         val existingDish = dishRepository.findByNameAndRestaurantId(dishRequest.name, restaurantId)
         if (existingDish != null) {
+            logger.error { "Entity with ID ${dishRequest.name} already exists." }
             throw DishAlreadyExistsException(
                 "Dish with name '${dishRequest.name}' already exists in this restaurant with id '$restaurantId'",
             )
@@ -126,6 +148,7 @@ class DishService(
         // Check if new name conflicts with another dish in the same restaurant
         val existingDishWithSameName = dishRepository.findByNameAndRestaurantId(updateRequest.name, restaurant.id)
         if (existingDishWithSameName != null && existingDishWithSameName.id != dishId) {
+            logger.error { "Entity with ID $dishId already exists." }
             throw DishAlreadyExistsException("Dish with name '${updateRequest.name}' already exists in this restaurant")
         }
 
@@ -372,8 +395,12 @@ class DishService(
         restaurantId: Long,
         userId: Long,
     ): Restaurant {
-        return restaurantRepository.findByIdAndUserId(restaurantId, userId)
-            ?: throw EntityNotFoundException("Restaurant with id '$restaurantId' not found for user with id '$userId'")
+        val restaurant = restaurantRepository.findByIdAndUserId(restaurantId, userId)
+        if (restaurant == null) {
+            logger.error("Restaurant not found for $restaurantId")
+            throw EntityNotFoundException("Restaurant with id '$restaurantId' not found for user with id '$userId'")
+        }
+        return restaurant
     }
 
     private fun findValidRestaurantByDishId(
@@ -382,9 +409,12 @@ class DishService(
     ): Restaurant {
         val dish = findById(dishId)
 
-        val restaurant =
-            restaurantRepository.findAll().firstOrNull { it.dishes.contains(dish) }
-                ?: throw EntityNotFoundException("Restaurant for dish not found")
+        val restaurant = restaurantRepository.findAll().firstOrNull { it.dishes.contains(dish) }
+
+        if (restaurant == null) {
+            logger.error("Dish not found for $dishId")
+            throw EntityNotFoundException("Restaurant for dish not found")
+        }
 
         return findValidRestaurant(restaurant.id, userId)
     }

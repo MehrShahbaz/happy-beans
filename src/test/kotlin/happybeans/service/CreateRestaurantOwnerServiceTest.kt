@@ -4,6 +4,7 @@ import happybeans.dto.user.RestaurantOwnerRequestDto
 import happybeans.enums.UserRole
 import happybeans.model.User
 import happybeans.repository.UserRepository
+import happybeans.utils.exception.DuplicateEntityException
 import org.assertj.core.api.Assertions.assertThat
 import org.junit.jupiter.api.Test
 import org.junit.jupiter.api.assertThrows
@@ -52,7 +53,7 @@ class CreateRestaurantOwnerServiceTest {
                 "World",
             )
 
-        assertThrows<IllegalArgumentException> {
+        assertThrows<DuplicateEntityException> {
             service.createRestaurantOwner(request)
         }
     }
