@@ -39,7 +39,7 @@ dependencies {
     implementation("org.jetbrains.kotlin:kotlin-reflect")
     implementation("org.springframework.boot:spring-boot-starter-validation")
     implementation("io.jsonwebtoken:jjwt-api:0.12.6")
-    implementation("io.github.cdimascio:dotenv-java:3.0.0")
+    implementation("io.github.cdimascio:dotenv-kotlin:6.4.1")
     implementation("org.springframework.boot:spring-boot-starter-data-jpa")
     implementation("com.stripe:stripe-java:29.4.0")
     implementation("org.springframework.boot:spring-boot-starter-mail")

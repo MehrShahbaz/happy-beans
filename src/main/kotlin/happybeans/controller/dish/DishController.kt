@@ -26,7 +26,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 import java.net.URI
 
 @RestController
-@RequestMapping("/api/restaurant-owner/")
+@RequestMapping("/api/restaurant-owner")
 class DishController(
     private val dishService: DishService,
 ) {
