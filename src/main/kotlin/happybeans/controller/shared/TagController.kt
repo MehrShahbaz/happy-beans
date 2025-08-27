@@ -1,10 +1,11 @@
 package happybeans.controller.shared
 
 import happybeans.dto.response.MessageResponse
-import happybeans.dto.tag.TagCreateRequest
+import happybeans.dto.tag.TagRequest
 import happybeans.model.Tag
 import happybeans.service.TagService
 import jakarta.validation.Valid
+import mu.KotlinLogging
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
@@ -26,7 +27,7 @@ class TagController(private val tagService: TagService) {
 
     @PostMapping
     fun createTag(
-        @Valid @RequestBody tagCreateRequest: TagCreateRequest,
+        @Valid @RequestBody tagRequest: TagRequest,
     ): ResponseEntity<MessageResponse> {
         logger.info("POST Creating ${tagRequest.tagNames.size} tag(s): ${tagRequest.tagNames}")
         val createdTags = tagRequest.tagNames.map { tagName ->
@@ -43,9 +44,9 @@ class TagController(private val tagService: TagService) {
             ServletUriComponentsBuilder
                 .fromCurrentRequest()
                 .path("create-tag")
-                .buildAndExpand(tag.id)
+                .buildAndExpand(createdTags.first().id)
                 .toUri()
 
-        return ResponseEntity.created(location).body(MessageResponse("Tag created!"))
+        return ResponseEntity.created(location).body(MessageResponse(message))
     }
 }
