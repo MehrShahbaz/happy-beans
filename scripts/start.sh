@@ -10,7 +10,13 @@ LOG_FILE="$LOG_DIR/app_start.log"
 # Define a simple logging function with a timestamp
 log() {
   echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1" >> "$LOG_FILE"
+  echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1"
 }
+
+# Clear the log file at the start of the script
+echo "" > "$LOG_FILE"
+
+log "Starting start.sh script"
 
 # Ensure the log directory exists
 if [ ! -d "$LOG_DIR" ]; then
@@ -22,22 +28,13 @@ fi
 
 # Ensure correct permissions for the log directory
 log "Setting ownership of log directory to ubuntu:ubuntu"
-if ! chown -R ubuntu:ubuntu "$LOG_DIR"; then
+if ! sudo chown -R ubuntu:ubuntu "$LOG_DIR"; then
   log "WARNING: Failed to set ownership of $LOG_DIR (sudo may be required)"
 fi
 
-# Clear or create the log file
-log "Initializing log file at $LOG_FILE"
-if [ -f "$LOG_FILE" ]; then
-  : > "$LOG_FILE" || { log "ERROR: Failed to clear log file $LOG_FILE"; exit 1; }
-else
-  touch "$LOG_FILE" || { log "ERROR: Failed to create log file $LOG_FILE"; exit 1; }
-fi
-
 # Ensure the log file has correct permissions
+log "Setting permissions on $LOG_FILE"
 chmod 644 "$LOG_FILE" || { log "ERROR: Failed to set permissions on $LOG_FILE"; exit 1; }
-
-log "Starting start.sh script"
 
 # Change to the application directory
 log "Changing directory to /home/ubuntu/app"
@@ -47,23 +44,26 @@ cd /home/ubuntu/app || { log "ERROR: Failed to change directory to /home/ubuntu/
 log "Starting the Spring Boot application with private IP address"
 nohup authbind --deep java -jar /home/ubuntu/app/build/libs/happy-beans-0.0.1-SNAPSHOT.jar \
 --spring.profiles.active=prod \
-#--spring.datasource.url=jdbc:postgresql://10.0.100.46:5432/happy_beans \
 > "$LOG_DIR/app.log" 2>&1 &
 
 # Get the PID of the new process
 PID=$!
 
-# Brief wait to ensure the process starts without immediate failure
-sleep 2
-if ! ps -p $PID > /dev/null; then
-  log "ERROR: Application process with PID $PID failed to start"
-  exit 1
-fi
+# Wait for the application to be healthy on port 80
+log "Waiting for application to become healthy on port 80..."
+HEALTH_CHECK_URL="http://localhost:80/api/health"
+MAX_RETRIES=20
+RETRY_COUNT=0
 
-# Add a message to both the main log and the application log
-log "Application started with PID: $PID. Logs are being redirected to $LOG_DIR/app.log"
-echo "[$(date '+%Y-%m-%d %H:%M:%S')] Script started new process with PID $PID" >> "$LOG_DIR/app.log"
+while [ $RETRY_COUNT -lt $MAX_RETRIES ]; do
+  if curl --fail --silent "$HEALTH_CHECK_URL" > /dev/null; then
+    log "Application is healthy."
+    exit 0
+  fi
+  log "Health check failed, retrying in 5 seconds..."
+  sleep 5
+  RETRY_COUNT=$((RETRY_COUNT + 1))
+done
 
-log "Script finished."
-# Exit immediately to signal CodeDeploy
-exit 0
+log "ERROR: Application failed to become healthy within the timeout period."
+exit 1
