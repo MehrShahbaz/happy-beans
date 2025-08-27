@@ -6,6 +6,7 @@ phases:
       java: corretto21
   pre_build:
     commands:
+      - rm -rf /home/ubuntu/app/*
 #      - export $(grep -v '^#' ./.env | xargs)
       - chmod +x gradlew
       - ./gradlew clean
