@@ -1,11 +1,9 @@
 package happybeans.controller.dish
 
-import happybeans.dto.dish.DishResponse
-import happybeans.dto.dish.toResponse
+import happybeans.model.DishOption
 import happybeans.model.User
 import happybeans.service.DishService
 import happybeans.utils.annotations.LoginMember
-import happybeans.utils.annotations.RestaurantOwner
 import mu.KotlinLogging
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.GetMapping
@@ -19,11 +17,11 @@ class DishSearchController(
     ) {
     private val logger = KotlinLogging.logger {}
         @GetMapping("/users")
-        fun getFilteredDishesByUser(
+        fun getFilteredDishOptionsByUser(
             @LoginMember user: User
-        ): ResponseEntity<List<DishResponse>> {
+        ): ResponseEntity<List<DishOption>> {
             logger.info("GET Dishes by user tags for user: ${user.id}")
-            val filteredDishes = dishService.getFilteredDishesByUser(user)
-            return ResponseEntity.ok(filteredDishes.map { it.toResponse() })
+            val filteredDishOptions = dishService.getFilteredDishOptionsByUser(user)
+            return ResponseEntity.ok(filteredDishOptions)
         }
 }

@@ -85,28 +85,20 @@ class DishService(
             }
     }
 
-    fun getFilteredDishesByUser(user: User): List<Dish> {
-        val allDishes = dishRepository.findAll()
-        val userLikes = user.likes
-        val userDislikes = user.dislikes
+    fun getFilteredDishOptionsByUser(user: User): List<DishOption> {
+        val allDishOptions = dishOptionRepository.findAll()
+        val userDislikesNames: Set<String> = user.dislikes.map { it.name }.toSet()
+        val userLikesNames: Set<String> = user.likes.map { it.name }.toSet()
 
-        return allDishes.filter { dish ->
-            val dishTags = dish.dishOptions.flatMap { it.dishOptionTags }.toSet()
-            
-            // Exclude dishes that contain any tags the user dislikes
-            val hasDislikedTags = dishTags.any { tag -> userDislikes.contains(tag) }
-            if (hasDislikedTags) {
-                return@filter false
-            }
-            
-            true
-        }.sortedWith(
-            compareByDescending<Dish> { dish ->
-                val dishTags = dish.dishOptions.flatMap { it.dishOptionTags }.toSet()
-                val likedTagsCount = dishTags.count { tag -> userLikes.contains(tag) }
-                likedTagsCount
-            }
-        )
+        val nonDislikedDishOptions = allDishOptions.filter { dishOption ->
+            val dishTagNames = dishOption.dishOptionTags.map { it.name }.toSet()
+            userDislikesNames.none { it in dishTagNames }
+        }
+
+        return nonDislikedDishOptions.sortedByDescending { dishOption ->
+            val dishOptionTagNames = dishOption.dishOptionTags.map { it.name }.toSet()
+            userLikesNames.count { it in dishOptionTagNames }
+        }
     }
 
     @Transactional

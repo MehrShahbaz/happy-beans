@@ -55,6 +55,52 @@ object TestFixture {
         return dish
     }
 
+    fun createPizzaWithAllOptions(): Dish {
+        val dish =
+            Dish(
+                name = "Pizza",
+                description = "Classic Italian pizza",
+                image = "https://images.unsplash.com/photo-1604382355076-af4b0eb60143?w=800&q=80",
+            )
+
+        val spicyOption =
+            DishOption(
+                dish = dish,
+                name = "Spicy Margherita (8\")",
+                description = "Perfect for one who loves spicy food",
+                price = 12.99,
+                image = "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=600&q=80",
+                available = true,
+                prepTimeMinutes = 15,
+            )
+
+        val sweetOption =
+            DishOption(
+                dish = dish,
+                name = "Sweet Margherita (8\")",
+                description = "Perfect for one who loves sweet food",
+                price = 18.99,
+                image = "https://images.unsplash.com/photo-1604382355076-af4b0eb60143?w=600&q=80",
+                available = true,
+                prepTimeMinutes = 18,
+            )
+
+        val bitterOption =
+            DishOption(
+                dish = dish,
+                name = "Bitter Margherita (8\")",
+                description = "Perfect for one who loves bitter taste",
+                price = 24.99,
+                image = "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=600&q=80",
+                available = true,
+                prepTimeMinutes = 22,
+            )
+
+        dish.addDishOptions(listOf(spicyOption, sweetOption, bitterOption))
+
+        return dish
+    }
+
     fun createMargheritaPizza() =
         Dish(
             name = "Margherita Pizza",
