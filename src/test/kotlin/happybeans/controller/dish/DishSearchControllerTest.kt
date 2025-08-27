@@ -37,7 +37,7 @@ class DishSearchControllerTest : AbstractRestDocsMockMvcTest() {
 
         // When & Then
         mockMvc.perform(
-            RestDocumentationRequestBuilders.get("/api/dishes/search/users")
+            RestDocumentationRequestBuilders.get("/api/member/dishes/search")
                 .contentType(MediaType.APPLICATION_JSON),
         )
             .andExpect(status().isOk)

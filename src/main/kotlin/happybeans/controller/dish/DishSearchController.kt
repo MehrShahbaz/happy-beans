@@ -11,13 +11,13 @@ import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
 
 @RestController
-@RequestMapping("/api/dishes/search")
+@RequestMapping("/api/member/dishes/search")
 class DishSearchController(
     private val dishService: DishService,
 ) {
     private val logger = KotlinLogging.logger {}
 
-    @GetMapping("/users")
+    @GetMapping()
     fun getFilteredDishOptionsByUser(
         @LoginMember user: User,
     ): ResponseEntity<List<DishOption>> {
