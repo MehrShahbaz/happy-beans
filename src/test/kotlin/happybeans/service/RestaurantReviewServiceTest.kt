@@ -55,7 +55,7 @@ class RestaurantReviewServiceTest {
         member =
             userRepository.save(
                 User(
-                    email = "user-login@test.com",
+                    email = unique("user-login"),
                     password = "12345678",
                     firstName = "Test",
                     lastName = "User",
@@ -65,7 +65,7 @@ class RestaurantReviewServiceTest {
         owner =
             userRepository.save(
                 User(
-                    email = "owner-login@test.com",
+                    email = unique("owner-login"),
                     password = "12345678",
                     firstName = "Test",
                     lastName = "User",
@@ -327,4 +327,6 @@ class RestaurantReviewServiceTest {
         val averageRating = restaurantReviewService.getAverageRatingForRestaurant(restaurant.id)
         assertThat(averageRating).isEqualTo(0.0)
     }
+
+    private fun unique(s: String) = "$s+${System.nanoTime()}@test.com"
 }
