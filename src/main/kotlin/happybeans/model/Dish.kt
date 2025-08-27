@@ -1,5 +1,6 @@
 package happybeans.model
 
+import com.fasterxml.jackson.annotation.JsonManagedReference
 import happybeans.utils.exception.EntityNotFoundException
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
@@ -24,6 +25,7 @@ class Dish(
     @Column(name = "image", nullable = false)
     var image: String,
     @OneToMany(mappedBy = "dish", cascade = [CascadeType.ALL], orphanRemoval = true, fetch = FetchType.EAGER)
+    @JsonManagedReference
     var dishOptions: MutableSet<DishOption> = mutableSetOf(),
     @CreationTimestamp
     val createdAt: LocalDateTime? = null,
