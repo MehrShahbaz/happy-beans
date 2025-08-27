@@ -1,0 +1,23 @@
+# mkdocs.yml
+site_name: My Project
+site_author: Your Name
+site_description: Documentation with Mermaid diagrams
+
+# Use the default theme (no need for material)
+theme:
+  name: mkdocs
+
+# Enable minimal Markdown extensions
+markdown_extensions:
+  - admonition
+  - toc
+  - pymdownx.superfences  # Needed for Mermaid code blocks
+
+# Optional plugin for offline Mermaid rendering
+plugins:
+  - search
+  - mermaid2
+
+# Include Mermaid JS from CDN
+extra_javascript:
+  - https://cdn.jsdelivr.net/npm/mermaid/dist/mermaid.min.js
