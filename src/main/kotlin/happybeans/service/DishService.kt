@@ -47,6 +47,7 @@ class DishService(
         return dishRepository.findDishesByRestaurant(restaurantId, pageable)
     }
 
+    @Transactional(readOnly = true)
     fun findByNameAndRestaurant(
         name: String,
         restaurantId: Long,
@@ -54,6 +55,7 @@ class DishService(
         return dishRepository.findByNameAndRestaurantId(name, restaurantId)
     }
 
+    @Transactional(readOnly = true)
     fun findById(dishId: Long): Dish {
         return dishRepository.findById(dishId).orElseThrow {
             logger.error { "Entity with ID $dishId does not exist." }
@@ -77,6 +79,7 @@ class DishService(
         return dishOption
     }
 
+    @Transactional(readOnly = true)
     fun findDishOptionById(dishOptionId: Long): DishOption {
         return dishOptionRepository.findById(dishOptionId)
             .orElseThrow {
@@ -85,6 +88,7 @@ class DishService(
             }
     }
 
+    @Transactional(readOnly = true)
     fun getFilteredDishOptionsByUser(user: User): List<DishOption> {
         val allDishOptions = dishOptionRepository.findAll()
         val userDislikesNames: Set<String> = user.dislikes.map { it.name }.toSet()
