@@ -93,12 +93,10 @@ class DishService(
         val userDislikesNames: Set<String> = user.dislikes.map { it.name }.toSet()
         val userLikesNames: Set<String> = user.likes.map { it.name }.toSet()
 
-        // User has no preferences
         if (userDislikesNames.isEmpty() && userLikesNames.isEmpty()) {
             return dishOptionRepository.findAll()
         }
 
-        // Handle empty cases
         val dislikesForQuery = userDislikesNames.ifEmpty { setOf("__NEVER_MATCH__") }
         val likesForQuery = userLikesNames.ifEmpty { setOf("__NEVER_MATCH__") }
 
