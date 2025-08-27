@@ -2,6 +2,7 @@
 
 echo ">>> [BeforeInstall] Fixing ownership..."
 sudo chown -R ubuntu:ubuntu /home/ubuntu/app
+sudo chown ubuntu:ubuntu /home/ubuntu/app/logs
 
 echo ">>> [AfterInstall] Setting permissions for jar..."
 chmod +x /home/ubuntu/app/build/libs/*.jar
