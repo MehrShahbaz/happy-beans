@@ -58,7 +58,6 @@ CREATE TABLE IF NOT EXISTS dish_options (
     name VARCHAR(100) NOT NULL,
     description VARCHAR(500),
     image VARCHAR(255) NOT NULL,
-    rating FLOAT(53) NOT NULL DEFAULT 0,
     dish_id BIGINT,
     CONSTRAINT fk_dish_option_dish FOREIGN KEY (dish_id) REFERENCES dishes
 );
