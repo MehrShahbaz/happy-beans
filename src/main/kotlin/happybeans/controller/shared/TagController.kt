@@ -16,8 +16,11 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 @RestController
 @RequestMapping("/api/tags")
 class TagController(private val tagService: TagService) {
+    private val logger = KotlinLogging.logger {}
+    
     @GetMapping
     fun getAllTags(): ResponseEntity<Map<String, List<Tag>>> {
+        logger.info("GET Getting all tags")
         return ResponseEntity.ok(mapOf("tags" to tagService.getAllTags()))
     }
 
