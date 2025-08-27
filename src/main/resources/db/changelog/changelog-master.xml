@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<databaseChangeLog
+        xmlns="http://www.liquibase.org/xml/ns/dbchangelog"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xsi:schemaLocation="
+       http://www.liquibase.org/xml/ns/dbchangelog
+       http://www.liquibase.org/xml/ns/dbchangelog/dbchangelog-latest.xsd">
+
+    <!-- Users and Tags -->
+    <include file="changelog/users.xml"/>
+    <include file="changelog/tags.xml"/>
+    <include file="changelog/user_likes_tags.xml"/>
+    <include file="changelog/user_dislikes_tags.xml"/>
+
+    <!-- Restaurants and related -->
+    <include file="changelog/restaurants.xml"/>
+    <include file="changelog/restaurant_working_dates_hours.xml"/>
+    <include file="changelog/restaurant_reviews.xml"/>
+
+    <!-- Dishes -->
+    <include file="changelog/dishes.xml"/>
+    <include file="changelog/dish_options.xml"/>
+    <include file="changelog/dish_option_tags.xml"/>
+    <include file="changelog/dish_reviews.xml"/>
+
+    <!-- Cart -->
+    <include file="changelog/cart_products.xml"/>
+
+    <!-- Orders -->
+    <include file="changelog/orders.xml"/>
+    <include file="changelog/order_products.xml"/>
+
+    <!-- Payments -->
+    <include file="changelog/payments.xml"/>
+
+    <!-- Join requests -->
+    <include file="changelog/join_requests.xml"/>
+
+</databaseChangeLog>
