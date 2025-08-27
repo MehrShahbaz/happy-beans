@@ -1,5 +1,5 @@
 # Happy Beans Food Delivery Application
-## Complete User Flow Documentation for Presentation
+## Complete Workflow for Presentation
 
 ---
 
@@ -10,6 +10,19 @@
 4. [Key Features & Business Logic](#key-features--business-logic)
 
 ---
+## Things to Update (28.Aug)
+
+### email
+- admin sends email to restaurant owner : register approved (with pw)
+- app sends email to user/member : order is placed
+
+### Add some short description with storytelling
+
+- Admin check restaurants, create other admin, create restaurant owners and send emails
+- Admin can delete restaurants, users
+
+---
+
 
 ## System Overview
 
