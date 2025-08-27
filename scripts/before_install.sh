@@ -7,4 +7,3 @@ sudo chown -R ubuntu:ubuntu /home/ubuntu/app
 
 echo ">>> [BeforeInstall] Cleaning old files..."
 rm -rf /home/ubuntu/app/*
-

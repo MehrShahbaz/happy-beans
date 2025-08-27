@@ -1,0 +1,349 @@
+= Happy Beans API Documentation
+Author Name
+:doctype: book
+:toc: left
+:toclevels: 3
+:sectnums:
+
+== Cart API
+=== Add to cart
+include::{snippets}/cart-add/curl-request.adoc[]
+include::{snippets}/cart-add/http-request.adoc[]
+include::{snippets}/cart-add/path-parameters.adoc[]
+include::{snippets}/cart-add/request-fields.adoc[]
+include::{snippets}/cart-add/http-response.adoc[]
+include::{snippets}/cart-add/response-fields.adoc[]
+
+=== Update quantity
+include::{snippets}/cart-update/curl-request.adoc[]
+include::{snippets}/cart-update/http-request.adoc[]
+include::{snippets}/cart-update/path-parameters.adoc[]
+include::{snippets}/cart-update/request-fields.adoc[]
+include::{snippets}/cart-update/http-response.adoc[]
+include::{snippets}/cart-update/response-fields.adoc[]
+
+=== Cart clear
+include::{snippets}/cart-clear/curl-request.adoc[]
+include::{snippets}/cart-clear/http-request.adoc[]
+include::{snippets}/cart-clear/http-response.adoc[]
+
+=== Cart delete one product
+include::{snippets}/cart-delete-one/curl-request.adoc[]
+include::{snippets}/cart-delete-one/http-request.adoc[]
+include::{snippets}/cart-delete-one/path-parameters.adoc[]
+include::{snippets}/cart-delete-one/http-response.adoc[]
+
+=== Get cart
+include::{snippets}/cart-get/curl-request.adoc[]
+include::{snippets}/cart-get/http-request.adoc[]
+include::{snippets}/cart-get/http-response.adoc[]
+include::{snippets}/cart-get/response-fields.adoc[]
+
+== Dish API
+=== Create dish
+include::{snippets}/dish-create/curl-request.adoc[]
+include::{snippets}/dish-create/http-request.adoc[]
+include::{snippets}/dish-create/path-parameters.adoc[]
+include::{snippets}/dish-create/request-fields.adoc[]
+include::{snippets}/dish-create/http-response.adoc[]
+include::{snippets}/dish-create/response-fields.adoc[]
+
+=== Get dish
+include::{snippets}/dish-get/curl-request.adoc[]
+include::{snippets}/dish-get/http-request.adoc[]
+include::{snippets}/dish-get/path-parameters.adoc[]
+include::{snippets}/dish-get/http-response.adoc[]
+include::{snippets}/dish-get/response-fields.adoc[]
+
+=== Update dish
+include::{snippets}/dish-update/curl-request.adoc[]
+include::{snippets}/dish-update/http-request.adoc[]
+include::{snippets}/dish-update/path-parameters.adoc[]
+include::{snippets}/dish-update/request-fields.adoc[]
+include::{snippets}/dish-update/http-response.adoc[]
+include::{snippets}/dish-update/response-fields.adoc[]
+
+=== Delete dish
+include::{snippets}/dish-delete/curl-request.adoc[]
+include::{snippets}/dish-delete/http-request.adoc[]
+include::{snippets}/dish-delete/path-parameters.adoc[]
+include::{snippets}/dish-delete/http-response.adoc[]
+
+=== Search filtered by user
+include::{snippets}/dish-search-filtered-by-user/curl-request.adoc[]
+include::{snippets}/dish-search-filtered-by-user/http-request.adoc[]
+include::{snippets}/dish-search-filtered-by-user/http-response.adoc[]
+include::{snippets}/dish-search-filtered-by-user/response-body.adoc[]
+include::{snippets}/dish-search-filtered-by-user/response-fields.adoc[]
+
+== Dish Option API
+=== Update option
+include::{snippets}/dish-option-update/curl-request.adoc[]
+include::{snippets}/dish-option-update/http-request.adoc[]
+include::{snippets}/dish-option-update/path-parameters.adoc[]
+include::{snippets}/dish-option-update/request-fields.adoc[]
+include::{snippets}/dish-option-update/http-response.adoc[]
+include::{snippets}/dish-option-update/response-fields.adoc[]
+
+=== Patch option
+include::{snippets}/dish-option-patch/curl-request.adoc[]
+include::{snippets}/dish-option-patch/http-request.adoc[]
+include::{snippets}/dish-option-patch/path-parameters.adoc[]
+include::{snippets}/dish-option-patch/request-fields.adoc[]
+include::{snippets}/dish-option-patch/http-response.adoc[]
+include::{snippets}/dish-option-patch/response-fields.adoc[]
+
+=== Delete option
+include::{snippets}/dish-option-delete/curl-request.adoc[]
+include::{snippets}/dish-option-delete/http-request.adoc[]
+include::{snippets}/dish-option-delete/path-parameters.adoc[]
+include::{snippets}/dish-option-delete/http-response.adoc[]
+
+=== Option tags add
+include::{snippets}/dish-option-tags-add/curl-request.adoc[]
+include::{snippets}/dish-option-tags-add/http-request.adoc[]
+include::{snippets}/dish-option-tags-add/path-parameters.adoc[]
+include::{snippets}/dish-option-tags-add/request-fields.adoc[]
+include::{snippets}/dish-option-tags-add/http-response.adoc[]
+
+=== Option tags remove
+include::{snippets}/dish-option-tags-remove/curl-request.adoc[]
+include::{snippets}/dish-option-tags-remove/http-request.adoc[]
+include::{snippets}/dish-option-tags-remove/path-parameters.adoc[]
+include::{snippets}/dish-option-tags-remove/http-response.adoc[]
+
+=== Option tags update
+include::{snippets}/dish-option-tags-update/curl-request.adoc[]
+include::{snippets}/dish-option-tags-update/http-request.adoc[]
+include::{snippets}/dish-option-tags-update/path-parameters.adoc[]
+include::{snippets}/dish-option-tags-update/request-fields.adoc[]
+include::{snippets}/dish-option-tags-update/http-response.adoc[]
+
+=== Option tags get
+include::{snippets}/dish-option-tags-get/curl-request.adoc[]
+include::{snippets}/dish-option-tags-get/http-request.adoc[]
+include::{snippets}/dish-option-tags-get/path-parameters.adoc[]
+include::{snippets}/dish-option-tags-get/http-response.adoc[]
+
+== Dish Review API
+=== Create review
+include::{snippets}/dish-review-create tap/curl-request.adoc[]
+include::{snippets}/dish-review-create tap/http-request.adoc[]
+include::{snippets}/dish-review-create tap/request-fields.adoc[]
+include::{snippets}/dish-review-create tap/http-response.adoc[]
+include::{snippets}/dish-review-create tap/response-fields.adoc[]
+
+=== Create invalid rating
+include::{snippets}/dish-review-create-invalid-rating/curl-request.adoc[]
+include::{snippets}/dish-review-create-invalid-rating/http-request.adoc[]
+include::{snippets}/dish-review-create-invalid-rating/http-response.adoc[]
+
+=== Delete review
+include::{snippets}/dish-review-delete/curl-request.adoc[]
+include::{snippets}/dish-review-delete/http-request.adoc[]
+include::{snippets}/dish-review-delete/path-parameters.adoc[]
+include::{snippets}/dish-review-delete/http-response.adoc[]
+
+=== Update review
+include::{snippets}/dish-review-update/curl-request.adoc[]
+include::{snippets}/dish-review-update/http-request.adoc[]
+include::{snippets}/dish-review-update/path-parameters.adoc[]
+include::{snippets}/dish-review-update/request-fields.adoc[]
+include::{snippets}/dish-review-update/http-response.adoc[]
+
+=== Get reviews by dish
+include::{snippets}/dish-review-get-by-dish-empty/curl-request.adoc[]
+include::{snippets}/dish-review-get-by-dish-empty/http-request.adoc[]
+include::{snippets}/dish-review-get-by-dish-empty/path-parameters.adoc[]
+include::{snippets}/dish-review-get-by-dish-empty/http-response.adoc[]
+
+=== Get reviews by dish option
+include::{snippets}/dish-review-get-by-dish-option-empty/curl-request.adoc[]
+include::{snippets}/dish-review-get-by-dish-option-empty/http-request.adoc[]
+include::{snippets}/dish-review-get-by-dish-option-empty/path-parameters.adoc[]
+include::{snippets}/dish-review-get-by-dish-option-empty/http-response.adoc[]
+
+=== Get reviews by user
+include::{snippets}/dish-review-get-by-user-empty/curl-request.adoc[]
+include::{snippets}/dish-review-get-by-user-empty/http-request.adoc[]
+include::{snippets}/dish-review-get-by-user-empty/http-response.adoc[]
+
+== Guest API
+=== Dishes by restaurant
+include::{snippets}/guest-dishes-by-restaurant-list/curl-request.adoc[]
+include::{snippets}/guest-dishes-by-restaurant-list/http-request.adoc[]
+include::{snippets}/guest-dishes-by-restaurant-list/path-parameters.adoc[]
+include::{snippets}/guest-dishes-by-restaurant-list/http-response.adoc[]
+
+=== Get restaurants
+include::{snippets}/guest-restaurants-list/curl-request.adoc[]
+include::{snippets}/guest-restaurants-list/http-request.adoc[]
+include::{snippets}/guest-restaurants-list/http-response.adoc[]
+
+=== Create join request
+include::{snippets}/guest-join-request-create/curl-request.adoc[]
+include::{snippets}/guest-join-request-create/http-request.adoc[]
+include::{snippets}/guest-join-request-create/request-fields.adoc[]
+include::{snippets}/guest-join-request-create/http-response.adoc[]
+
+=== Conflict on join request
+include::{snippets}/guest-join-request-create-conflict/curl-request.adoc[]
+include::{snippets}/guest-join-request-create-conflict/http-request.adoc[]
+include::{snippets}/guest-join-request-create-conflict/http-response.adoc[]
+
+== Health API
+=== Health check
+include::{snippets}/health-check/curl-request.adoc[]
+include::{snippets}/health-check/http-request.adoc[]
+include::{snippets}/health-check/http-response.adoc[]
+
+== Member API
+=== Auth login
+include::{snippets}/member-auth-login/curl-request.adoc[]
+include::{snippets}/member-auth-login/http-request.adoc[]
+include::{snippets}/member-auth-login/http-response.adoc[]
+
+=== Auth signup
+include::{snippets}/member-auth-sign-up/curl-request.adoc[]
+include::{snippets}/member-auth-sign-up/http-request.adoc[]
+include::{snippets}/member-auth-sign-up/http-response.adoc[]
+
+=== Get likes
+include::{snippets}/member-get-likes/curl-request.adoc[]
+include::{snippets}/member-get-likes/http-request.adoc[]
+include::{snippets}/member-get-likes/http-response.adoc[]
+include::{snippets}/member-get-likes/response-fields.adoc[]
+
+=== Get dislikes
+include::{snippets}/member-get-dislikes/curl-request.adoc[]
+include::{snippets}/member-get-dislikes/http-request.adoc[]
+include::{snippets}/member-get-dislikes/http-response.adoc[]
+include::{snippets}/member-get-dislikes/response-fields.adoc[]
+
+=== Add like
+include::{snippets}/member-add-like/curl-request.adoc[]
+include::{snippets}/member-add-like/http-request.adoc[]
+include::{snippets}/member-add-like/http-response.adoc[]
+
+=== Remove like
+include::{snippets}/member-remove-like/curl-request.adoc[]
+include::{snippets}/member-remove-like/http-request.adoc[]
+include::{snippets}/member-remove-like/http-response.adoc[]
+
+=== Update likes
+include::{snippets}/member-update-likes/curl-request.adoc[]
+include::{snippets}/member-update-likes/http-request.adoc[]
+include::{snippets}/member-update-likes/http-response.adoc[]
+
+=== Orders
+==== Buy dish
+include::{snippets}/member-orders-buy-dish/curl-request.adoc[]
+include::{snippets}/member-orders-buy-dish/http-request.adoc[]
+include::{snippets}/member-orders-buy-dish/http-response.adoc[]
+
+==== Cart checkout
+include::{snippets}/member-orders-cart-checkout/curl-request.adoc[]
+include::{snippets}/member-orders-cart-checkout/http-request.adoc[]
+include::{snippets}/member-orders-cart-checkout/http-response.adoc[]
+
+==== Get all orders
+include::{snippets}/member-orders-list/curl-request.adoc[]
+include::{snippets}/member-orders-list/http-request.adoc[]
+include::{snippets}/member-orders-list/http-response.adoc[]
+
+==== Get order by id
+include::{snippets}/member-orders-get-by-id/curl-request.adoc[]
+include::{snippets}/member-orders-get-by-id/http-request.adoc[]
+include::{snippets}/member-orders-get-by-id/http-response.adoc[]
+
+==== Order not found (404)
+include::{snippets}/member-orders-get-by-id-404/curl-request.adoc[]
+include::{snippets}/member-orders-get-by-id-404/http-request.adoc[]
+include::{snippets}/member-orders-get-by-id-404/http-response.adoc[]
+
+=== Reviews
+==== Create review
+include::{snippets}/member-review-create/curl-request.adoc[]
+include::{snippets}/member-review-create/http-request.adoc[]
+include::{snippets}/member-review-create/request-fields.adoc[]
+include::{snippets}/member-review-create/http-response.adoc[]
+
+==== Update review
+include::{snippets}/member-review-update/curl-request.adoc[]
+include::{snippets}/member-review-update/http-request.adoc[]
+include::{snippets}/member-review-update/request-fields.adoc[]
+include::{snippets}/member-review-update/http-response.adoc[]
+
+==== Delete review
+include::{snippets}/member-review-delete/curl-request.adoc[]
+include::{snippets}/member-review-delete/http-request.adoc[]
+include::{snippets}/member-review-delete/path-parameters.adoc[]
+include::{snippets}/member-review-delete/http-response.adoc[]
+
+==== Get reviews by restaurant
+include::{snippets}/member-review-get-by-restaurant/curl-request.adoc[]
+include::{snippets}/member-review-get-by-restaurant/http-request.adoc[]
+include::{snippets}/member-review-get-by-restaurant/path-parameters.adoc[]
+include::{snippets}/member-review-get-by-restaurant/http-response.adoc[]
+
+==== Get reviews by user
+include::{snippets}/member-review-get-by-user/curl-request.adoc[]
+include::{snippets}/member-review-get-by-user/http-request.adoc[]
+include::{snippets}/member-review-get-by-user/path-parameters.adoc[]
+include::{snippets}/member-review-get-by-user/http-response.adoc[]
+
+== Admin API
+=== Auth login
+include::{snippets}/admin-auth-login/curl-request.adoc[]
+include::{snippets}/admin-auth-login/http-request.adoc[]
+include::{snippets}/admin-auth-login/request-fields.adoc[]
+include::{snippets}/admin-auth-login/http-response.adoc[]
+
+=== Create admin
+include::{snippets}/admin-create-admin/curl-request.adoc[]
+include::{snippets}/admin-create-admin/http-request.adoc[]
+include::{snippets}/admin-create-admin/request-fields.adoc[]
+include::{snippets}/admin-create-admin/http-response.adoc[]
+
+=== Get restaurants
+include::{snippets}/admin-get-restaurants/curl-request.adoc[]
+include::{snippets}/admin-get-restaurants/http-request.adoc[]
+include::{snippets}/admin-get-restaurants/http-response.adoc[]
+
+=== Create restaurant owner
+include::{snippets}/admin-restaurant-owner-create/curl-request.adoc[]
+include::{snippets}/admin-restaurant-owner-create/http-request.adoc[]
+include::{snippets}/admin-restaurant-owner-create/request-fields.adoc[]
+include::{snippets}/admin-restaurant-owner-create/http-response.adoc[]
+
+=== Create restaurant owner (400 case)
+include::{snippets}/admin-restaurant-owner-create-400/curl-request.adoc[]
+include::{snippets}/admin-restaurant-owner-create-400/http-request.adoc[]
+include::{snippets}/admin-restaurant-owner-create-400/http-response.adoc[]
+
+=== Restaurant delete
+include::{snippets}/admin-restaurant-delete/curl-request.adoc[]
+include::{snippets}/admin-restaurant-delete/http-request.adoc[]
+include::{snippets}/admin-restaurant-delete/path-parameters.adoc[]
+include::{snippets}/admin-restaurant-delete/http-response.adoc[]
+
+=== Restaurant status update
+include::{snippets}/admin-restaurant-status-update/curl-request.adoc[]
+include::{snippets}/admin-restaurant-status-update/http-request.adoc[]
+include::{snippets}/admin-restaurant-status-update/path-parameters.adoc[]
+include::{snippets}/admin-restaurant-status-update/http-response.adoc[]
+
+=== Join requests - get all
+include::{snippets}/admin-join-request-get-all/curl-request.adoc[]
+include::{snippets}/admin-join-request-get-all/http-request.adoc[]
+include::{snippets}/admin-join-request-get-all/http-response.adoc[]
+
+=== Join requests - accept
+include::{snippets}/admin-join-request-accept/curl-request.adoc[]
+include::{snippets}/admin-join-request-accept/http-request.adoc[]
+include::{snippets}/admin-join-request-accept/http-response.adoc[]
+
+=== Join requests - reject
+include::{snippets}/admin-join-request-reject/curl-request.adoc[]
+include::{snippets}/admin-join-request-reject/http-request.adoc[]
+include::{snippets}/admin-join-request-reject/http-response.adoc[]

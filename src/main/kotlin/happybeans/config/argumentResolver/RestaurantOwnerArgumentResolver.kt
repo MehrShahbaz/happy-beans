@@ -1,0 +1,50 @@
+package happybeans.config.argumentResolver
+
+import happybeans.enums.UserRole
+import happybeans.model.User
+import happybeans.repository.UserRepository
+import happybeans.utils.annotations.RestaurantOwner
+import happybeans.utils.exception.UnauthorisedUserException
+import mu.KotlinLogging
+import org.springframework.core.MethodParameter
+import org.springframework.stereotype.Component
+import org.springframework.web.bind.support.WebDataBinderFactory
+import org.springframework.web.context.request.NativeWebRequest
+import org.springframework.web.context.request.ServletWebRequest
+import org.springframework.web.method.support.HandlerMethodArgumentResolver
+import org.springframework.web.method.support.ModelAndViewContainer
+
+@Component
+class RestaurantOwnerArgumentResolver(
+    private val userRepository: UserRepository,
+) : HandlerMethodArgumentResolver {
+    private val logger = KotlinLogging.logger {}
+
+    override fun supportsParameter(parameter: MethodParameter): Boolean {
+        return parameter.hasParameterAnnotation(RestaurantOwner::class.java)
+    }
+
+    override fun resolveArgument(
+        parameter: MethodParameter,
+        mavContainer: ModelAndViewContainer?,
+        webRequest: NativeWebRequest,
+        binderFactory: WebDataBinderFactory?,
+    ): User {
+        val request = (webRequest as ServletWebRequest).request
+
+        logger.debug("Loading email from request")
+        val email = request.getAttribute("email") as String
+
+        val user =
+            userRepository.findByEmail(email).orElseThrow {
+                logger.error("Error finding user with email $email")
+                UnauthorisedUserException("User not found")
+            }
+        if (user.role != UserRole.RESTAURANT_OWNER) {
+            logger.error("User role not valid User:${user.id}")
+            throw UnauthorisedUserException("User role not valid")
+        }
+
+        return user
+    }
+}

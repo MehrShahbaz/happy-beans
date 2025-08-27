@@ -1,9 +1,10 @@
 package happybeans.config
 
 import happybeans.config.argumentResolver.LoginMemberArgumentResolver
+import happybeans.config.argumentResolver.RestaurantOwnerArgumentResolver
 import happybeans.config.interceptor.AdminInterceptor
 import happybeans.config.interceptor.MemberInterceptor
-import happybeans.repository.UserRepository
+import happybeans.config.interceptor.RestaurantOwnerInterceptor
 import org.springframework.context.annotation.Configuration
 import org.springframework.http.HttpHeaders
 import org.springframework.web.method.support.HandlerMethodArgumentResolver
@@ -14,21 +15,32 @@ import org.springframework.web.servlet.config.annotation.WebMvcConfigurer
 @Configuration
 class WebConfig(
     private val adminInterceptor: AdminInterceptor,
-    private val authInterceptor: MemberInterceptor,
-    private val userRepository: UserRepository,
+    private val memberInterceptor: MemberInterceptor,
+    private val restaurantOwnerInterceptor: RestaurantOwnerInterceptor,
+    private val loginMemberArgumentResolver: LoginMemberArgumentResolver,
+    private val restaurantOwnerArgumentResolver: RestaurantOwnerArgumentResolver,
 ) : WebMvcConfigurer {
     override fun addInterceptors(registry: InterceptorRegistry) {
-        registry.addInterceptor(authInterceptor)
-            .addPathPatterns("")
+        registry.addInterceptor(memberInterceptor)
+            .addPathPatterns("/api/member/**")
+            .excludePathPatterns("/api/member/auth/**")
         registry.addInterceptor(adminInterceptor)
-            .addPathPatterns("")
+            .addPathPatterns(
+                "/api/admin/restaurant-owner/**",
+                "/api/admin/join-request/**",
+                "/api/admin/restaurants/**",
+                "/api/admin/create-admin",
+            )
+        registry.addInterceptor(restaurantOwnerInterceptor)
+            .addPathPatterns("/api/restaurant-owner/**")
         super.addInterceptors(registry)
     }
 
     override fun addArgumentResolvers(resolvers: MutableList<HandlerMethodArgumentResolver?>) {
         val additionalResolvers =
             listOf(
-                LoginMemberArgumentResolver(userRepository),
+                loginMemberArgumentResolver,
+                restaurantOwnerArgumentResolver,
             )
         resolvers.addAll(additionalResolvers)
         super.addArgumentResolvers(resolvers)
