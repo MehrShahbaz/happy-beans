@@ -31,11 +31,13 @@ import org.springframework.restdocs.payload.PayloadDocumentation.relaxedResponse
 import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
+import org.springframework.test.context.ActiveProfiles
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 
+@ActiveProfiles("test")
 class DishControllerTest : AbstractRestDocsMockMvcTest() {
     @MockitoBean
     private lateinit var dishService: DishService

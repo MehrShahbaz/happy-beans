@@ -14,16 +14,8 @@ import org.springframework.boot.test.web.server.LocalServerPort
 import org.springframework.http.HttpEntity
 import org.springframework.http.HttpMethod
 import org.springframework.http.HttpStatus
-import org.springframework.test.context.TestPropertySource
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
-@TestPropertySource(
-    properties = [
-        "spring.datasource.url=jdbc:h2:mem:testdb",
-        "spring.datasource.driverClassName=org.h2.Driver",
-        "spring.jpa.database-platform=org.hibernate.dialect.H2Dialect",
-    ],
-)
 class DishE2ETest {
     @LocalServerPort
     private var port: Int = 0

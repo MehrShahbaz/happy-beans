@@ -115,7 +115,7 @@ class DishService(
         return savedDish
     }
 
-    private fun createAndLinkDishOptions(
+    fun createAndLinkDishOptions(
         dish: Dish,
         optionRequests: Set<DishOptionCreateRequest>,
     ): MutableSet<DishOption> {
