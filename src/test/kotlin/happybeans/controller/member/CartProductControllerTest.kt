@@ -143,7 +143,7 @@ class CartProductControllerTest : AbstractRestDocsMockMvcTest() {
                     preprocessRequest(Preprocessors.prettyPrint()),
                     preprocessResponse(Preprocessors.prettyPrint()),
                     pathParameters(
-                        parameterWithName("dishOptionId").description("ID опции блюда"),
+                        parameterWithName("dishOptionId").description("ID dish option"),
                     ),
                     relaxedRequestFields(
                         fieldWithPath("quantity")

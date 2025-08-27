@@ -105,7 +105,6 @@ class MemberRestaurantReviewControllerTest : AbstractRestDocsMockMvcTest() {
                     pathParameters(
                         parameterWithName("restaurantReviewId").description("Restaurant Review ID"),
                     ),
-                    // В DTO есть только message
                     relaxedRequestFields(
                         fieldWithPath("message")
                             .type(JsonFieldType.STRING)
