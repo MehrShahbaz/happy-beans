@@ -5,6 +5,8 @@ import happybeans.enums.UserRole
 import happybeans.model.JoinRequest
 import happybeans.model.User
 import happybeans.repository.JoinRequestRepository
+import happybeans.repository.RestaurantRepository
+import happybeans.repository.TagRepository
 import happybeans.repository.UserRepository
 import happybeans.service.AdminAuthService
 import io.restassured.RestAssured
@@ -19,6 +21,11 @@ import org.springframework.http.HttpStatus
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.DEFINED_PORT)
 class AdminJoinRequestControllerTest {
+    @Autowired
+    private lateinit var restaurantRepository: RestaurantRepository
+
+    @Autowired
+    private lateinit var tagRepository: TagRepository
     private lateinit var token: String
     private lateinit var user: User
     private lateinit var joinRequest: JoinRequest
@@ -58,6 +65,8 @@ class AdminJoinRequestControllerTest {
 
     @AfterEach
     fun tearDown() {
+        tagRepository.deleteAll()
+        restaurantRepository.deleteAll()
         joinRequestRepository.deleteAll()
         userRepository.deleteAll()
     }

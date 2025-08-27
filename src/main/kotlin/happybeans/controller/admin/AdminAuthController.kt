@@ -4,6 +4,7 @@ import happybeans.dto.auth.LoginRequestDto
 import happybeans.dto.response.TokenResponse
 import happybeans.service.AdminAuthService
 import jakarta.validation.Valid
+import mu.KotlinLogging
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.PostMapping
 import org.springframework.web.bind.annotation.RequestBody
@@ -15,10 +16,13 @@ import org.springframework.web.bind.annotation.RestController
 class AdminAuthController(
     private val adminAuthService: AdminAuthService,
 ) {
+    private val logger = KotlinLogging.logger {}
+
     @PostMapping("/login")
     fun signIn(
         @RequestBody @Valid loginRequest: LoginRequestDto,
     ): ResponseEntity<TokenResponse> {
+        logger.info("POST Admin Logging in")
         val token = adminAuthService.login(loginRequest)
         return ResponseEntity.ok().body(TokenResponse(token))
     }

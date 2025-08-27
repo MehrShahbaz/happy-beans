@@ -62,6 +62,7 @@ class GlobalExceptionHandler {
         ex: UnauthorisedUserException,
         request: HttpServletRequest,
     ): ResponseEntity<ErrorResponse> {
+        logger.error(ex) { "UNAUTHORIZED ${request.method} ${request.requestURI}" }
         return errorResponse(HttpStatus.UNAUTHORIZED, ex.message ?: "UNAUTHORIZED", request)
     }
 
@@ -70,6 +71,7 @@ class GlobalExceptionHandler {
         ex: IllegalArgumentException,
         request: HttpServletRequest,
     ): ResponseEntity<ErrorResponse> {
+        logger.error(ex) { "Illegal Argument Exception ${request.method} ${request.requestURI}" }
         return errorResponse(HttpStatus.BAD_REQUEST, ex.message ?: "BAD_REQUEST", request)
     }
 
@@ -78,6 +80,7 @@ class GlobalExceptionHandler {
         ex: UserAlreadyExistsException,
         request: HttpServletRequest,
     ): ResponseEntity<ErrorResponse> {
+        logger.error(ex) { "User Already Exists Exception ${request.method} ${request.requestURI}" }
         return errorResponse(HttpStatus.CONFLICT, ex.message ?: "Already exists", request)
     }
 
@@ -86,7 +89,7 @@ class GlobalExceptionHandler {
         ex: Exception,
         request: HttpServletRequest,
     ): ResponseEntity<ErrorResponse> {
-        logger.error(ex) { "An uncaught exception occurred at ${request.method} ${request.requestURI}" }
+        logger.error(ex) { "Generic Exception ${request.method} ${request.requestURI}" }
         return errorResponse(HttpStatus.INTERNAL_SERVER_ERROR, "An internal server error occurred", request)
     }
 
@@ -95,6 +98,7 @@ class GlobalExceptionHandler {
         ex: UserCredentialException,
         request: HttpServletRequest,
     ): ResponseEntity<ErrorResponse> {
+        logger.error(ex) { "User Credential Exception ${request.method} ${request.requestURI}" }
         return errorResponse(HttpStatus.UNAUTHORIZED, ex.message ?: "Already exists", request)
     }
 
@@ -103,6 +107,7 @@ class GlobalExceptionHandler {
         ex: DuplicateEntityException,
         request: HttpServletRequest,
     ): ResponseEntity<ErrorResponse> {
+        logger.error(ex) { "Duplicate Entity Exception ${request.method} ${request.requestURI}" }
         return errorResponse(HttpStatus.CONFLICT, ex.message ?: "Already exists", request)
     }
 
@@ -111,6 +116,7 @@ class GlobalExceptionHandler {
         ex: SQLIntegrityConstraintViolationException,
         request: HttpServletRequest,
     ): ResponseEntity<ErrorResponse> {
+        logger.error(ex) { "SQL Integrity Constraint Violation Exception ${request.method} ${request.requestURI}" }
         return errorResponse(HttpStatus.BAD_REQUEST, ex.message ?: "DB Exception", request)
     }
 

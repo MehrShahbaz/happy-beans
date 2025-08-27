@@ -34,11 +34,14 @@ class RestaurantControllerTest {
     @Autowired
     private lateinit var userRepository: UserRepository
 
-    @Autowired private lateinit var loginService: LoginService
+    @Autowired
+    private lateinit var loginService: LoginService
 
-    @Autowired private lateinit var userRepository: UserRepository
+    @Autowired
+    private lateinit var restaurantRepository: RestaurantRepository
 
-    @Autowired private lateinit var restaurantRepository: RestaurantRepository
+    @Autowired
+    private lateinit var tagRepository: TagRepository
 
     private lateinit var token: String
 

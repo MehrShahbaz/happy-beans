@@ -8,6 +8,7 @@ import happybeans.model.User
 import happybeans.service.DishService
 import happybeans.utils.annotations.RestaurantOwner
 import jakarta.validation.Valid
+import mu.KotlinLogging
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
@@ -24,12 +25,15 @@ import org.springframework.web.bind.annotation.RestController
 class DishOptionController(
     private val dishService: DishService,
 ) {
+    private val logger = KotlinLogging.logger {}
+
     @PutMapping("/{optionId}")
     fun updateDishOption(
         @RestaurantOwner owner: User,
         @PathVariable optionId: Long,
         @Valid @RequestBody updateRequest: DishOptionUpdateRequest,
     ): ResponseEntity<MessageResponse> {
+        logger.info("PUT Updating dish option for $optionId and user ${owner.id}")
         dishService.updateDishOption(optionId, updateRequest, owner)
         return ResponseEntity.ok(MessageResponse("Option updated"))
     }
@@ -40,6 +44,7 @@ class DishOptionController(
         @PathVariable optionId: Long,
         @Valid @RequestBody patchRequest: DishOptionPatchRequest,
     ): ResponseEntity<MessageResponse> {
+        logger.info("PATCH Patching dish option for $optionId and user ${owner.id}")
         dishService.patchDishOption(optionId, patchRequest, owner)
         return ResponseEntity.ok(MessageResponse("Option updated"))
     }
@@ -49,6 +54,7 @@ class DishOptionController(
         @RestaurantOwner owner: User,
         @PathVariable optionId: Long,
     ): ResponseEntity<Void> {
+        logger.info("DELETE Deleting dish option for $optionId and user ${owner.id}")
         dishService.deleteDishOption(optionId, owner)
         return ResponseEntity.noContent().build()
     }
@@ -57,6 +63,7 @@ class DishOptionController(
     fun getDishOptionTags(
         @PathVariable optionId: Long,
     ): ResponseEntity<Set<Tag>> {
+        logger.info("GET Get dish option tags for $optionId}")
         val tags = dishService.getDishOptionTags(optionId)
         return ResponseEntity.ok(tags)
     }
@@ -67,7 +74,12 @@ class DishOptionController(
         @PathVariable optionId: Long,
         @RequestBody tagRequest: Map<String, String>,
     ): ResponseEntity<MessageResponse> {
-        val tagName = tagRequest["tagName"] ?: throw IllegalArgumentException("tagName is required")
+        logger.info("POST Add tag for dish option for $optionId}")
+        val tagName =
+            tagRequest["tagName"] ?: run {
+                logger.error("tagName is missing in request: $tagRequest")
+                throw IllegalArgumentException("tagName is required")
+            }
         dishService.addDishOptionTag(optionId, tagName, owner)
         return ResponseEntity.ok(MessageResponse("Tag added successfully"))
     }
@@ -78,7 +90,12 @@ class DishOptionController(
         @PathVariable optionId: Long,
         @RequestBody tagRequest: Map<String, String>,
     ): ResponseEntity<MessageResponse> {
-        val tagName = tagRequest["tagName"] ?: throw IllegalArgumentException("tagName is required")
+        val tagName =
+            tagRequest["tagName"] ?: run {
+                logger.error("tagName is missing: $tagRequest")
+                throw IllegalArgumentException("tagName is required")
+            }
+        logger.info("DELETE Tag for $optionId and user ${owner.id}")
         dishService.removeDishOptionTag(optionId, tagName, owner)
         return ResponseEntity.ok(MessageResponse("Tag removed successfully"))
     }
@@ -89,7 +106,12 @@ class DishOptionController(
         @PathVariable optionId: Long,
         @RequestBody tagRequest: Map<String, Set<String>>,
     ): ResponseEntity<MessageResponse> {
-        val tagNames = tagRequest["tagNames"] ?: throw IllegalArgumentException("tagNames is required")
+        val tagNames =
+            tagRequest["tagNames"] ?: run {
+                logger.error("tagNames is missing in request: $tagRequest")
+                throw IllegalArgumentException("tagNames is required")
+            }
+        logger.info("UPDATE Tags for $optionId and user ${owner.id}")
         dishService.updateDishOptionTags(optionId, tagNames, owner)
         return ResponseEntity.ok(MessageResponse("Tags updated successfully"))
     }

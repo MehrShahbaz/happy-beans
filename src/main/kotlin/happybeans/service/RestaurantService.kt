@@ -9,6 +9,7 @@ import happybeans.model.WorkingDateHour
 import happybeans.repository.RestaurantRepository
 import happybeans.utils.exception.DuplicateEntityException
 import happybeans.utils.exception.EntityNotFoundException
+import mu.KotlinLogging
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 import kotlin.collections.map
@@ -18,6 +19,12 @@ import kotlin.collections.map
 class RestaurantService(
     private val restaurantRepository: RestaurantRepository,
 ) {
+    private val logger = KotlinLogging.logger {}
+
+    fun getALlRestaurants(): List<Restaurant> {
+        return restaurantRepository.findAll()
+    }
+
     fun createRestaurant(
         restaurantCreateRequest: RestaurantCreateRequest,
         restaurantOwner: User,
@@ -25,6 +32,7 @@ class RestaurantService(
         val currentRestaurants = restaurantRepository.findAllByUserId(restaurantOwner.id)
 
         if (currentRestaurants.any { it.name == restaurantCreateRequest.name }) {
+            logger.error { "For user: ${restaurantOwner.id} already exists a restaurant: ${restaurantCreateRequest.name}" }
             throw DuplicateEntityException("Owner already has a restaurant with name ${restaurantCreateRequest.name}")
         }
 
@@ -69,9 +77,14 @@ class RestaurantService(
         restaurantId: Long,
         userId: Long,
     ): Restaurant {
-        return restaurantRepository.findByIdAndUserId(restaurantId, userId) ?: throw EntityNotFoundException(
-            "Resource not found for id: $restaurantId",
-        )
+        val restaurant = restaurantRepository.findByIdAndUserId(restaurantId, userId)
+
+        if (restaurant == null) {
+            logger.error { "For user: $userId, restaurant $restaurantId does not exist" }
+            throw EntityNotFoundException("Resource not found for id: $restaurantId")
+        }
+
+        return restaurant
     }
 
     private fun createWorkingHours(dto: List<WorkingDateHourRequest>): List<WorkingDateHour> {

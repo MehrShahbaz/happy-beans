@@ -4,6 +4,7 @@ import happybeans.model.Tag
 import happybeans.model.User
 import happybeans.repository.UserRepository
 import happybeans.utils.exception.EntityNotFoundException
+import mu.KotlinLogging
 import org.springframework.stereotype.Service
 import org.springframework.transaction.annotation.Transactional
 
@@ -13,10 +14,15 @@ class UserService(
     private val userRepository: UserRepository,
     private val tagService: TagService,
 ) {
+    private val logger = KotlinLogging.logger {}
+
     @Transactional(readOnly = true)
     fun findById(userId: Long): User {
         return userRepository.findById(userId)
-            .orElseThrow { EntityNotFoundException("User with id '$userId' not found") }
+            .orElseThrow {
+                logger.error { "User with ID $userId does not exist." }
+                EntityNotFoundException("User with id '$userId' not found")
+            }
     }
 
     fun addUserLike(
