@@ -96,8 +96,8 @@ create table cart_products (
                                constraint uq_cart_user_option unique (user_id, dish_option_id)
 );
 
--- DISH REVIEWS (без явных FK в сущности — оставляю как денормализованный снэпшот)
-create table dish_reviews (
+-- DISH REVIEWS
+create table dish_review (
                               id                bigserial primary key,
                               user_id           bigint not null,
                               user_name         varchar not null,
