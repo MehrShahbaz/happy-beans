@@ -58,7 +58,6 @@ CREATE TABLE IF NOT EXISTS dish_options (
     name VARCHAR(100) NOT NULL,
     description VARCHAR(500),
     image VARCHAR(255) NOT NULL,
-    rating FLOAT(53) NOT NULL DEFAULT 0,
     dish_id BIGINT,
     CONSTRAINT fk_dish_option_dish FOREIGN KEY (dish_id) REFERENCES dishes
 );
@@ -72,7 +71,7 @@ CREATE TABLE IF NOT EXISTS cart_products (
     updated_at TIMESTAMP(6),
     quantity INTEGER NOT NULL,
     dish_id BIGINT NOT NULL,
-    dish_option_id BIGINT NOT NULL UNIQUE,
+    dish_option_id BIGINT NOT NULL,
     user_id BIGINT NOT NULL,
     CONSTRAINT uq_cart_user_dish_option UNIQUE (user_id, dish_option_id),
     CONSTRAINT fk_cart_dish FOREIGN KEY (dish_id) REFERENCES dishes,

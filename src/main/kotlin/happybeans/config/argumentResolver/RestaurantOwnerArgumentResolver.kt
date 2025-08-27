@@ -32,7 +32,7 @@ class RestaurantOwnerArgumentResolver(
     ): User {
         val request = (webRequest as ServletWebRequest).request
 
-        logger.info("Loading email from request")
+        logger.debug("Loading email from request")
         val email = request.getAttribute("email") as String
 
         val user =

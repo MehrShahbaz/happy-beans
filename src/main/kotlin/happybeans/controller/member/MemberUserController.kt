@@ -1,10 +1,12 @@
 package happybeans.controller.member
 
 import happybeans.dto.response.MessageResponse
+import happybeans.dto.tag.TagRequest
 import happybeans.model.Tag
 import happybeans.model.User
 import happybeans.service.UserService
 import happybeans.utils.annotations.LoginMember
+import jakarta.validation.Valid
 import mu.KotlinLogging
 import org.springframework.http.ResponseEntity
 import org.springframework.web.bind.annotation.DeleteMapping
@@ -34,32 +36,48 @@ class MemberUserController(
     @PostMapping("/likes")
     fun addUserLike(
         @LoginMember user: User,
-        @RequestBody tagRequest: Map<String, String>,
+        @Valid @RequestBody tagRequest: TagRequest,
     ): ResponseEntity<MessageResponse> {
         logger.info { "Adding like for ${user.id}" }
-        val tagName = tagRequest["tagName"] ?: throw IllegalArgumentException("tagName is required")
-        userService.addUserLike(user.id, tagName)
-        return ResponseEntity.ok(MessageResponse("Tag added to likes successfully"))
+        val tagNames = tagRequest.tagNames
+
+        tagNames.forEach { tagName ->
+            userService.addUserLike(user.id, tagName)
+        }
+
+        return if (tagNames.size == 1) {
+            ResponseEntity.ok(MessageResponse("Tag added to likes successfully"))
+        } else {
+            ResponseEntity.ok(MessageResponse("Tags added to likes successfully"))
+        }
     }
 
     @DeleteMapping("/likes")
     fun removeUserLike(
         @LoginMember user: User,
-        @RequestBody tagRequest: Map<String, String>,
+        @Valid @RequestBody tagRequest: TagRequest,
     ): ResponseEntity<MessageResponse> {
         logger.info { "Removing like for ${user.id}" }
-        val tagName = tagRequest["tagName"] ?: throw IllegalArgumentException("tagName is required")
-        userService.removeUserLike(user.id, tagName)
-        return ResponseEntity.ok(MessageResponse("Tag removed from likes successfully"))
+        val tagNames = tagRequest.tagNames
+
+        tagNames.forEach { tagName ->
+            userService.removeUserLike(user.id, tagName)
+        }
+
+        return if (tagNames.size == 1) {
+            ResponseEntity.ok(MessageResponse("Tag removed from likes successfully"))
+        } else {
+            ResponseEntity.ok(MessageResponse("Tags removed from likes successfully"))
+        }
     }
 
     @PutMapping("/likes")
     fun updateUserLikes(
         @LoginMember user: User,
-        @RequestBody tagRequest: Map<String, Set<String>>,
+        @Valid @RequestBody tagRequest: TagRequest,
     ): ResponseEntity<MessageResponse> {
         logger.info { "Updating likes for ${user.id}" }
-        val tagNames = tagRequest["tagNames"] ?: throw IllegalArgumentException("tagNames is required")
+        val tagNames = tagRequest.tagNames.toSet()
         userService.updateUserLikes(user.id, tagNames)
         return ResponseEntity.ok(MessageResponse("Likes updated successfully"))
     }
@@ -76,32 +94,48 @@ class MemberUserController(
     @PostMapping("/dislikes")
     fun addUserDislike(
         @LoginMember user: User,
-        @RequestBody tagRequest: Map<String, String>,
+        @Valid @RequestBody tagRequest: TagRequest,
     ): ResponseEntity<MessageResponse> {
         logger.info { "Adding dislike for ${user.id}" }
-        val tagName = tagRequest["tagName"] ?: throw IllegalArgumentException("tagName is required")
-        userService.addUserDislike(user.id, tagName)
-        return ResponseEntity.ok(MessageResponse("Tag added to dislikes successfully"))
+        val tagNames = tagRequest.tagNames
+
+        tagNames.forEach { tagName ->
+            userService.addUserDislike(user.id, tagName)
+        }
+
+        return if (tagNames.size == 1) {
+            ResponseEntity.ok(MessageResponse("Tag added to dislikes successfully"))
+        } else {
+            ResponseEntity.ok(MessageResponse("Tags added to dislikes successfully"))
+        }
     }
 
     @DeleteMapping("/dislikes")
     fun removeUserDislike(
         @LoginMember user: User,
-        @RequestBody tagRequest: Map<String, String>,
+        @Valid @RequestBody tagRequest: TagRequest,
     ): ResponseEntity<MessageResponse> {
         logger.info { "Removing dislike for ${user.id}" }
-        val tagName = tagRequest["tagName"] ?: throw IllegalArgumentException("tagName is required")
-        userService.removeUserDislike(user.id, tagName)
-        return ResponseEntity.ok(MessageResponse("Tag removed from dislikes successfully"))
+        val tagNames = tagRequest.tagNames
+
+        tagNames.forEach { tagName ->
+            userService.removeUserDislike(user.id, tagName)
+        }
+
+        return if (tagNames.size == 1) {
+            ResponseEntity.ok(MessageResponse("Tag removed from dislikes successfully"))
+        } else {
+            ResponseEntity.ok(MessageResponse("Tags removed from dislikes successfully"))
+        }
     }
 
     @PutMapping("/dislikes")
     fun updateUserDislikes(
         @LoginMember user: User,
-        @RequestBody tagRequest: Map<String, Set<String>>,
+        @Valid @RequestBody tagRequest: TagRequest,
     ): ResponseEntity<MessageResponse> {
         logger.info { "Updating dislikes for ${user.id}" }
-        val tagNames = tagRequest["tagNames"] ?: throw IllegalArgumentException("tagNames is required")
+        val tagNames = tagRequest.tagNames.toSet()
         userService.updateUserDislikes(user.id, tagNames)
         return ResponseEntity.ok(MessageResponse("Dislikes updated successfully"))
     }

@@ -62,7 +62,7 @@ class WebhookController(
                 orderPaymentService.handlePaymentSuccess(stripeEvent)
             }
             "payment_intent.payment_failed" -> {
-                logger.info { "Payment failed for ${event.id}" }
+                logger.warn { "Payment failed for ${event.id}" }
                 orderPaymentService.handlePaymentFailure(stripeEvent)
             }
         }
