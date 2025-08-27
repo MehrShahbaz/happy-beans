@@ -21,6 +21,6 @@ fi
 cd /home/ubuntu/app
 echo ">>> $(date '+%Y-%m-%d %H:%M:%S') [ApplicationStart] Starting application: $JAR_FILE"
 
-nohup authbind --deep java -jar "$JAR_FILE" --spring.profiles.active=prod > /home/ubuntu/app/logs/app.log 2>&1 &
+nohup authbind --deep java -jar /home/ubuntu/app/build/libs/happy-beans-0.0.1-SNAPSHOT.jar --spring.profiles.active=prod > /home/ubuntu/app/logs/app.log 2>&1 &
 
 echo ">>> Application started in background. Logs: /home/ubuntu/app/logs/app.log"
