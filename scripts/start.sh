@@ -10,23 +10,38 @@ LOG_FILE="$LOG_DIR/app_start.log"
 # Define a simple logging function with a timestamp
 log() {
   echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1" >> "$LOG_FILE"
-  echo "[$(date '+%Y-%m-%d %H:%M:%S')] $1"
 }
 
-# Ensure the log directory exists and has correct permissions
-log "Ensuring logs directory exists at $LOG_DIR"
-mkdir -p "$LOG_DIR"
-log "Fixing ownership of log directory"
-sudo chown -R ubuntu:ubuntu "$LOG_DIR"
+# Ensure the log directory exists
+if [ ! -d "$LOG_DIR" ]; then
+  log "Creating logs directory at $LOG_DIR"
+  mkdir -p "$LOG_DIR" || { log "ERROR: Failed to create log directory $LOG_DIR"; exit 1; }
+else
+  log "Logs directory already exists at $LOG_DIR"
+fi
 
-# Clear the log file at the start of the script
-echo "" > "$LOG_FILE"
+# Ensure correct permissions for the log directory
+log "Setting ownership of log directory to ubuntu:ubuntu"
+if ! chown -R ubuntu:ubuntu "$LOG_DIR"; then
+  log "WARNING: Failed to set ownership of $LOG_DIR (sudo may be required)"
+fi
+
+# Clear or create the log file
+log "Initializing log file at $LOG_FILE"
+if [ -f "$LOG_FILE" ]; then
+  : > "$LOG_FILE" || { log "ERROR: Failed to clear log file $LOG_FILE"; exit 1; }
+else
+  touch "$LOG_FILE" || { log "ERROR: Failed to create log file $LOG_FILE"; exit 1; }
+fi
+
+# Ensure the log file has correct permissions
+chmod 644 "$LOG_FILE" || { log "ERROR: Failed to set permissions on $LOG_FILE"; exit 1; }
 
 log "Starting start.sh script"
 
 # Change to the application directory
 log "Changing directory to /home/ubuntu/app"
-cd /home/ubuntu/app
+cd /home/ubuntu/app || { log "ERROR: Failed to change directory to /home/ubuntu/app"; exit 1; }
 
 # Run the application using the private IP address
 log "Starting the Spring Boot application with private IP address"
