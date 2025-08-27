@@ -17,7 +17,7 @@ class RestaurantOwnerAuthController(
     private val restaurantOwnerAuthService: RestaurantOwnerAuthService,
 ) {
     private val logger = KotlinLogging.logger {}
-    
+
     @PostMapping("/login")
     fun login(
         @Valid @RequestBody loginRequestDto: LoginRequestDto,

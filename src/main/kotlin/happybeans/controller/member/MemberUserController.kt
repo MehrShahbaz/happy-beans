@@ -40,11 +40,11 @@ class MemberUserController(
     ): ResponseEntity<MessageResponse> {
         logger.info { "Adding like for ${user.id}" }
         val tagNames = tagRequest.tagNames
-        
+
         tagNames.forEach { tagName ->
             userService.addUserLike(user.id, tagName)
         }
-        
+
         return if (tagNames.size == 1) {
             ResponseEntity.ok(MessageResponse("Tag added to likes successfully"))
         } else {
@@ -59,11 +59,11 @@ class MemberUserController(
     ): ResponseEntity<MessageResponse> {
         logger.info { "Removing like for ${user.id}" }
         val tagNames = tagRequest.tagNames
-        
+
         tagNames.forEach { tagName ->
             userService.removeUserLike(user.id, tagName)
         }
-        
+
         return if (tagNames.size == 1) {
             ResponseEntity.ok(MessageResponse("Tag removed from likes successfully"))
         } else {
@@ -98,11 +98,11 @@ class MemberUserController(
     ): ResponseEntity<MessageResponse> {
         logger.info { "Adding dislike for ${user.id}" }
         val tagNames = tagRequest.tagNames
-        
+
         tagNames.forEach { tagName ->
             userService.addUserDislike(user.id, tagName)
         }
-        
+
         return if (tagNames.size == 1) {
             ResponseEntity.ok(MessageResponse("Tag added to dislikes successfully"))
         } else {
@@ -117,11 +117,11 @@ class MemberUserController(
     ): ResponseEntity<MessageResponse> {
         logger.info { "Removing dislike for ${user.id}" }
         val tagNames = tagRequest.tagNames
-        
+
         tagNames.forEach { tagName ->
             userService.removeUserDislike(user.id, tagName)
         }
-        
+
         return if (tagNames.size == 1) {
             ResponseEntity.ok(MessageResponse("Tag removed from dislikes successfully"))
         } else {

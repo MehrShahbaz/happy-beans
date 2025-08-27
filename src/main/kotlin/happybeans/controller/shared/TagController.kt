@@ -18,7 +18,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder
 @RequestMapping("/api/tags")
 class TagController(private val tagService: TagService) {
     private val logger = KotlinLogging.logger {}
-    
+
     @GetMapping
     fun getAllTags(): ResponseEntity<Map<String, List<Tag>>> {
         logger.info("GET Getting all tags")
@@ -30,16 +30,18 @@ class TagController(private val tagService: TagService) {
         @Valid @RequestBody tagRequest: TagRequest,
     ): ResponseEntity<MessageResponse> {
         logger.info("POST Creating ${tagRequest.tagNames.size} tag(s): ${tagRequest.tagNames}")
-        val createdTags = tagRequest.tagNames.map { tagName ->
-            tagService.createTag(tagName)
-        }
-        
-        val message = if (createdTags.size == 1) {
-            "Tag created!"
-        } else {
-            "${createdTags.size} tags created!"
-        }
-        
+        val createdTags =
+            tagRequest.tagNames.map { tagName ->
+                tagService.createTag(tagName)
+            }
+
+        val message =
+            if (createdTags.size == 1) {
+                "Tag created!"
+            } else {
+                "${createdTags.size} tags created!"
+            }
+
         val location =
             ServletUriComponentsBuilder
                 .fromCurrentRequest()
