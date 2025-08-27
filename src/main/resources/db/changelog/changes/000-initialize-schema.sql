@@ -158,7 +158,7 @@ create table payment (
                          updated_at     timestamp default now()
 );
 
--- RESTAURANT REVIEWS (как и DishReview — снэпшот без явных связей)
+-- RESTAURANT REVIEWS
 create table restaurant_review (
                                    id              bigserial primary key,
                                    user_id         bigint not null,
