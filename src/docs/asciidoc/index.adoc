@@ -69,6 +69,13 @@ include::{snippets}/dish-delete/http-request.adoc[]
 include::{snippets}/dish-delete/path-parameters.adoc[]
 include::{snippets}/dish-delete/http-response.adoc[]
 
+=== Search filtered by user
+include::{snippets}/dish-search-filtered-by-user/curl-request.adoc[]
+include::{snippets}/dish-search-filtered-by-user/http-request.adoc[]
+include::{snippets}/dish-search-filtered-by-user/http-response.adoc[]
+include::{snippets}/dish-search-filtered-by-user/response-body.adoc[]
+include::{snippets}/dish-search-filtered-by-user/response-fields.adoc[]
+
 == Dish Option API
 === Update option
 include::{snippets}/dish-option-update/curl-request.adoc[]
@@ -313,6 +320,18 @@ include::{snippets}/admin-restaurant-owner-create/http-response.adoc[]
 include::{snippets}/admin-restaurant-owner-create-400/curl-request.adoc[]
 include::{snippets}/admin-restaurant-owner-create-400/http-request.adoc[]
 include::{snippets}/admin-restaurant-owner-create-400/http-response.adoc[]
+
+=== Restaurant delete
+include::{snippets}/admin-restaurant-delete/curl-request.adoc[]
+include::{snippets}/admin-restaurant-delete/http-request.adoc[]
+include::{snippets}/admin-restaurant-delete/path-parameters.adoc[]
+include::{snippets}/admin-restaurant-delete/http-response.adoc[]
+
+=== Restaurant status update
+include::{snippets}/admin-restaurant-status-update/curl-request.adoc[]
+include::{snippets}/admin-restaurant-status-update/http-request.adoc[]
+include::{snippets}/admin-restaurant-status-update/path-parameters.adoc[]
+include::{snippets}/admin-restaurant-status-update/http-response.adoc[]
 
 === Join requests - get all
 include::{snippets}/admin-join-request-get-all/curl-request.adoc[]
