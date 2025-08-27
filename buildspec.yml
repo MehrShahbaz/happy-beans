@@ -6,20 +6,18 @@ phases:
       java: corretto21
   pre_build:
     commands:
-      - rm -rf /home/ubuntu/app/*
-#      - export $(grep -v '^#' ./.env | xargs)
       - chmod +x gradlew
       - ./gradlew clean
-      - echo ">>> Creating .env file..."
-      - echo "JWT_SECRET=${JWT_SECRET}" > .env
-      - echo "JWT_TIME=${JWT_TIME}" >> .env
-      - echo "SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}" >> .env
-      - echo "SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME}" >> .env
-      - echo "SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}" >> .env
-      - echo "STRIPE_WEBHOOK_KEY=${STRIPE_WEBHOOK_KEY}" >> .env
-      - echo "STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}" >> .env
-      - echo "EMAIL_USERNAME=${EMAIL_USERNAME}" >> .env
-      - echo "EMAIL_PASSWORD=${EMAIL_PASSWORD}" >> .env
+      - echo ">>> Creating .env.properties file..."
+      - echo "JWT_SECRET=${JWT_SECRET}" > .env.properties
+      - echo "JWT_TIME=${JWT_TIME}" >> .env.properties
+      - echo "SPRING_DATASOURCE_URL=${SPRING_DATASOURCE_URL}" >> .env.properties
+      - echo "SPRING_DATASOURCE_USERNAME=${SPRING_DATASOURCE_USERNAME}" >> .env.properties
+      - echo "SPRING_DATASOURCE_PASSWORD=${SPRING_DATASOURCE_PASSWORD}" >> .env.properties
+      - echo "STRIPE_WEBHOOK_KEY=${STRIPE_WEBHOOK_KEY}" >> .env.properties
+      - echo "STRIPE_SECRET_KEY=${STRIPE_SECRET_KEY}" >> .env.properties
+      - echo "EMAIL_USERNAME=${EMAIL_USERNAME}" >> .env.properties
+      - echo "EMAIL_PASSWORD=${EMAIL_PASSWORD}" >> .env.properties
       - echo ".env file created:"
 
   build:
@@ -32,7 +30,7 @@ phases:
 
 artifacts:
   files:
-    - .env
+    - .env.properties
     - build/libs/*.jar
     - appspec.yml
     - scripts/**/*
