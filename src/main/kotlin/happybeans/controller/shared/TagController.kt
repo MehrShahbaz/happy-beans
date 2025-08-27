@@ -25,7 +25,17 @@ class TagController(private val tagService: TagService) {
     fun createTag(
         @Valid @RequestBody tagCreateRequest: TagCreateRequest,
     ): ResponseEntity<MessageResponse> {
-        val tag = tagService.createTag(tagCreateRequest.name)
+        logger.info("POST Creating ${tagRequest.tagNames.size} tag(s): ${tagRequest.tagNames}")
+        val createdTags = tagRequest.tagNames.map { tagName ->
+            tagService.createTag(tagName)
+        }
+        
+        val message = if (createdTags.size == 1) {
+            "Tag created!"
+        } else {
+            "${createdTags.size} tags created!"
+        }
+        
         val location =
             ServletUriComponentsBuilder
                 .fromCurrentRequest()
