@@ -6,6 +6,8 @@ phases:
       java: corretto21
   pre_build:
     commands:
+#      - export $(grep -v '^#' ./.env | xargs)
+      - chmod +x gradlew
       - ./gradlew clean
       - echo ">>> Creating .env file..."
       - echo "JWT_SECRET=${JWT_SECRET}" > .env
@@ -22,7 +24,7 @@ phases:
   build:
     commands:
       - echo ">>> Building jar..."
-      - ./gradlew bootJar --no-daemon
+      - ./gradlew bootJar -x asciidoctor --no-daemon
   post_build:
     commands:
       - echo ">>> Build completed. Packaging for deployment..." > logs
