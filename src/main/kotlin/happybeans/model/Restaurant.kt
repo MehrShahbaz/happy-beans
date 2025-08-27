@@ -1,6 +1,7 @@
 package happybeans.model
 
 import happybeans.dto.restaurant.RestaurantPatchRequest
+import happybeans.enums.RestaurantStatus
 import jakarta.persistence.CascadeType
 import jakarta.persistence.CollectionTable
 import jakarta.persistence.Column
@@ -32,13 +33,15 @@ class Restaurant(
     var image: String,
     @Column(name = "address_url")
     var addressUrl: String,
-    @ElementCollection(fetch = FetchType.EAGER)
+    @Column(name = "status", nullable = false)
+    var status: RestaurantStatus = RestaurantStatus.ACTIVE,
+    @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(
         name = "restaurant_working_dates_hours",
         joinColumns = [JoinColumn(name = "restaurant_id")],
     )
     var workingDateHours: MutableList<WorkingDateHour> = mutableListOf(),
-    @OneToMany(cascade = [(CascadeType.ALL)], fetch = FetchType.EAGER, orphanRemoval = true)
+    @OneToMany(cascade = [(CascadeType.ALL)], fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "restaurant_id")
     val dishes: MutableList<Dish> = mutableListOf(),
     @CreationTimestamp
