@@ -24,9 +24,6 @@ phases:
     commands:
       - echo ">>> Building jar..."
       - ./gradlew bootJar -x asciidoctor --no-daemon
-  post_build:
-    commands:
-      - echo ">>> Build completed. Packaging for deployment..." > logs
 
 artifacts:
   files:
