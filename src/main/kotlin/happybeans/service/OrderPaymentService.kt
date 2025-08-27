@@ -13,6 +13,7 @@ class OrderPaymentService(
     private val stripePaymentService: StripePaymentService,
     private val paymentService: PaymentService,
     private val emailDispatchService: EmailDispatchService,
+    private val cartProductService: CartProductService,
 ) {
     private val logger = KotlinLogging.logger {}
 
@@ -43,6 +44,8 @@ class OrderPaymentService(
 
         paymentService.updateStatus(payment, PaymentStatus.COMPLETED)
         memberOrderService.updateStatus(order, OrderStatus.COMPLETED)
+
+        cartProductService.clearPaymentSuccess(order.userId)
 
         emailDispatchService.sendOrderConfirmationEmail(order)
     }
