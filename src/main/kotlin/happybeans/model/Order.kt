@@ -28,7 +28,7 @@ class Order(
     var userId: Long,
     @Column(name = "user_email", nullable = false)
     var userEmail: String,
-    @Column(name = "payment_id", nullable = false)
+    @Column(name = "payment_id")
     val paymentId: String? = null,
     @Column(name = "total_amount", nullable = false)
     var totalAmount: Double = 0.0,

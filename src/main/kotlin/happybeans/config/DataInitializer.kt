@@ -1,8 +1,6 @@
 package happybeans.config
 
-import happybeans.dto.dish.DishOptionCreateRequest
 import happybeans.enums.UserRole
-import happybeans.model.Dish
 import happybeans.model.User
 import happybeans.repository.DishRepository
 import happybeans.repository.RestaurantRepository
