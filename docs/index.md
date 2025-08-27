@@ -10,28 +10,19 @@
 4. [Key Features & Business Logic](#key-features--business-logic)
 
 ---
-## Things to Update (28.Aug)
-
-### email
-- admin sends email to restaurant owner : register approved (with pw)
-- app sends email to user/member : order is placed
-
-### Add some short description with storytelling
-
-- Admin check restaurants, create other admin, create restaurant owners and send emails
-- Admin can delete restaurants, users
-
----
-
 
 ## System Overview
 
 **Happy Beans** is a sophisticated Kotlin Spring Boot food delivery application featuring:
-- **Role-based Access Control**: Admin, Restaurant Owner, User/Member
+- **Role-based Access Control**: Admin, Restaurant Owner, User/Member with comprehensive user management
 - **Intelligent Filtering**: Tag-based meal recommendations with preference conflict resolution
-- **Complete Order Management**: Cart → Order → Payment → Fulfillment
-- **Integrated Payments**: Stripe webhook processing
-- **Review System**: Dish and restaurant reviews
+- **Complete Order Management**: Cart → Order → Payment → Fulfillment with automated notifications
+- **Integrated Payments**: Stripe webhook processing with real-time status updates
+- **Review System**: Dish and restaurant reviews for quality assurance
+- **Email Integration**: Automated notifications for account creation and order confirmations
+
+### **Platform Narrative**
+Happy Beans operates as a three-tier ecosystem where **Admins** serve as platform gatekeepers, reviewing restaurant applications and creating verified restaurant owner accounts. Upon approval, restaurant owners receive automated invitation emails with login credentials, enabling them to establish their digital storefronts. **Restaurant Owners** then craft their menus, set pricing, and manage orders while **Members** discover personalized dining experiences through intelligent tag-based filtering. The platform handles the complete customer journey from preference-driven discovery to secure payment processing, with automated email confirmations ensuring transparency throughout the ordering process.
 
 ---
 
@@ -96,25 +87,83 @@ graph TD
 
 **Detailed Flow:**
 1. **Authentication** → Admin login with elevated privileges
-2. **Application Review** → Process restaurant owner applications
-3. **User Management** → Create restaurant owners, send invitations
-4. **System Administration** → Monitor restaurants, manage system health
-5. **Oversight** → Delete problematic restaurants, manage user accounts
+2. **Application Review** → Process restaurant owner applications with accept/reject capabilities
+3. **Account Creation** → Create restaurant owners and automatically send invitation emails with credentials
+4. **System Administration** → Monitor all restaurants, create additional admin accounts, manage platform health
+5. **Quality Control** → Delete problematic restaurants, suspend restaurant status, remove user accounts
+6. **Email Management** → Automated email notifications for account approvals and system communications
 
 ---
 
 ## Endpoint Reference
 
-### **Authentication Endpoints**
+**Total Endpoints: 50**
+
+### **Authentication Endpoints (4)**
 
 | User Type | Method | Endpoint | Purpose |
 |-----------|--------|----------|---------|
-| User | `POST` | `/api/member/auth/sign-up` | User registration |
-| User | `POST` | `/api/member/auth/login` | User login |
-| Restaurant Owner | `POST` | `/api/auth/restaurant-owner/login` | Owner login |
-| Admin | `POST` | `/api/admin/auth/login` | Admin login |
+| Member | `POST` | `/api/member/auth/sign-up` | User registration |
+| Member | `POST` | `/api/member/auth/login` | User authentication |
+| Admin | `POST` | `/api/admin/auth/login` | Admin authentication |
+| Restaurant Owner | `POST` | `/api/auth/restaurant-owner/login` | Owner authentication |
 
-### **User/Member Endpoints**
+### **Admin Endpoints (8)**
+
+| Method | Endpoint | Purpose | Request Body |
+|--------|----------|---------|--------------|
+| `POST` | `/api/admin/create-admin` | Create admin user | `UserCreateRequestDto` |
+| `POST` | `/api/admin/restaurant-owner` | Create restaurant owner | `RestaurantOwnerRequestDto` |
+| `GET` | `/api/admin/join-request` | View join requests | - |
+| `POST` | `/api/admin/join-request/accept/{id}` | Accept application | - |
+| `POST` | `/api/admin/join-request/reject/{id}` | Reject application | - |
+| `GET` | `/api/admin/restaurants` | View all restaurants | - |
+| `DELETE` | `/api/admin/restaurants/{restaurantId}` | Delete restaurant | - |
+| `PATCH` | `/api/admin/restaurants/{restaurantId}/status` | Update restaurant status | `{"status": "ACTIVE"}` |
+
+### **Restaurant Owner Endpoints (20)**
+
+#### Restaurant Management
+| Method | Endpoint | Purpose | Request Body |
+|--------|----------|---------|--------------|
+| `GET` | `/api/restaurant-owner/restaurants` | View owned restaurants | - |
+| `POST` | `/api/restaurant-owner/restaurants` | Create restaurant | `RestaurantCreateRequest` |
+| `GET` | `/api/restaurant-owner/restaurants/{restaurantId}` | View restaurant details | - |
+| `PATCH` | `/api/restaurant-owner/restaurants/{restaurantId}` | Update restaurant | `RestaurantPatchRequest` |
+| `DELETE` | `/api/restaurant-owner/restaurants/{restaurantId}` | Delete restaurant | - |
+
+#### Dish Management
+| Method | Endpoint | Purpose | Request Body |
+|--------|----------|---------|--------------|
+| `POST` | `/api/restaurant-owner/restaurant/{restaurantId}/dishes` | Create dish | `DishCreateRequest` |
+| `GET` | `/api/restaurant-owner/dish/{dishId}` | View dish details | - |
+| `PUT` | `/api/restaurant-owner/dish/{dishId}` | Update dish | `DishUpdateRequest` |
+| `PATCH` | `/api/restaurant-owner/dish/{dishId}` | Partial dish update | `DishPatchRequest` |
+| `DELETE` | `/api/restaurant-owner/dish/{dishId}` | Delete dish | - |
+
+#### Dish Option Management
+| Method | Endpoint | Purpose | Request Body |
+|--------|----------|---------|--------------|
+| `POST` | `/api/restaurant-owner/dish/{dishId}/options` | Add dish option | `DishOptionCreateRequest` |
+| `PUT` | `/api/restaurant-owner/dish-options/{dishOptionId}` | Update option | `DishOptionUpdateRequest` |
+| `DELETE` | `/api/restaurant-owner/dish-options/{dishOptionId}` | Delete option | - |
+
+#### Dish Option Tag Management
+| Method | Endpoint | Purpose | Request Body |
+|--------|----------|---------|--------------|
+| `GET` | `/api/restaurant-owner/dish-options/{dishOptionId}/tags` | View option tags | - |
+| `POST` | `/api/restaurant-owner/dish-options/{dishOptionId}/tags` | Add tag to option | `{"tagName": "vegetarian"}` |
+| `DELETE` | `/api/restaurant-owner/dish-options/{dishOptionId}/tags` | Remove tag from option | `{"tagName": "spicy"}` |
+| `PUT` | `/api/restaurant-owner/dish-options/{dishOptionId}/tags` | Replace all option tags | `{"tagNames": ["tag1", "tag2"]}` |
+
+#### Order Management
+| Method | Endpoint | Purpose | Request Body |
+|--------|----------|---------|--------------|
+| `GET` | `/api/restaurant-owner/orders/order-details` | View all order details | - |
+| `GET` | `/api/restaurant-owner/orders/order-details/{orderDetailId}` | View specific order detail | - |
+| `PATCH` | `/api/restaurant-owner/orders/order-details/{orderDetailId}/status` | Update order detail status | `{"status": "CONFIRMED"}` |
+
+### **Member Endpoints (19)**
 
 #### Preference Management
 | Method | Endpoint | Purpose | Request Body |
@@ -146,51 +195,12 @@ graph TD
 | `POST` | `/api/member/orders/cart-checkout` | Checkout cart | `{"paymentUrl": "stripe_url"}` |
 | `POST` | `/api/member/orders/buy-dish/{dishOptionId}` | Direct dish purchase | `{"paymentUrl": "stripe_url"}` |
 
-### **Restaurant Owner Endpoints**
-
-#### Restaurant Management
+#### Reviews
 | Method | Endpoint | Purpose | Request Body |
 |--------|----------|---------|--------------|
-| `GET` | `/api/restaurant-owner/restaurants` | View owned restaurants | - |
-| `POST` | `/api/restaurant-owner/restaurants` | Create restaurant | `RestaurantCreateRequest` |
-| `GET` | `/api/restaurant-owner/restaurants/{id}` | View restaurant details | - |
-| `PATCH` | `/api/restaurant-owner/restaurants/{id}` | Update restaurant | `RestaurantPatchRequest` |
-| `DELETE` | `/api/restaurant-owner/restaurants/{id}` | Delete restaurant | - |
+| `POST` | `/api/member/reviews/dish` | Submit dish review | `DishReviewCreateRequest` |
 
-#### Menu Management
-| Method | Endpoint | Purpose | Request Body |
-|--------|----------|---------|--------------|
-| `POST` | `/api/restaurant-owner/restaurant/{id}/dishes` | Create dish | `DishCreateRequest` |
-| `GET` | `/api/restaurant-owner/dish/{dishId}` | View dish details | - |
-| `PUT` | `/api/restaurant-owner/dish/{dishId}` | Update dish | `DishUpdateRequest` |
-| `PATCH` | `/api/restaurant-owner/dish/{dishId}` | Partial dish update | `DishPatchRequest` |
-| `DELETE` | `/api/restaurant-owner/dish/{dishId}` | Delete dish | - |
-| `POST` | `/api/restaurant-owner/dish/{dishId}/options` | Add dish option | `DishOptionCreateRequest` |
-| `PUT` | `/api/restaurant-owner/dish-options/{optionId}` | Update option | `DishOptionUpdateRequest` |
-| `DELETE` | `/api/restaurant-owner/dish-options/{optionId}` | Delete option | - |
-
-#### Tag Management
-| Method | Endpoint | Purpose | Request Body |
-|--------|----------|---------|--------------|
-| `GET` | `/api/restaurant-owner/dish-options/{optionId}/tags` | View option tags | - |
-| `POST` | `/api/restaurant-owner/dish-options/{optionId}/tags` | Add tag | `{"tagName": "vegetarian"}` |
-| `DELETE` | `/api/restaurant-owner/dish-options/{optionId}/tags` | Remove tag | `{"tagName": "spicy"}` |
-| `PUT` | `/api/restaurant-owner/dish-options/{optionId}/tags` | Replace all tags | `{"tagNames": ["tag1", "tag2"]}` |
-
-### **Admin Endpoints**
-
-| Method | Endpoint | Purpose | Request Body |
-|--------|----------|---------|--------------|
-| `POST` | `/api/admin/create-admin` | Create admin user | `UserCreateRequestDto` |
-| `POST` | `/api/admin/restaurant-owner` | Create restaurant owner | `RestaurantOwnerRequestDto` |
-| `GET` | `/api/admin/join-request` | View join requests | - |
-| `POST` | `/api/admin/join-request/accept/{id}` | Accept application | - |
-| `POST` | `/api/admin/join-request/reject/{id}` | Reject application | - |
-| `GET` | `/api/admin/restaurants` | View all restaurants | - |
-| `DELETE` | `/api/admin/restaurants/{id}` | Delete restaurant | - |
-| `PATCH` | `/api/admin/restaurants/{id}/status` | Update restaurant status | `{"status": "ACTIVE"}` |
-
-### **Public/Guest Endpoints**
+### **Guest Endpoints (3)**
 
 | Method | Endpoint | Purpose | Request Body |
 |--------|----------|---------|--------------|
@@ -198,7 +208,7 @@ graph TD
 | `GET` | `/api/guest/{restaurantId}/dishes` | View restaurant menu | - |
 | `POST` | `/api/guest/join-request` | Apply to be restaurant owner | `JoinRequestDto` |
 
-### **System/Shared Endpoints**
+### **Shared System Endpoints (3)**
 
 | Method | Endpoint | Purpose | Request Body |
 |--------|----------|---------|--------------|
@@ -206,11 +216,18 @@ graph TD
 | `POST` | `/api/tags` | Create new tags | `{"tagNames": ["tag1", "tag2"]}` |
 | `GET` | `/api/health` | System health check | - |
 
-### **Payment Webhook**
+### **Payment Webhook (1)**
 
 | Method | Endpoint | Purpose | Triggered By |
 |--------|----------|---------|--------------|
 | `POST` | `/api/payment/webhook` | Process payment events | Stripe webhook |
+
+### **Review System Endpoints (2) - Currently Commented Out**
+
+| Status | Method | Endpoint | Purpose | Security |
+|--------|--------|----------|---------|----------|
+| INACTIVE | `GET` | `/api/restaurant-owner/reviews/dish` | View dish reviews for owned restaurants | @RestaurantOwner |
+| INACTIVE | `GET` | `/api/restaurant-owner/reviews/dish/average-rating/{dishOptionId}` | Get average rating for dish option | @RestaurantOwner |
 
 ---
 
@@ -231,8 +248,14 @@ graph TD
 ### **Payment Processing**
 - **Stripe Integration**: Secure payment processing with webhooks
 - **Order States**: PENDING → COMPLETED/REJECTED based on payment
-- **Email Notifications**: Automatic confirmation/failure emails
+- **Email Notifications**: Automatic order confirmation emails to members
 - **Cart Clearing**: Successful payment clears cart automatically
+
+### **Email Automation**
+- **Registration Approval**: Admin sends automated emails to approved restaurant owners with login credentials
+- **Order Confirmations**: Members receive email notifications when orders are successfully placed
+- **Account Management**: System-generated emails for account creation and status updates
+- **Transparent Communication**: Automated notifications ensure all parties stay informed
 
 ### **Security & Authorization**
 - **JWT Authentication**: Token-based auth with role verification
@@ -587,7 +610,7 @@ PATCH /api/admin/restaurants/1/status
 ## System Statistics & Capabilities
 
 - **User Types**: 3 (Admin, Restaurant Owner, Member)
-- **Total Endpoints**: 50+ RESTful endpoints
+- **Total Endpoints**: 50 RESTful endpoints
 - **Authentication**: JWT-based with role verification
 - **Database**: PostgreSQL with JPA/Hibernate
 - **Payment**: Stripe integration with webhooks
