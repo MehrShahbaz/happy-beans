@@ -14,4 +14,4 @@ fi
 echo ">>> ####### Test #######"
 echo ">>> [ApplicationStart] Starting application: $JAR_FILE"
 #nohup java -jar "$JAR_FILE" > /home/ubuntu/app/logs/app.log 2>&1 &
-nohup java -jar "$JAR_FILE" --spring.profiles.active=prod > /home/ubuntu/app/logs/app.log 2>&1 &
+nohup sudo -E java -jar "$JAR_FILE" --spring.profiles.active=prod > /home/ubuntu/app/logs/app.log 2>&1 &
