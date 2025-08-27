@@ -1,7 +1,7 @@
 -- USERS
 create table users (
                        id            bigserial primary key,
-                       email         varchar not null,
+                       email         varchar not null unique,
                        password      varchar not null,
                        first_name    varchar not null,
                        last_name     varchar not null,
@@ -39,6 +39,7 @@ create table restaurants (
                              description varchar(500),
                              image       varchar,
                              address_url varchar,
+                             status      varchar not null,
                              created_at  timestamp default now(),
                              updated_at  timestamp default now()
 );
@@ -98,16 +99,16 @@ create table cart_products (
 
 -- DISH REVIEWS
 create table dish_review (
-                              id                bigserial primary key,
-                              user_id           bigint not null,
-                              user_name         varchar not null,
-                              rating            double precision not null,
-                              message           varchar,
-                              dish_option_id    bigint,
-                              dish_option_name  varchar,
-                              dish_option_price double precision,
-                              created_at        timestamp default now(),
-                              updated_at        timestamp default now()
+                             id                bigserial primary key,
+                             user_id           bigint not null,
+                             user_name         varchar not null,
+                             rating            double precision not null,
+                             message           varchar,
+                             dish_option_id    bigint,
+                             dish_option_name  varchar,
+                             dish_option_price double precision,
+                             created_at        timestamp default now(),
+                             updated_at        timestamp default now()
 );
 
 -- JOIN REQUESTS
@@ -126,7 +127,7 @@ create table orders (
                         id              bigserial primary key,
                         user_id         bigint not null,
                         user_email      varchar not null,
-                        payment_id      varchar not null,
+                        payment_id      varchar,
                         total_amount    double precision not null default 0,
                         status          varchar not null,
                         creation_source varchar not null,
@@ -166,7 +167,7 @@ create table restaurant_review (
                                    rating          double precision not null,
                                    message         varchar,
                                    restaurant_id   bigint,
-                                   restaurant_name varchar,
+                                   restaurant_name varchar not null,
                                    created_at      timestamp default now(),
                                    updated_at      timestamp default now()
 );
