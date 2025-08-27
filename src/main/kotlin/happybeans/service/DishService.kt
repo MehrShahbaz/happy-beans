@@ -86,7 +86,27 @@ class DishService(
     }
 
     fun getFilteredDishesByUser(user: User): List<Dish> {
+        val allDishes = dishRepository.findAll()
+        val userLikes = user.likes
+        val userDislikes = user.dislikes
 
+        return allDishes.filter { dish ->
+            val dishTags = dish.dishOptions.flatMap { it.dishOptionTags }.toSet()
+            
+            // Exclude dishes that contain any tags the user dislikes
+            val hasDislikedTags = dishTags.any { tag -> userDislikes.contains(tag) }
+            if (hasDislikedTags) {
+                return@filter false
+            }
+            
+            true
+        }.sortedWith(
+            compareByDescending<Dish> { dish ->
+                val dishTags = dish.dishOptions.flatMap { it.dishOptionTags }.toSet()
+                val likedTagsCount = dishTags.count { tag -> userLikes.contains(tag) }
+                likedTagsCount
+            }
+        )
     }
 
     @Transactional
