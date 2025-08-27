@@ -53,8 +53,17 @@ nohup authbind --deep java -jar /home/ubuntu/app/build/libs/happy-beans-0.0.1-SN
 # Get the PID of the new process
 PID=$!
 
+# Brief wait to ensure the process starts without immediate failure
+sleep 2
+if ! ps -p $PID > /dev/null; then
+  log "ERROR: Application process with PID $PID failed to start"
+  exit 1
+fi
+
 # Add a message to both the main log and the application log
 log "Application started with PID: $PID. Logs are being redirected to $LOG_DIR/app.log"
 echo "[$(date '+%Y-%m-%d %H:%M:%S')] Script started new process with PID $PID" >> "$LOG_DIR/app.log"
 
 log "Script finished."
+# Exit immediately to signal CodeDeploy
+exit 0
