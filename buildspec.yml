@@ -6,19 +6,23 @@ phases:
       java: corretto21
   pre_build:
     commands:
-      - echo ">>> Cleaning project..."
       - ./gradlew clean
+#      - rm -rf .env
+#      - echo "JWT_SECRET=${JWT_SECRET}" > .env
+#      - echo "JWT_TIME=${JWT_TIME}" >> .env
+#      - echo ".env file created:"
+
   build:
     commands:
       - echo ">>> Building jar..."
       - ./gradlew bootJar --no-daemon
   post_build:
     commands:
-      - echo ">>> Build completed. Packaging for deployment..."
+      - echo ">>> Build completed. Packaging for deployment..." > logs
 
 artifacts:
   files:
+    - .env
     - build/libs/*.jar
     - appspec.yml
     - scripts/**/*
-  discard-paths: no
