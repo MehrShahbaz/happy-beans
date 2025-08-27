@@ -2,9 +2,7 @@
 JAR_FILE=$(ls /home/ubuntu/app/build/libs/*.jar | head -n 1 || true)
 
 # Load environment variables from .env
-if [ -f /home/ubuntu/app/.env ]; then
-  export $(grep -v '^#' /home/ubuntu/app/.env | xargs)
-fi
+export $(grep -v '^#' /home/ubuntu/app/.env | xargs)
 
 if [ -z "$JAR_FILE" ]; then
   echo ">>> [ApplicationStart] No JAR file found!"
