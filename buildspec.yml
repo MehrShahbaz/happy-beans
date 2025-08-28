@@ -23,7 +23,7 @@ phases:
   build:
     commands:
       - echo ">>> Building jar..."
-      - ./gradlew bootJar --no-daemon
+      - ./gradlew clean bootJar
 
 artifacts:
   files:
