@@ -3,7 +3,8 @@ package happybeans.controller.restaurant
 import happybeans.dto.response.MessageResponse
 import happybeans.dto.restaurant.RestaurantCreateRequest
 import happybeans.dto.restaurant.RestaurantPatchRequest
-import happybeans.model.Restaurant
+import happybeans.dto.restaurant.RestaurantResponseDto
+import happybeans.dto.restaurant.toResponse
 import happybeans.model.User
 import happybeans.service.RestaurantService
 import happybeans.utils.annotations.RestaurantOwner
@@ -31,31 +32,17 @@ class RestaurantController(
     fun getRestaurantById(
         @RestaurantOwner user: User,
         @PathVariable restaurantId: Long,
-    ): ResponseEntity<Restaurant> {
-        logger.info { "GET restaurant with id $restaurantId for user ${user.id}" }
-        return try {
-            val restaurant = restaurantService.getRestaurantByIdAndOwnerId(restaurantId, user.id)
-            logger.info { "Successfully retrieved restaurant ${restaurant.id} for user ${user.id}" }
-            ResponseEntity.ok(restaurant)
-        } catch (e: Exception) {
-            logger.error(e) { "Error getting restaurant $restaurantId for user ${user.id}" }
-            throw e
-        }
+    ): ResponseEntity<RestaurantResponseDto> {
+        logger.info("GET restaurant with id $restaurantId for user ${user.id}")
+        return ResponseEntity.ok(restaurantService.getRestaurantByIdAndOwnerId(restaurantId, user.id).toResponse())
     }
 
     @GetMapping
     fun getAllRestaurants(
         @RestaurantOwner user: User,
-    ): ResponseEntity<List<Restaurant>> {
-        logger.info { "GET all restaurants for user ${user.id}" }
-        return try {
-            val restaurants = restaurantService.getAllOwnedRestaurants(user.id)
-            logger.info { "Retrieved ${restaurants.size} restaurants for user ${user.id}" }
-            ResponseEntity.ok(restaurants)
-        } catch (e: Exception) {
-            logger.error(e) { "Error getting restaurants for user ${user.id}" }
-            throw e
-        }
+    ): ResponseEntity<List<RestaurantResponseDto>> {
+        logger.info("GET all restaurants for user ${user.id}")
+        return ResponseEntity.ok(restaurantService.getAllOwnedRestaurants(user.id))
     }
 
     @PostMapping
@@ -63,16 +50,10 @@ class RestaurantController(
         @RestaurantOwner user: User,
         @Valid @RequestBody request: RestaurantCreateRequest,
     ): ResponseEntity<MessageResponse> {
-        logger.info { "POST create restaurant '${request.name}' for user ${user.id}" }
-        return try {
-            val savedRestaurant = restaurantService.createRestaurant(request, user)
-            logger.info { "Successfully created restaurant ${savedRestaurant.id} for user ${user.id}" }
-            val uri = URI.create("/restaurants/${savedRestaurant.id}")
-            ResponseEntity.created(uri).body(MessageResponse("Created successfully!"))
-        } catch (e: Exception) {
-            logger.error(e) { "Error creating restaurant for user ${user.id}" }
-            throw e
-        }
+        logger.info("POST restaurant for owner ${user.id}")
+        val savedRestaurant = restaurantService.createRestaurant(request, user)
+        val uri = URI.create("/restaurants/${savedRestaurant.id}")
+        return ResponseEntity.created(uri).body(MessageResponse("Created successfully!"))
     }
 
     @PatchMapping("/{restaurantId}")

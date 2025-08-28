@@ -28,6 +28,7 @@ class WebhookController(
         @RequestBody payload: String,
         request: HttpServletRequest,
     ): String {
+        logger.info("Received request for webhook")
         val sigHeader = request.getHeader("Stripe-Signature")
 
         if (sigHeader == null) {
@@ -56,6 +57,8 @@ class WebhookController(
                 null
             }
 
+        logger.info("Event type: ${event.type}")
+
         when (event.type) {
             "payment_intent.succeeded" -> {
                 logger.info { "Successfully sent PaymentIntent for ${event.id}" }
@@ -63,6 +66,18 @@ class WebhookController(
             }
             "payment_intent.payment_failed" -> {
                 logger.warn { "Payment failed for ${event.id}" }
+                orderPaymentService.handlePaymentFailure(stripeEvent)
+            }
+            "checkout.session.completed" -> {
+                logger.info { "Checkout session completed for ${event.id}" }
+                orderPaymentService.handlePaymentSuccess(stripeEvent)
+            }
+            "checkout.session.async_payment_succeeded" -> {
+                logger.info { "Async payment succeeded for ${event.id}" }
+                orderPaymentService.handlePaymentSuccess(stripeEvent)
+            }
+            "checkout.session.async_payment_failed" -> {
+                logger.info { "Async payment failed for ${event.id}" }
                 orderPaymentService.handlePaymentFailure(stripeEvent)
             }
         }

@@ -18,8 +18,13 @@ class OrderPaymentService(
     private val logger = KotlinLogging.logger {}
 
     fun handleCartCheckout(member: User): String {
+        logger.info("Checkout for member: ${member.id}")
         val order = memberOrderService.checkoutCart(member)
+        logger.info("Session for member: ${member.id}")
         val session = stripePaymentService.createSession(order)
+        logger.info("Set session id for order: ${order.id}")
+        memberOrderService.setPaymentId(order, session.id)
+        logger.info("Create payment for order: ${order.id}")
         paymentService.createPayment(session.id, order)
         return session.url
     }
@@ -28,8 +33,11 @@ class OrderPaymentService(
         member: User,
         dishOptionId: Long,
     ): String {
+        logger.info("Buy dish for member: ${member.id} dish option id: $dishOptionId")
         val order = memberOrderService.buyProduct(member, dishOptionId)
+        logger.info("Buy dish Session for member: ${member.id}")
         val session = stripePaymentService.createSession(order)
+        logger.info("Create payment for dish order: ${order.id}")
         paymentService.createPayment(session.id, order)
         return session.url
     }
@@ -39,14 +47,21 @@ class OrderPaymentService(
             logger.error { "event not found" }
             return
         }
+        logger.info("Success: Payment success for event: ${event.id}")
+        logger.info("Success: Find order by id: ${getOrderId(event)}")
         val order = memberOrderService.getOrder(getOrderId(event))
+        logger.info("Success: Find payment by order id: ${getOrderId(event)}")
         val payment = paymentService.getPaymentByOrderId(order.id)
 
+        logger.info("Success: Payment success for payment: ${payment.id}")
         paymentService.updateStatus(payment, PaymentStatus.COMPLETED)
+        logger.info("Success: Payment success for order: ${order.id}")
         memberOrderService.updateStatus(order, OrderStatus.COMPLETED)
 
+        logger.info("Success: Clear cart for member: ${order.userId}")
         cartProductService.clearPaymentSuccess(order.userId)
 
+        logger.info("Success: Sending confirmation email for order: ${order.id} for email: ${order.userEmail}")
         emailDispatchService.sendOrderConfirmationEmail(order)
     }
 
@@ -55,12 +70,18 @@ class OrderPaymentService(
             logger.error { "event not found" }
             return
         }
+        logger.info("Failure: Payment failed for event: ${event.id}")
+        logger.info("Find order by id: ${getOrderId(event)}")
         val order = memberOrderService.getOrder(getOrderId(event))
+        logger.info("Find payment by order id: ${getOrderId(event)}")
         val payment = paymentService.getPaymentByOrderId(order.id)
 
+        logger.info("Payment fail for payment: ${payment.id}")
         paymentService.updateStatus(payment, PaymentStatus.FAILED)
+        logger.info("Payment fail for order: ${order.id}")
         memberOrderService.updateStatus(order, OrderStatus.REJECTED)
 
+        logger.info("Sending fail email for order: ${order.id} for email: ${order.userEmail}")
         emailDispatchService.sendOrderFailEmail(order)
     }
 
