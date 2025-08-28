@@ -5,6 +5,7 @@ import happybeans.dto.dish.DishOptionResponse
 import happybeans.dto.dish.DishOptionUpdateRequest
 import happybeans.dto.dish.toResponse
 import happybeans.dto.response.MessageResponse
+import happybeans.dto.tag.TagRequest
 import happybeans.model.Tag
 import happybeans.model.User
 import happybeans.service.DishService
@@ -85,13 +86,13 @@ class DishOptionController(
     fun addDishOptionTag(
         @RestaurantOwner owner: User,
         @PathVariable optionId: Long,
-        @RequestBody tagRequest: Map<String, String>,
+        @Valid @RequestBody tagRequest: TagRequest,
     ): ResponseEntity<MessageResponse> {
         logger.info("POST Add tag for dish option for $optionId}")
         val tagName =
-            tagRequest["tagName"] ?: run {
-                logger.error("tagName is missing in request: $tagRequest")
-                throw IllegalArgumentException("tagName is required")
+            tagRequest.tagNames.firstOrNull() ?: run {
+                logger.error("tagNames is empty in request: $tagRequest")
+                throw IllegalArgumentException("At least one tag name is required")
             }
         dishService.addDishOptionTag(optionId, tagName, owner)
         return ResponseEntity.ok(MessageResponse("Tag added successfully"))
@@ -101,12 +102,12 @@ class DishOptionController(
     fun removeDishOptionTag(
         @RestaurantOwner owner: User,
         @PathVariable optionId: Long,
-        @RequestBody tagRequest: Map<String, String>,
+        @Valid @RequestBody tagRequest: TagRequest,
     ): ResponseEntity<MessageResponse> {
         val tagName =
-            tagRequest["tagName"] ?: run {
-                logger.error("tagName is missing: $tagRequest")
-                throw IllegalArgumentException("tagName is required")
+            tagRequest.tagNames.firstOrNull() ?: run {
+                logger.error("tagNames is empty in request: $tagRequest")
+                throw IllegalArgumentException("At least one tag name is required")
             }
         logger.info("DELETE Tag for $optionId and user ${owner.id}")
         dishService.removeDishOptionTag(optionId, tagName, owner)
@@ -117,13 +118,9 @@ class DishOptionController(
     fun updateDishOptionTags(
         @RestaurantOwner owner: User,
         @PathVariable optionId: Long,
-        @RequestBody tagRequest: Map<String, Set<String>>,
+        @Valid @RequestBody tagRequest: TagRequest,
     ): ResponseEntity<MessageResponse> {
-        val tagNames =
-            tagRequest["tagNames"] ?: run {
-                logger.error("tagNames is missing in request: $tagRequest")
-                throw IllegalArgumentException("tagNames is required")
-            }
+        val tagNames = tagRequest.tagNames.toSet()
         logger.info("UPDATE Tags for $optionId and user ${owner.id}")
         dishService.updateDishOptionTags(optionId, tagNames, owner)
         return ResponseEntity.ok(MessageResponse("Tags updated successfully"))
