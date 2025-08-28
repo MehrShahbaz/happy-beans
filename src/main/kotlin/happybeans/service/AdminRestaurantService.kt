@@ -1,9 +1,9 @@
 package happybeans.service
 
-import happybeans.enums.RestaurantStatus
-import happybeans.model.Restaurant
 import happybeans.dto.restaurant.RestaurantResponseDto
 import happybeans.dto.restaurant.toResponse
+import happybeans.enums.RestaurantStatus
+import happybeans.model.Restaurant
 import happybeans.repository.RestaurantRepository
 import mu.KotlinLogging
 import org.springframework.data.repository.findByIdOrNull

@@ -1,6 +1,8 @@
 package happybeans.controller.admin
 
+import happybeans.dto.response.MessageResponse
 import happybeans.dto.restaurant.RestaurantResponseDto
+import happybeans.dto.restaurant.RestaurantStatusUpdateRequest
 import happybeans.service.AdminRestaurantService
 import mu.KotlinLogging
 import org.springframework.http.ResponseEntity
