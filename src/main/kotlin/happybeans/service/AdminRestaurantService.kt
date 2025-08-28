@@ -2,8 +2,6 @@ package happybeans.service
 
 import happybeans.dto.restaurant.RestaurantResponseDto
 import happybeans.dto.restaurant.toResponse
-import happybeans.enums.RestaurantStatus
-import happybeans.model.Restaurant
 import happybeans.repository.RestaurantRepository
 import mu.KotlinLogging
 import org.springframework.data.repository.findByIdOrNull
@@ -29,17 +27,5 @@ class AdminRestaurantService(
             restaurantRepository.findByIdOrNull(restaurantId)
                 ?: throw IllegalArgumentException("Restaurant not found with id: $restaurantId")
         restaurantRepository.delete(restaurant)
-    }
-
-    @Transactional
-    fun updateRestaurantStatus(
-        restaurantId: Long,
-        status: RestaurantStatus,
-    ): Restaurant {
-        val restaurant =
-            restaurantRepository.findByIdOrNull(restaurantId)
-                ?: throw IllegalArgumentException("Restaurant not found with id: $restaurantId")
-        restaurant.status = status
-        return restaurantRepository.save(restaurant)
     }
 }
