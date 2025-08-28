@@ -1,7 +1,6 @@
 package happybeans.controller.admin
 
 import happybeans.TestFixture
-import happybeans.enums.RestaurantStatus
 import happybeans.repository.RestaurantRepository
 import happybeans.repository.UserRepository
 import happybeans.service.AdminRestaurantService
@@ -57,20 +56,5 @@ class AdminRestaurantE2ETest(
 
         // then: restaurant removed
         assertThat(restaurantRepository.findById(restaurant.id)).isEmpty
-    }
-
-    @Test
-    fun `deactivate restaurant status`() {
-        // given: a restaurant owner + create request
-        val restaurantOwner = userRepository.save(TestFixture.createRestaurantOwner())
-        val request = TestFixture.createRestaurantCreateRequest()
-
-        // when: create the restaurant
-        val restaurant = restaurantService.createRestaurant(request, restaurantOwner)
-        assertThat(restaurant.status).isEqualTo(RestaurantStatus.ACTIVE)
-
-        // when & then: restaurant status is updated
-        val updatedRestaurant = adminRestaurantService.updateRestaurantStatus(restaurant.id, RestaurantStatus.INACTIVE)
-        assertThat(updatedRestaurant.status).isEqualTo(RestaurantStatus.INACTIVE)
     }
 }

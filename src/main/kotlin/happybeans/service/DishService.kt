@@ -223,8 +223,11 @@ class DishService(
 
         findValidRestaurantByDishId(dishId, owner.id)
         dish.addDishOption(dishOption)
-        dishRepository.save(dish)
-        return dishOption
+
+        return dishRepository
+            .save(dish)
+            .dishOptions
+            .first { it.name == dishOption.name }
     }
 
     @Transactional
@@ -244,7 +247,6 @@ class DishService(
         dishOption.image = updateRequest.image
         dishOption.prepTimeMinutes = updateRequest.prepTimeMinutes
 
-        dishRepository.save(dishOption.dish)
         return dishOption
     }
 

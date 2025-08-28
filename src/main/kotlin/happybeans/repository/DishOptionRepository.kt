@@ -9,16 +9,16 @@ interface DishOptionRepository : JpaRepository<DishOption, Long> {
         nativeQuery = true,
         value = """
         WITH filtered_options AS (
-            SELECT do.*, 
+            SELECT dopt.*, 
                    COALESCE((
                        SELECT COUNT(*)
                        FROM dish_option_tags dot3
                        JOIN tags t3 ON dot3.tag_id = t3.id
-                       WHERE dot3.dish_option_id = do.id 
+                       WHERE dot3.dish_option_id = dopt.id 
                        AND t3.name IN :likedTagNames
                    ), 0) as like_count
-            FROM dish_options do
-            WHERE do.id NOT IN (
+            FROM dish_options dopt
+            WHERE dopt.id NOT IN (
                 SELECT DISTINCT do2.id 
                 FROM dish_options do2 
                 JOIN dish_option_tags dot2 ON do2.id = dot2.dish_option_id

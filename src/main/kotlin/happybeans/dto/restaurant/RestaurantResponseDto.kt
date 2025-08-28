@@ -24,7 +24,7 @@ fun Restaurant.toResponse(): RestaurantResponseDto {
         description,
         image,
         addressUrl,
-        workingDateHours,
+        workingDateHours.toList(),
         dishes.map { it.toResponse() },
     )
 }
