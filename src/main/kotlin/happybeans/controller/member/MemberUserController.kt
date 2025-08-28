@@ -9,6 +9,7 @@ import happybeans.utils.annotations.LoginMember
 import jakarta.validation.Valid
 import mu.KotlinLogging
 import org.springframework.http.ResponseEntity
+import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.DeleteMapping
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.PostMapping
@@ -25,6 +26,7 @@ class MemberUserController(
     private val logger = KotlinLogging.logger {}
 
     @GetMapping("/likes")
+    @Transactional(readOnly = true)
     fun getUserLikes(
         @LoginMember user: User,
     ): ResponseEntity<Set<Tag>> {
@@ -83,6 +85,7 @@ class MemberUserController(
     }
 
     @GetMapping("/dislikes")
+    @Transactional(readOnly = true)
     fun getUserDislikes(
         @LoginMember user: User,
     ): ResponseEntity<Set<Tag>> {
