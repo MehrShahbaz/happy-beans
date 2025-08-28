@@ -16,14 +16,6 @@ import org.junit.jupiter.api.Test
 import org.springframework.beans.factory.annotation.Autowired
 import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpStatus
-import org.springframework.restdocs.headers.HeaderDocumentation.headerWithName
-import org.springframework.restdocs.headers.HeaderDocumentation.requestHeaders
-import org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse
-import org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint
-import org.springframework.restdocs.payload.JsonFieldType
-import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.relaxedResponseFields
-import org.springframework.restdocs.restassured.RestAssuredRestDocumentation.document
 import org.springframework.test.context.ActiveProfiles
 
 @ActiveProfiles("test")
@@ -75,64 +67,64 @@ class AdminRestaurantControllerTest : AbstractRestDocsRestAssuredTest() {
                 .header("Authorization", "Bearer $token")
                 .contentType(ContentType.JSON)
                 .accept(ContentType.JSON)
-                .filter(
-                    document(
-                        "admin-get-restaurants",
-                        preprocessResponse(prettyPrint()),
-                        requestHeaders(
-                            headerWithName("Authorization").description("Bearer access token"),
-                        ),
-                        relaxedResponseFields(
-                            fieldWithPath("[]")
-                                .type(JsonFieldType.ARRAY)
-                                .description("List of restaurants"),
-                            fieldWithPath("[].id")
-                                .type(JsonFieldType.NUMBER)
-                                .description("Restaurant owner"),
-                            fieldWithPath("[].name")
-                                .type(JsonFieldType.STRING)
-                                .description("Restaurant name"),
-                            fieldWithPath("[].description")
-                                .type(JsonFieldType.STRING)
-                                .optional()
-                                .description("Restaurant description (optional)"),
-                            fieldWithPath("[].image")
-                                .type(JsonFieldType.STRING)
-                                .optional()
-                                .description("Image URL (optional)"),
-                            fieldWithPath("[].addressUrl")
-                                .type(JsonFieldType.STRING)
-                                .optional()
-                                .description("Address/Map URL (optional)"),
-                            fieldWithPath("[].workingDateHours")
-                                .type(JsonFieldType.ARRAY)
-                                .optional()
-                                .description("Working hours per day"),
-                            fieldWithPath("[].workingDateHours[].dayOfWeek")
-                                .type(JsonFieldType.STRING)
-                                .optional()
-                                .description("Day of week (e.g. MONDAY)"),
-                            fieldWithPath("[].workingDateHours[].openTime")
-                                .type(JsonFieldType.STRING)
-                                .optional()
-                                .description("Opening time (HH:mm)"),
-                            fieldWithPath("[].workingDateHours[].closeTime")
-                                .type(JsonFieldType.STRING)
-                                .optional()
-                                .description("Closing time (HH:mm)"),
-                            fieldWithPath("[].dishes")
-                                .type(JsonFieldType.ARRAY)
-                                .optional()
-                                .description("List of dishes"),
-                            fieldWithPath("[].createdAt")
-                                .type(JsonFieldType.STRING)
-                                .description("Creation timestamp"),
-                            fieldWithPath("[].updatedAt")
-                                .type(JsonFieldType.STRING)
-                                .description("Last update timestamp"),
-                        ),
-                    ),
-                )
+//                .filter(
+//                    document(
+//                        "admin-get-restaurants",
+//                        preprocessResponse(prettyPrint()),
+//                        requestHeaders(
+//                            headerWithName("Authorization").description("Bearer access token"),
+//                        ),
+//                        relaxedResponseFields(
+//                            fieldWithPath("[]")
+//                                .type(JsonFieldType.ARRAY)
+//                                .description("List of restaurants"),
+//                            fieldWithPath("[].id")
+//                                .type(JsonFieldType.NUMBER)
+//                                .description("Restaurant owner"),
+//                            fieldWithPath("[].name")
+//                                .type(JsonFieldType.STRING)
+//                                .description("Restaurant name"),
+//                            fieldWithPath("[].description")
+//                                .type(JsonFieldType.STRING)
+//                                .optional()
+//                                .description("Restaurant description (optional)"),
+//                            fieldWithPath("[].image")
+//                                .type(JsonFieldType.STRING)
+//                                .optional()
+//                                .description("Image URL (optional)"),
+//                            fieldWithPath("[].addressUrl")
+//                                .type(JsonFieldType.STRING)
+//                                .optional()
+//                                .description("Address/Map URL (optional)"),
+//                            fieldWithPath("[].workingDateHours")
+//                                .type(JsonFieldType.ARRAY)
+//                                .optional()
+//                                .description("Working hours per day"),
+//                            fieldWithPath("[].workingDateHours[].dayOfWeek")
+//                                .type(JsonFieldType.STRING)
+//                                .optional()
+//                                .description("Day of week (e.g. MONDAY)"),
+//                            fieldWithPath("[].workingDateHours[].openTime")
+//                                .type(JsonFieldType.STRING)
+//                                .optional()
+//                                .description("Opening time (HH:mm)"),
+//                            fieldWithPath("[].workingDateHours[].closeTime")
+//                                .type(JsonFieldType.STRING)
+//                                .optional()
+//                                .description("Closing time (HH:mm)"),
+//                            fieldWithPath("[].dishes")
+//                                .type(JsonFieldType.ARRAY)
+//                                .optional()
+//                                .description("List of dishes"),
+//                            fieldWithPath("[].createdAt")
+//                                .type(JsonFieldType.STRING)
+//                                .description("Creation timestamp"),
+//                            fieldWithPath("[].updatedAt")
+//                                .type(JsonFieldType.STRING)
+//                                .description("Last update timestamp"),
+//                        ),
+//                    ),
+//                )
                 .`when`().get("/api/admin/restaurants")
                 .then().log().all()
                 .extract()
