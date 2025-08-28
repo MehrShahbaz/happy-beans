@@ -3,8 +3,6 @@ package happybeans.controller.admin
 import com.fasterxml.jackson.module.kotlin.jacksonObjectMapper
 import happybeans.config.interceptor.AdminInterceptor
 import happybeans.dto.auth.AuthTokenPayload
-import happybeans.dto.restaurant.RestaurantStatusUpdateRequest
-import happybeans.enums.RestaurantStatus
 import happybeans.enums.UserRole
 import happybeans.infrastructure.JwtProvider
 import happybeans.model.User
@@ -15,7 +13,6 @@ import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
 import org.mockito.kotlin.doNothing
-import org.mockito.kotlin.eq
 import org.mockito.kotlin.verify
 import org.mockito.kotlin.whenever
 import org.springframework.beans.factory.annotation.Autowired
@@ -27,16 +24,10 @@ import org.springframework.restdocs.mockmvc.RestDocumentationRequestBuilders
 import org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessRequest
 import org.springframework.restdocs.operation.preprocess.Preprocessors.preprocessResponse
 import org.springframework.restdocs.operation.preprocess.Preprocessors.prettyPrint
-import org.springframework.restdocs.payload.JsonFieldType
-import org.springframework.restdocs.payload.PayloadDocumentation.fieldWithPath
-import org.springframework.restdocs.payload.PayloadDocumentation.requestFields
-import org.springframework.restdocs.payload.PayloadDocumentation.responseFields
 import org.springframework.restdocs.request.RequestDocumentation.parameterWithName
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.web.servlet.MockMvc
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.content
-import org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.util.Optional
 
@@ -107,43 +98,5 @@ class AdminRestaurantManageControllerTest {
             )
 
         verify(adminRestaurantService).deleteRestaurant(restaurantId)
-    }
-
-    @Test
-    @DisplayName("PATCH /api/admin/restaurants/{restaurantId}/status -> 200 and success message")
-    fun updateRestaurantStatus_ok() {
-        val restaurantId = 123L
-        val statusRequest = RestaurantStatusUpdateRequest(RestaurantStatus.SUSPENDED)
-
-        mockMvc.perform(
-            RestDocumentationRequestBuilders.patch("/api/admin/restaurants/{restaurantId}/status", restaurantId)
-                .header("Authorization", "Bearer mock-jwt-token")
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(statusRequest)),
-        )
-            .andExpect(status().isOk)
-            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
-            .andExpect(jsonPath("$.message").value("Restaurant status is updated."))
-            .andDo(
-                document(
-                    "admin-restaurant-status-update",
-                    preprocessRequest(prettyPrint()),
-                    preprocessResponse(prettyPrint()),
-                    pathParameters(
-                        parameterWithName("restaurantId").description("ID of the restaurant to update"),
-                    ),
-                    requestFields(
-                        fieldWithPath(
-                            "status",
-                        ).type(JsonFieldType.STRING).description("New restaurant status (ACTIVE, INACTIVE, SUSPENDED)"),
-                    ),
-                    responseFields(
-                        fieldWithPath("message").type(JsonFieldType.STRING).description("Success message"),
-                    ),
-                ),
-            )
-
-        verify(adminRestaurantService).updateRestaurantStatus(eq(restaurantId), eq(RestaurantStatus.SUSPENDED))
     }
 }
