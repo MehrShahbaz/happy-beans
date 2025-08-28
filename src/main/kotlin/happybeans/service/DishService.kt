@@ -31,7 +31,6 @@ class DishService(
     private val restaurantRepository: RestaurantRepository,
     private val dishOptionRepository: DishOptionRepository,
     private val tagService: TagService,
-    private val userService: UserService,
 ) {
     private val logger = KotlinLogging.logger {}
 
@@ -91,11 +90,12 @@ class DishService(
 
     @Transactional(readOnly = true)
     fun getFilteredDishOptionsByUser(user: User): List<DishOption> {
-        val userDislikes = userService.getUserDislikes(user.id)
-        val userLikes = userService.getUserLikes(user.id)
-        
-        val userDislikesNames: Set<String> = userDislikes.map { it.name }.toSet()
-        val userLikesNames: Set<String> = userLikes.map { it.name }.toSet()
+        // Force initialization of lazy collections within transaction
+        user.dislikes.size
+        user.likes.size
+
+        val userDislikesNames: Set<String> = user.dislikes.map { it.name }.toSet()
+        val userLikesNames: Set<String> = user.likes.map { it.name }.toSet()
 
         if (userDislikesNames.isEmpty() && userLikesNames.isEmpty()) {
             return dishOptionRepository.findAll()

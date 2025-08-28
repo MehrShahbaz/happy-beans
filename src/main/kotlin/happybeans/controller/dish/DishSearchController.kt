@@ -6,7 +6,6 @@ import happybeans.service.DishService
 import happybeans.utils.annotations.LoginMember
 import mu.KotlinLogging
 import org.springframework.http.ResponseEntity
-//import org.springframework.transaction.annotation.Transactional
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
@@ -19,7 +18,6 @@ class DishSearchController(
     private val logger = KotlinLogging.logger {}
 
     @GetMapping()
-//    @Transactional(readOnly = true)
     fun getFilteredDishOptionsByUser(
         @LoginMember user: User,
     ): ResponseEntity<List<DishOption>> {
