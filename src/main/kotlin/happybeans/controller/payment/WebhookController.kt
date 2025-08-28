@@ -57,6 +57,8 @@ class WebhookController(
                 null
             }
 
+        logger.info("Event type: ${event.type}")
+
         when (event.type) {
             "payment_intent.succeeded" -> {
                 logger.info { "Successfully sent PaymentIntent for ${event.id}" }
