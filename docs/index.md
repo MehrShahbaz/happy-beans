@@ -28,6 +28,75 @@ Happy Beans operates as a three-tier ecosystem where **Admins** serve as platfor
 
 ## User Flow Narratives
 
+### **Complete Workflow for Presentation Day** 
+```mermaid
+graph TD
+subgraph Phase1[1. Create Restaurant & Menu]
+A[POST admin login] --> B[POST create Restaurant Owner]
+B --> C[POST Restaurant Owner auth]
+C --> D[POST create Restaurant]
+D --> E[GET get Restaurant by ID]
+E --> F[POST add Dish]
+F --> G[PUT update Dish by ID]
+G --> H[GET get Dish by ID]
+H --> I[POST add Dish Option]
+I --> J[POST add DishOptionTag]
+end
+
+    subgraph Phase2[2. Process Customer Orders]
+        K[POST user sign-up] --> L[POST add UserLikes]
+        L --> M[POST add UserDislikes]
+        M --> N[DEL delete UserLikes]
+        N --> O[GET get UserLikes]
+        O --> P[GET get UserDislikes]
+        P --> Q[GET get FilteredDishOptions]
+    end
+
+    subgraph Phase3[3. Get Email & Checkout]
+        R[POST User logs in] --> S[POST Add To Cart]
+        S --> T[POST Checkout Cart]
+    end
+
+    J --> K
+    Q --> R
+    T --> U[Order Confirmation Email]
+```
+**Detailed Flow**
+Explanation
+
+Phase 1 – Create Restaurant & Menu
+1.	Admin login → Authenticate as admin.
+2.	Create Restaurant Owner → Admin registers a new owner.
+3.	Owner auth → Owner logs in to get a JWT.
+4.	Create Restaurant → Owner creates a restaurant profile.
+5.	Get Restaurant by ID → Verify creation.
+6.	Add Dish → Owner adds a new dish.
+7.	Update Dish by ID → Adjust details (price, description, etc.).
+8.	Get Dish by ID → Confirm the dish exists.
+9.	Add Dish Option → Add customizable option (e.g., extra topping).
+10.	Add DishOptionTag → Categorize options for filtering.
+
+⸻
+
+Phase 2 – Process Customer Orders
+1.	User sign-up → New customer registers.
+2.	Add UserLikes → User specifies preferred tags (e.g., “tofu”).
+3.	Add UserDislikes → User specifies dislikes (e.g., “peanuts”).
+4.	Delete UserLikes → Remove a like if needed.
+5.	Get UserLikes → Fetch current likes.
+6.	Get UserDislikes → Fetch current dislikes.
+7.	Get FilteredDishOptions → Personalized menu shown, excluding dislikes and prioritizing likes.
+
+⸻
+
+Phase 3 – Get Email & Checkout
+1.	User logs in → Authenticate and receive JWT.
+2.	Add To Cart → Add dish with selected options.
+3.	Checkout Cart → Place order, trigger payment (Stripe) and send confirmation email.
+
+⸻
+
+
 ### **User/Member Complete Journey**
 
 ```mermaid
