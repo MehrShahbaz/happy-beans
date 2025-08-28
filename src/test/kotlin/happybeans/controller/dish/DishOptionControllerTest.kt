@@ -7,6 +7,7 @@ import happybeans.config.interceptor.RestaurantOwnerInterceptor
 import happybeans.controller.AbstractRestDocsMockMvcTest
 import happybeans.dto.dish.DishOptionPatchRequest
 import happybeans.dto.dish.DishOptionUpdateRequest
+import happybeans.dto.tag.TagRequest
 import happybeans.enums.UserRole
 import happybeans.model.Tag
 import happybeans.model.User
@@ -62,6 +63,51 @@ class DishOptionControllerTest : AbstractRestDocsMockMvcTest() {
         whenever(restaurantOwnerArgumentResolver.resolveArgument(any(), any(), any(), any()))
             .thenReturn(testOwner)
         whenever(restaurantOwnerInterceptor.preHandle(any(), any(), any())).thenReturn(true)
+    }
+
+    @Test
+    @DisplayName("GET /api/restaurant-owner/dish-options/{optionId} -> 200 and dish option details")
+    fun getDishOptionById_ok() {
+        val optionId = 1L
+        val dishOption = TestFixture.createMargheritaPizzaWithAllOptions().dishOptions.first()
+        whenever(dishService.findDishOptionById(optionId)).thenReturn(dishOption)
+
+        mockMvc.perform(
+            RestDocumentationRequestBuilders.get("/api/restaurant-owner/dish-options/{optionId}", optionId)
+                .accept(MediaType.APPLICATION_JSON),
+        )
+            .andExpect(status().isOk)
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.id").value(dishOption.id))
+            .andExpect(jsonPath("$.name").value(dishOption.name))
+            .andExpect(jsonPath("$.description").value(dishOption.description))
+            .andExpect(jsonPath("$.price").value(dishOption.price))
+            .andExpect(jsonPath("$.image").value(dishOption.image))
+            .andExpect(jsonPath("$.available").value(dishOption.available))
+            .andExpect(jsonPath("$.prepTimeMinutes").value(dishOption.prepTimeMinutes))
+            .andExpect(jsonPath("$.dishId").value(dishOption.dish.id))
+            .andDo(
+                document(
+                    "dish-option-get",
+                    preprocessRequest(prettyPrint()),
+                    preprocessResponse(prettyPrint()),
+                    pathParameters(
+                        parameterWithName("optionId").description("ID of the dish option to retrieve"),
+                    ),
+                    responseFields(
+                        fieldWithPath("id").type(JsonFieldType.NUMBER).description("Dish option ID"),
+                        fieldWithPath("name").type(JsonFieldType.STRING).description("Dish option name"),
+                        fieldWithPath("description").type(JsonFieldType.STRING).description("Dish option description"),
+                        fieldWithPath("price").type(JsonFieldType.NUMBER).description("Dish option price"),
+                        fieldWithPath("image").type(JsonFieldType.STRING).description("Dish option image URL"),
+                        fieldWithPath("available").type(JsonFieldType.BOOLEAN).description("Whether the dish option is available"),
+                        fieldWithPath("prepTimeMinutes").type(JsonFieldType.NUMBER).description("Preparation time in minutes"),
+                        fieldWithPath("dishId").type(JsonFieldType.NUMBER).description("ID of the parent dish"),
+                    ),
+                ),
+            )
+
+        verify(dishService).findDishOptionById(optionId)
     }
 
     @Test
@@ -222,7 +268,7 @@ class DishOptionControllerTest : AbstractRestDocsMockMvcTest() {
     fun addDishOptionTag_ok() {
         // Given
         val optionId = 1L
-        val tagRequest = mapOf("tagName" to "spicy")
+        val tagRequest = TagRequest(tagNames = listOf("spicy"))
         val dishOption = TestFixture.createMargheritaPizzaWithAllOptions().dishOptions.first()
 
         whenever(dishService.addDishOptionTag(eq(optionId), eq("spicy"), any())).thenReturn(dishOption)
@@ -246,7 +292,9 @@ class DishOptionControllerTest : AbstractRestDocsMockMvcTest() {
                         parameterWithName("optionId").description("ID of the dish option"),
                     ),
                     relaxedRequestFields(
-                        fieldWithPath("tagName").type(JsonFieldType.STRING).description("Name of the tag to add"),
+                        fieldWithPath(
+                            "tagNames",
+                        ).type(JsonFieldType.ARRAY).description("List of tag names to add (use single item for one tag)"),
                     ),
                     responseFields(
                         fieldWithPath("message").type(JsonFieldType.STRING).description("Success message"),
@@ -262,7 +310,7 @@ class DishOptionControllerTest : AbstractRestDocsMockMvcTest() {
     fun removeDishOptionTag_ok() {
         // Given
         val optionId = 1L
-        val tagRequest = mapOf("tagName" to "spicy")
+        val tagRequest = TagRequest(tagNames = listOf("spicy"))
         val dishOption = TestFixture.createMargheritaPizzaWithAllOptions().dishOptions.first()
 
         whenever(dishService.removeDishOptionTag(eq(optionId), eq("spicy"), any())).thenReturn(dishOption)
@@ -286,7 +334,9 @@ class DishOptionControllerTest : AbstractRestDocsMockMvcTest() {
                         parameterWithName("optionId").description("ID of the dish option"),
                     ),
                     relaxedRequestFields(
-                        fieldWithPath("tagName").type(JsonFieldType.STRING).description("Name of the tag to remove"),
+                        fieldWithPath(
+                            "tagNames",
+                        ).type(JsonFieldType.ARRAY).description("List of tag names to remove (use single item for one tag)"),
                     ),
                     responseFields(
                         fieldWithPath("message").type(JsonFieldType.STRING).description("Success message"),
@@ -302,7 +352,7 @@ class DishOptionControllerTest : AbstractRestDocsMockMvcTest() {
     fun updateDishOptionTags_ok() {
         // Given
         val optionId = 1L
-        val tagRequest = mapOf("tagNames" to setOf("spicy", "vegetarian", "italian"))
+        val tagRequest = TagRequest(tagNames = listOf("spicy", "vegetarian", "italian"))
         val dishOption = TestFixture.createMargheritaPizzaWithAllOptions().dishOptions.first()
 
         whenever(dishService.updateDishOptionTags(eq(optionId), any(), any())).thenReturn(dishOption)
@@ -326,7 +376,7 @@ class DishOptionControllerTest : AbstractRestDocsMockMvcTest() {
                         parameterWithName("optionId").description("ID of the dish option"),
                     ),
                     relaxedRequestFields(
-                        fieldWithPath("tagNames").type(JsonFieldType.ARRAY).description("Set of tag names to replace current tags"),
+                        fieldWithPath("tagNames").type(JsonFieldType.ARRAY).description("List of tag names to replace current tags"),
                     ),
                     responseFields(
                         fieldWithPath("message").type(JsonFieldType.STRING).description("Success message"),

@@ -3,7 +3,8 @@ package happybeans.controller.restaurant
 import happybeans.dto.response.MessageResponse
 import happybeans.dto.restaurant.RestaurantCreateRequest
 import happybeans.dto.restaurant.RestaurantPatchRequest
-import happybeans.model.Restaurant
+import happybeans.dto.restaurant.RestaurantResponseDto
+import happybeans.dto.restaurant.toResponse
 import happybeans.model.User
 import happybeans.service.RestaurantService
 import happybeans.utils.annotations.RestaurantOwner
@@ -31,15 +32,15 @@ class RestaurantController(
     fun getRestaurantById(
         @RestaurantOwner user: User,
         @PathVariable restaurantId: Long,
-    ): ResponseEntity<Restaurant> {
+    ): ResponseEntity<RestaurantResponseDto> {
         logger.info("GET restaurant with id $restaurantId for user ${user.id}")
-        return ResponseEntity.ok(restaurantService.getRestaurantByIdAndOwnerId(restaurantId, user.id))
+        return ResponseEntity.ok(restaurantService.getRestaurantByIdAndOwnerId(restaurantId, user.id).toResponse())
     }
 
     @GetMapping
     fun getAllRestaurants(
         @RestaurantOwner user: User,
-    ): ResponseEntity<List<Restaurant>> {
+    ): ResponseEntity<List<RestaurantResponseDto>> {
         logger.info("GET all restaurants for user ${user.id}")
         return ResponseEntity.ok(restaurantService.getAllOwnedRestaurants(user.id))
     }
@@ -61,7 +62,7 @@ class RestaurantController(
         @PathVariable restaurantId: Long,
         @Valid @RequestBody request: RestaurantPatchRequest,
     ): ResponseEntity<MessageResponse> {
-        logger.info("PATCH restaurant: $restaurantId for user ${user.id}")
+        logger.info { "PATCH restaurant $restaurantId for user ${user.id}" }
         restaurantService.patchRestaurant(request, restaurantId, user.id)
         return ResponseEntity.ok(MessageResponse("Patched successfully!"))
     }
@@ -71,7 +72,7 @@ class RestaurantController(
         @RestaurantOwner user: User,
         @PathVariable restaurantId: Long,
     ): ResponseEntity<Void> {
-        logger.info("DELETE restaurant: $restaurantId for user ${user.id}")
+        logger.info { "DELETE restaurant $restaurantId for user ${user.id}" }
         restaurantService.deleteRestaurant(restaurantId, user.id)
         return ResponseEntity.noContent().build()
     }

@@ -124,12 +124,6 @@ class AdminRestaurantControllerTest : AbstractRestDocsRestAssuredTest() {
                                 .type(JsonFieldType.ARRAY)
                                 .optional()
                                 .description("List of dishes"),
-                            fieldWithPath("[].createdAt")
-                                .type(JsonFieldType.STRING)
-                                .description("Creation timestamp"),
-                            fieldWithPath("[].updatedAt")
-                                .type(JsonFieldType.STRING)
-                                .description("Last update timestamp"),
                         ),
                     ),
                 )

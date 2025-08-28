@@ -89,16 +89,16 @@ class DishService(
     }
 
     @Transactional(readOnly = true)
-    fun getFilteredDishOptionsByUser(user: User): List<DishOption> {
-        val userDislikesNames: Set<String> = user.dislikes.map { it.name }.toSet()
-        val userLikesNames: Set<String> = user.likes.map { it.name }.toSet()
-
-        if (userDislikesNames.isEmpty() && userLikesNames.isEmpty()) {
+    fun getFilteredDishOptionsByUserTags(
+        userLikes: Set<String>,
+        userDislikes: Set<String>,
+    ): List<DishOption> {
+        if (userDislikes.isEmpty() && userLikes.isEmpty()) {
             return dishOptionRepository.findAll()
         }
 
-        val dislikesForQuery = userDislikesNames.ifEmpty { setOf("__NEVER_MATCH__") }
-        val likesForQuery = userLikesNames.ifEmpty { setOf("__NEVER_MATCH__") }
+        val dislikesForQuery = userDislikes.ifEmpty { setOf("__NEVER_MATCH__") }
+        val likesForQuery = userLikes.ifEmpty { setOf("__NEVER_MATCH__") }
 
         return dishOptionRepository.findFilteredByUserPreferences(dislikesForQuery, likesForQuery)
     }

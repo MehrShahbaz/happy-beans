@@ -1,6 +1,7 @@
 package happybeans.model
 
 import com.fasterxml.jackson.annotation.JsonBackReference
+import com.fasterxml.jackson.annotation.JsonIgnore
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -40,6 +41,7 @@ class DishOption(
     var createdAt: LocalDateTime? = null,
     @UpdateTimestamp
     var updatedAt: LocalDateTime? = null,
+    @JsonIgnore
     @ManyToMany(cascade = [CascadeType.PERSIST, CascadeType.MERGE], fetch = FetchType.LAZY)
     @JoinTable(
         name = "dish_option_tags",
