@@ -1,5 +1,6 @@
 package happybeans.model
 
+import com.fasterxml.jackson.annotation.JsonBackReference
 import jakarta.persistence.CascadeType
 import jakarta.persistence.Column
 import jakarta.persistence.Entity
@@ -21,6 +22,7 @@ import java.time.LocalDateTime
 class DishOption(
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "dish_id")
+    @JsonBackReference
     var dish: Dish,
     @Column(name = "name", nullable = false, length = 100)
     var name: String,
