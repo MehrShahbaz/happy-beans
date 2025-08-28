@@ -33,7 +33,17 @@ class RestaurantController(
         @PathVariable restaurantId: Long,
     ): ResponseEntity<Restaurant> {
         logger.info("GET restaurant with id $restaurantId for user ${user.id}")
-        return ResponseEntity.ok(restaurantService.getRestaurantByIdAndOwnerId(restaurantId, user.id))
+        logger.info("User details - ID: ${user.id}, Email: ${user.email}, Role: ${user.role}")
+        
+        return try {
+            logger.info("Calling restaurantService.getRestaurantByIdAndOwnerId with restaurantId: $restaurantId, userId: ${user.id}")
+            val restaurant = restaurantService.getRestaurantByIdAndOwnerId(restaurantId, user.id)
+            logger.info("Successfully retrieved restaurant ${restaurant.id} for user ${user.id}")
+            ResponseEntity.ok(restaurant)
+        } catch (e: Exception) {
+            logger.error("Error getting restaurant $restaurantId for user ${user.id}: ${e.message}", e)
+            throw e
+        }
     }
 
     @GetMapping
@@ -41,7 +51,17 @@ class RestaurantController(
         @RestaurantOwner user: User,
     ): ResponseEntity<List<Restaurant>> {
         logger.info("GET all restaurants for user ${user.id}")
-        return ResponseEntity.ok(restaurantService.getAllOwnedRestaurants(user.id))
+        logger.info("User details - ID: ${user.id}, Email: ${user.email}, Role: ${user.role}")
+        
+        return try {
+            logger.info("Calling restaurantService.getAllOwnedRestaurants with userId: ${user.id}")
+            val restaurants = restaurantService.getAllOwnedRestaurants(user.id)
+            logger.info("Successfully retrieved ${restaurants.size} restaurants for user ${user.id}")
+            ResponseEntity.ok(restaurants)
+        } catch (e: Exception) {
+            logger.error("Error getting restaurants for user ${user.id}: ${e.message}", e)
+            throw e
+        }
     }
 
     @PostMapping
@@ -50,9 +70,19 @@ class RestaurantController(
         @Valid @RequestBody request: RestaurantCreateRequest,
     ): ResponseEntity<MessageResponse> {
         logger.info("POST restaurant for owner ${user.id}")
-        val savedRestaurant = restaurantService.createRestaurant(request, user)
-        val uri = URI.create("/restaurants/${savedRestaurant.id}")
-        return ResponseEntity.created(uri).body(MessageResponse("Created successfully!"))
+        logger.info("User details - ID: ${user.id}, Email: ${user.email}, Role: ${user.role}")
+        logger.info("Restaurant creation request: ${request.name} for owner ${user.id}")
+        
+        return try {
+            logger.info("Calling restaurantService.createRestaurant for user ${user.id}")
+            val savedRestaurant = restaurantService.createRestaurant(request, user)
+            logger.info("Successfully created restaurant ${savedRestaurant.id} for owner ${user.id}")
+            val uri = URI.create("/restaurants/${savedRestaurant.id}")
+            ResponseEntity.created(uri).body(MessageResponse("Created successfully!"))
+        } catch (e: Exception) {
+            logger.error("Error creating restaurant for user ${user.id}: ${e.message}", e)
+            throw e
+        }
     }
 
     @PatchMapping("/{restaurantId}")
