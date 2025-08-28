@@ -68,6 +68,7 @@ dependencies {
     testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
     testImplementation("org.springframework.restdocs:spring-restdocs-core")
     testImplementation("org.springframework.restdocs:spring-restdocs-restassured")
+    testImplementation("com.h2database:h2")
 }
 
 kotlin {
