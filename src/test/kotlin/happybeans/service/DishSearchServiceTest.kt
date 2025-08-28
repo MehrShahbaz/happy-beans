@@ -99,12 +99,14 @@ class DishSearchServiceTest {
     }
 
     @Test
-    fun `getFilteredDishOptionsByUser should show filtered options successfully`() {
+    fun `getFilteredDishOptionsByUserTags should show filtered options successfully`() {
         // Given
         val testUser = userRepository.findByEmail("user@user.com").get()
+        val likes = userService.getUserLikes(testUser.id).map { it.name }.toSet()
+        val dislikes = userService.getUserDislikes(testUser.id).map { it.name }.toSet()
 
         // When
-        val filteredOptions = dishService.getFilteredDishOptionsByUser(testUser)
+        val filteredOptions = dishService.getFilteredDishOptionsByUserTags(likes, dislikes)
 
         // Then : dislikedTag(bitter) is filtered out
         assertThat(filteredOptions).hasSize(2)
@@ -117,14 +119,21 @@ class DishSearchServiceTest {
 
         // Then: First option should be spicy (matches 2 liked tags: spicy + meat)
         assertThat(filteredOptions[0].name).isEqualTo("Spicy Margherita (8\")")
-        assertThat(filteredOptions[0].dishOptionTags.any { it.name == "spicy" }).isTrue()
-        assertThat(filteredOptions[0].dishOptionTags.any { it.name == "meat" }).isTrue()
+        // Verify the tags through the service since dishOptionTags is now JsonIgnore
+        val spicyOptionTags = dishService.getDishOptionTags(filteredOptions[0].id)
+        assertThat(spicyOptionTags.any { it.name == "spicy" }).isTrue()
+        assertThat(spicyOptionTags.any { it.name == "meat" }).isTrue()
 
         // Then: Second option should be sweet (matches 1 liked tag: sweet)
         assertThat(filteredOptions[1].name).isEqualTo("Sweet Margherita (8\")")
-        assertThat(filteredOptions[1].dishOptionTags.any { it.name == "sweet" }).isTrue()
+        val sweetOptionTags = dishService.getDishOptionTags(filteredOptions[1].id)
+        assertThat(sweetOptionTags.any { it.name == "sweet" }).isTrue()
 
-        // Then: Bitter option should not be present (filtered out)
-        assertThat(filteredOptions.none { it.dishOptionTags.any { tag -> tag.name == "bitter" } }).isTrue()
+        // Then: Verify bitter option is not present by checking no filtered options have bitter tag
+        val allTagsFromFilteredOptions =
+            filteredOptions.flatMap {
+                dishService.getDishOptionTags(it.id).map { tag -> tag.name }
+            }
+        assertThat(allTagsFromFilteredOptions).doesNotContain("bitter")
     }
 }

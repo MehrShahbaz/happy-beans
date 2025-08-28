@@ -118,12 +118,15 @@ class UserService(
     @Transactional(readOnly = true)
     fun getUserLikes(userId: Long): Set<Tag> {
         val user = findById(userId)
+        // To force lazy loading within transaction
+        user.likes.size
         return user.likes
     }
 
     @Transactional(readOnly = true)
     fun getUserDislikes(userId: Long): Set<Tag> {
         val user = findById(userId)
+        user.dislikes.size
         return user.dislikes
     }
 }
