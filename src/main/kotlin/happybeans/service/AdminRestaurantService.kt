@@ -1,5 +1,7 @@
 package happybeans.service
 
+import happybeans.dto.restaurant.RestaurantResponseDto
+import happybeans.dto.restaurant.toResponse
 import happybeans.enums.RestaurantStatus
 import happybeans.model.Restaurant
 import happybeans.repository.RestaurantRepository
@@ -15,9 +17,9 @@ class AdminRestaurantService(
     private val logger = KotlinLogging.logger {}
 
     @Transactional(readOnly = true)
-    fun getAllRestaurants(): List<Restaurant> {
-        logger.info { "Getting all restaurants for admin" }
-        return restaurantRepository.findAll()
+    fun getAllRestaurants(): List<RestaurantResponseDto> {
+        logger.info("Get all restaurants for admin")
+        return restaurantRepository.findAll().map { it.toResponse() }
     }
 
     @Transactional

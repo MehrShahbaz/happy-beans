@@ -2,7 +2,7 @@ package happybeans.controller.guest
 
 import happybeans.controller.AbstractRestDocsMockMvcTest
 import happybeans.dto.dish.DishResponse
-import happybeans.model.Restaurant
+import happybeans.dto.restaurant.RestaurantResponseDto
 import happybeans.model.User
 import happybeans.service.DishService
 import happybeans.service.RestaurantService
@@ -20,7 +20,6 @@ import org.springframework.restdocs.request.RequestDocumentation.parameterWithNa
 import org.springframework.restdocs.request.RequestDocumentation.pathParameters
 import org.springframework.test.context.bean.override.mockito.MockitoBean
 import org.springframework.test.web.servlet.get
-import java.time.LocalDateTime
 
 class GuestDishControllerTest : AbstractRestDocsMockMvcTest() {
     @MockitoBean
@@ -85,16 +84,14 @@ class GuestDishControllerTest : AbstractRestDocsMockMvcTest() {
             )
 
         val restaurant =
-            Restaurant(
-                user = owner,
+            RestaurantResponseDto(
+                ownerId = owner.id,
                 name = "Happy Beans",
                 description = "Fresh & tasty bowls",
                 image = "https://cdn.example/hb-logo.png",
                 addressUrl = "https://maps.example/hb",
                 workingDateHours = mutableListOf(),
                 dishes = mutableListOf(),
-                createdAt = LocalDateTime.now(),
-                updatedAt = LocalDateTime.now(),
                 id = 5L,
             )
 
@@ -124,8 +121,6 @@ class GuestDishControllerTest : AbstractRestDocsMockMvcTest() {
                                 .optional().description("Created at (ISO-8601)"),
                             fieldWithPath("[].updatedAt").type(JsonFieldType.STRING)
                                 .optional().description("Updated at (ISO-8601)"),
-                            fieldWithPath("[].user").optional()
-                                .description("Owner entity (if serialized; usually hidden)"),
                         ),
                     ),
                 )

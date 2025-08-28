@@ -5,10 +5,14 @@ import com.stripe.param.checkout.SessionCreateParams
 import happybeans.model.Order
 import happybeans.model.OrderProduct
 import mu.KotlinLogging
+import org.springframework.beans.factory.annotation.Value
 import org.springframework.stereotype.Service
 
 @Service
-class StripePaymentService() {
+class StripePaymentService(
+    @Value("\${app.url}")
+    private val url: String,
+) {
     private val logger = KotlinLogging.logger {}
 
     fun createSession(order: Order): Session {
@@ -16,8 +20,8 @@ class StripePaymentService() {
         val params =
             SessionCreateParams.builder()
                 .setMode(SessionCreateParams.Mode.PAYMENT)
-                .setSuccessUrl("http://localhost:80/payment-success.html")
-                .setCancelUrl("http://localhost:80/payment-failed.html")
+                .setSuccessUrl("$url/payment-success.html")
+                .setCancelUrl("$url/payment-failed.html")
                 .putMetadata("orderId", "${order.id}")
                 .setPaymentIntentData(
                     SessionCreateParams.PaymentIntentData.builder()
