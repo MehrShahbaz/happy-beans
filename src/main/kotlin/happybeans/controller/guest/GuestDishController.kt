@@ -1,7 +1,7 @@
 package happybeans.controller.guest
 
 import happybeans.dto.dish.DishResponse
-import happybeans.model.Restaurant
+import happybeans.dto.restaurant.RestaurantResponseDto
 import happybeans.service.DishService
 import happybeans.service.RestaurantService
 import mu.KotlinLogging
@@ -28,7 +28,7 @@ class GuestDishController(
     }
 
     @GetMapping("/restaurant")
-    fun getAllRestaurantService(): ResponseEntity<List<Restaurant>> {
+    fun getAllRestaurantService(): ResponseEntity<List<RestaurantResponseDto>> {
         logger.info("GET Retrieving All restaurants for guest")
         return ResponseEntity.ok(restaurantService.getALlRestaurants())
     }
