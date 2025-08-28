@@ -62,7 +62,7 @@ class RestaurantController(
         @PathVariable restaurantId: Long,
         @Valid @RequestBody request: RestaurantPatchRequest,
     ): ResponseEntity<MessageResponse> {
-        logger.info("PATCH restaurant: $restaurantId for user ${user.id}")
+        logger.info { "PATCH restaurant $restaurantId for user ${user.id}" }
         restaurantService.patchRestaurant(request, restaurantId, user.id)
         return ResponseEntity.ok(MessageResponse("Patched successfully!"))
     }
@@ -72,7 +72,7 @@ class RestaurantController(
         @RestaurantOwner user: User,
         @PathVariable restaurantId: Long,
     ): ResponseEntity<Void> {
-        logger.info("DELETE restaurant: $restaurantId for user ${user.id}")
+        logger.info { "DELETE restaurant $restaurantId for user ${user.id}" }
         restaurantService.deleteRestaurant(restaurantId, user.id)
         return ResponseEntity.noContent().build()
     }
