@@ -2,7 +2,9 @@ package happybeans.service
 
 import happybeans.dto.restaurant.RestaurantCreateRequest
 import happybeans.dto.restaurant.RestaurantPatchRequest
+import happybeans.dto.restaurant.RestaurantResponseDto
 import happybeans.dto.restaurant.WorkingDateHourRequest
+import happybeans.dto.restaurant.toResponse
 import happybeans.model.Restaurant
 import happybeans.model.User
 import happybeans.model.WorkingDateHour
@@ -21,8 +23,8 @@ class RestaurantService(
 ) {
     private val logger = KotlinLogging.logger {}
 
-    fun getALlRestaurants(): List<Restaurant> {
-        return restaurantRepository.findAll()
+    fun getALlRestaurants(): List<RestaurantResponseDto> {
+        return restaurantRepository.findAll().map { it.toResponse() }
     }
 
     fun createRestaurant(
@@ -69,8 +71,8 @@ class RestaurantService(
         restaurantRepository.delete(restaurant)
     }
 
-    fun getAllOwnedRestaurants(userId: Long): List<Restaurant> {
-        return restaurantRepository.findAllByUserId(userId)
+    fun getAllOwnedRestaurants(userId: Long): List<RestaurantResponseDto> {
+        return restaurantRepository.findAllByUserId(userId).map { it.toResponse() }
     }
 
     fun getRestaurantByIdAndOwnerId(

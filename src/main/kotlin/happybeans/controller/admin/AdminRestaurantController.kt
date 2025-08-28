@@ -1,6 +1,6 @@
 package happybeans.controller.admin
 
-import happybeans.model.Restaurant
+import happybeans.dto.restaurant.RestaurantResponseDto
 import happybeans.service.AdminRestaurantService
 import mu.KotlinLogging
 import org.springframework.http.ResponseEntity
@@ -16,8 +16,9 @@ class AdminRestaurantController(
     private val logger = KotlinLogging.logger {}
 
     @GetMapping
-    fun getAllRestaurants(): ResponseEntity<List<Restaurant>> {
+    fun getAllRestaurants(): ResponseEntity<List<RestaurantResponseDto>> {
         logger.info("GET Getting all restaurants for Admin")
+        val temp = adminRestaurantService.getAllRestaurants()
         return ResponseEntity.ok().body(adminRestaurantService.getAllRestaurants())
     }
 }

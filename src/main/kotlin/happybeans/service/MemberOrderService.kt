@@ -55,6 +55,15 @@ class MemberOrderService(
     }
 
     @Transactional
+    fun setPaymentId(
+        order: Order,
+        paymentId: String,
+    ) {
+        order.paymentId = paymentId
+        orderRepository.save(order)
+    }
+
+    @Transactional
     fun checkoutCart(member: User): Order {
         val cartProducts = cartProductRepository.findAllByUserId(member.id)
         if (cartProducts.isEmpty()) {
