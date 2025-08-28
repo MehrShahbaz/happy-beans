@@ -1,5 +1,6 @@
 package happybeans.service
 
+import happybeans.dto.order.OrderListResponse
 import happybeans.dto.order.OrderProductResponse
 import happybeans.dto.order.OrderResponse
 import happybeans.enums.OrderStatus
@@ -25,8 +26,8 @@ class MemberOrderService(
     private val logger = KotlinLogging.logger {}
 
     @Transactional(readOnly = true)
-    fun getAllUserOrders(userId: Long): List<OrderResponse> {
-        return orderRepository.findAllByUserId(userId).map { it.toOrderResponse() }
+    fun getAllUserOrders(userId: Long): OrderListResponse {
+        return OrderListResponse(orderRepository.findAllByUserId(userId).map { it.toOrderResponse() })
     }
 
     @Transactional(readOnly = true)
@@ -51,6 +52,15 @@ class MemberOrderService(
         status: OrderStatus,
     ) {
         order.status = status
+        orderRepository.save(order)
+    }
+
+    @Transactional
+    fun setPaymentId(
+        order: Order,
+        paymentId: String,
+    ) {
+        order.paymentId = paymentId
         orderRepository.save(order)
     }
 

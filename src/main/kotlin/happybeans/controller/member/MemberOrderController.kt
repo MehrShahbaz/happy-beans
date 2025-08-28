@@ -27,8 +27,7 @@ class MemberOrderController(
         @LoginMember user: User,
     ): ResponseEntity<OrderListResponse> {
         logger.info("GET all orders for user: ${user.id}")
-        val response = OrderListResponse(orderService.getAllUserOrders(user.id))
-        return ResponseEntity.ok(response)
+        return ResponseEntity.ok(orderService.getAllUserOrders(user.id))
     }
 
     @GetMapping("/{orderId}")

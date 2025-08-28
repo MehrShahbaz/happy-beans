@@ -28,8 +28,8 @@ class Order(
     var userId: Long,
     @Column(name = "user_email", nullable = false)
     var userEmail: String,
-    @Column(name = "payment_id", nullable = false)
-    val paymentId: String? = null,
+    @Column(name = "payment_id")
+    var paymentId: String? = null,
     @Column(name = "total_amount", nullable = false)
     var totalAmount: Double = 0.0,
     @Column(name = "status", nullable = false)

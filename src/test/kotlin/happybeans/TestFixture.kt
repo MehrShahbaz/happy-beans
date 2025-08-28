@@ -1,5 +1,8 @@
 package happybeans
 
+import happybeans.dto.restaurant.RestaurantCreateRequest
+import happybeans.dto.restaurant.WorkingDateHourRequest
+import happybeans.enums.UserRole
 import happybeans.model.Dish
 import happybeans.model.DishOption
 import happybeans.model.Restaurant
@@ -51,6 +54,52 @@ object TestFixture {
             ).apply { id = 3L }
 
         dish.addDishOptions(listOf(personalOption, mediumOption, largeOption))
+
+        return dish
+    }
+
+    fun createPizzaWithAllOptions(): Dish {
+        val dish =
+            Dish(
+                name = "Pizza",
+                description = "Classic Italian pizza",
+                image = "https://images.unsplash.com/photo-1604382355076-af4b0eb60143?w=800&q=80",
+            )
+
+        val spicyOption =
+            DishOption(
+                dish = dish,
+                name = "Spicy Margherita (8\")",
+                description = "Perfect for one who loves spicy food",
+                price = 12.99,
+                image = "https://images.unsplash.com/photo-1513104890138-7c749659a591?w=600&q=80",
+                available = true,
+                prepTimeMinutes = 15,
+            )
+
+        val sweetOption =
+            DishOption(
+                dish = dish,
+                name = "Sweet Margherita (8\")",
+                description = "Perfect for one who loves sweet food",
+                price = 18.99,
+                image = "https://images.unsplash.com/photo-1604382355076-af4b0eb60143?w=600&q=80",
+                available = true,
+                prepTimeMinutes = 18,
+            )
+
+        val bitterOption =
+            DishOption(
+                dish = dish,
+                name = "Bitter Margherita (8\")",
+                description = "Perfect for one who loves bitter taste",
+                price = 24.99,
+                image = "https://images.unsplash.com/photo-1565299624946-b28f40a0ca4b?w=600&q=80",
+                available = true,
+                prepTimeMinutes = 22,
+            )
+
+        dish.addDishOptions(listOf(spicyOption, sweetOption, bitterOption))
 
         return dish
     }
@@ -233,4 +282,53 @@ object TestFixture {
             description = "Crisp romaine lettuce with parmesan cheese, croutons, and our homemade Caesar dressing.",
             image = "https://images.unsplash.com/photo-1546793665-c74683f339c1?w=800&q=80",
         )
+
+    fun createRestaurantOwner(): User {
+        return User(
+            email = "owner@gmail.com",
+            password = "password",
+            firstName = "Sushi",
+            lastName = "Master",
+            role = UserRole.RESTAURANT_OWNER,
+        )
+    }
+
+    val workingDateHoursDefault =
+        listOf<WorkingDateHourRequest>(
+            WorkingDateHourRequest(
+                dayOfWeek = DayOfWeek.TUESDAY,
+                openTime = LocalTime.of(9, 0),
+                closeTime = LocalTime.of(18, 0),
+            ),
+            WorkingDateHourRequest(
+                dayOfWeek = DayOfWeek.WEDNESDAY,
+                openTime = LocalTime.of(9, 0),
+                closeTime = LocalTime.of(18, 0),
+            ),
+            WorkingDateHourRequest(
+                dayOfWeek = DayOfWeek.THURSDAY,
+                openTime = LocalTime.of(9, 0),
+                closeTime = LocalTime.of(18, 0),
+            ),
+            WorkingDateHourRequest(
+                dayOfWeek = DayOfWeek.FRIDAY,
+                openTime = LocalTime.of(9, 0),
+                closeTime = LocalTime.of(18, 0),
+            ),
+            WorkingDateHourRequest(
+                dayOfWeek = DayOfWeek.SATURDAY,
+                openTime = LocalTime.of(9, 0),
+                closeTime = LocalTime.of(18, 0),
+            ),
+        )
+
+    fun createRestaurantCreateRequest(): RestaurantCreateRequest {
+        return RestaurantCreateRequest(
+            name = "Ishin",
+            description = "We offer fresh Sushi for the reasonable price",
+            image = "https://images.unsplash.com/photo-1725122194872-ace87e5a1a8d",
+            addressUrl = "https://maps.app.goo.gl/WjjdsCZm8eyv9tvd8",
+            workingDateHours = workingDateHoursDefault,
+        )
+    }
 }
