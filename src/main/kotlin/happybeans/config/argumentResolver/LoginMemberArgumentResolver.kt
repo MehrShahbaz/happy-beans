@@ -32,10 +32,10 @@ class LoginMemberArgumentResolver(
     ): User {
         val request = (webRequest as ServletWebRequest).request
 
-        logger.info("Loading email from request")
+        logger.debug("Loading email from request")
         val email = request.getAttribute("email") as String
 
-        logger.info("Finding user with email: $email")
+        logger.debug("Finding user with email: $email")
         val user =
             userRepository.findByEmail(email).orElseThrow {
                 logger.error("Error finding user with email $email")

@@ -34,6 +34,6 @@ class GuestJoinRequestController(
                 .buildAndExpand(request.id)
                 .toUri()
 
-        return ResponseEntity.ok(MessageResponse("Request sent successfully"))
+        return ResponseEntity.created(location).body(MessageResponse("Request sent successfully"))
     }
 }

@@ -16,13 +16,13 @@ class AdminRestaurantService(
 
     @Transactional(readOnly = true)
     fun getAllRestaurants(): List<Restaurant> {
-        logger.info("Get all restaurants for admin")
+        logger.info { "Getting all restaurants for admin" }
         return restaurantRepository.findAll()
     }
 
     @Transactional
     fun deleteRestaurant(restaurantId: Long) {
-        logger.info("DELETE delete restaurant by admin")
+        logger.info { "Deleting restaurant with id $restaurantId" }
         val restaurant =
             restaurantRepository.findByIdOrNull(restaurantId)
                 ?: throw IllegalArgumentException("Restaurant not found with id: $restaurantId")
