@@ -1,5 +1,6 @@
 package happybeans.model
 
+import com.fasterxml.jackson.annotation.JsonIgnore
 import happybeans.dto.restaurant.RestaurantPatchRequest
 import happybeans.enums.RestaurantStatus
 import jakarta.persistence.CascadeType
@@ -35,12 +36,14 @@ class Restaurant(
     var addressUrl: String,
     @Column(name = "status", nullable = false)
     var status: RestaurantStatus = RestaurantStatus.ACTIVE,
+    @JsonIgnore
     @ElementCollection(fetch = FetchType.LAZY)
     @CollectionTable(
         name = "restaurant_working_dates_hours",
         joinColumns = [JoinColumn(name = "restaurant_id")],
     )
     var workingDateHours: MutableList<WorkingDateHour> = mutableListOf(),
+    @JsonIgnore
     @OneToMany(cascade = [(CascadeType.ALL)], fetch = FetchType.LAZY, orphanRemoval = true)
     @JoinColumn(name = "restaurant_id")
     val dishes: MutableList<Dish> = mutableListOf(),
