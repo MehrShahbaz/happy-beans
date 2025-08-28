@@ -41,7 +41,11 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers.status
 import java.util.Optional
 
 @WebMvcTest(controllers = [AdminRestaurantController::class])
-@AutoConfigureRestDocs
+@AutoConfigureRestDocs(
+    uriScheme = "https",
+    uriHost = "happy-beans.shop",
+    uriPort = 8080,
+)
 class AdminRestaurantManageControllerTest {
     @Autowired
     lateinit var mockMvc: MockMvc

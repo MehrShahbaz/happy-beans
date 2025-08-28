@@ -17,7 +17,11 @@ import org.springframework.test.web.servlet.MockMvc
 @ActiveProfiles("test")
 @SpringBootTest
 @AutoConfigureMockMvc
-@AutoConfigureRestDocs
+@AutoConfigureRestDocs(
+    uriScheme = "https",
+    uriHost = "happy-beans.shop",
+    uriPort = 8080,
+)
 abstract class AbstractRestDocsMockMvcTest {
     @Autowired
     lateinit var mockMvc: MockMvc

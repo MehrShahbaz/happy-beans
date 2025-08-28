@@ -9,7 +9,11 @@ import org.springframework.boot.test.context.SpringBootTest
 import org.springframework.http.HttpStatus
 import org.springframework.restdocs.restassured.RestAssuredRestDocumentation.document
 
-@AutoConfigureRestDocs
+@AutoConfigureRestDocs(
+    uriScheme = "https",
+    uriHost = "happy-beans.shop",
+    uriPort = 8080,
+)
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 class HealthCheckControllerTest : AbstractRestDocsRestAssuredTest() {
     @Test
