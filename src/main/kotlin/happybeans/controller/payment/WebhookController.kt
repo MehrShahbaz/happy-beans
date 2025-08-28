@@ -28,6 +28,7 @@ class WebhookController(
         @RequestBody payload: String,
         request: HttpServletRequest,
     ): String {
+        logger.info("Received request for webhook")
         val sigHeader = request.getHeader("Stripe-Signature")
 
         if (sigHeader == null) {
