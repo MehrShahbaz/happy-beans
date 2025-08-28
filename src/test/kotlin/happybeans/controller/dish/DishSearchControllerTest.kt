@@ -2,8 +2,8 @@ package happybeans.controller.dish
 
 import happybeans.TestFixture
 import happybeans.controller.AbstractRestDocsMockMvcTest
-import happybeans.model.User
 import happybeans.service.DishService
+import happybeans.service.UserService
 import org.junit.jupiter.api.DisplayName
 import org.junit.jupiter.api.Test
 import org.mockito.kotlin.any
@@ -26,6 +26,9 @@ class DishSearchControllerTest : AbstractRestDocsMockMvcTest() {
     @MockitoBean
     private lateinit var dishService: DishService
 
+    @MockitoBean
+    private lateinit var userService: UserService
+
     @Test
     @DisplayName("get filtered dishes by user tags successful")
     fun getFilteredDishOptionsByUser_Success() {
@@ -33,7 +36,16 @@ class DishSearchControllerTest : AbstractRestDocsMockMvcTest() {
         val dish = TestFixture.createPizzaWithAllOptions()
         val filteredDishOptions = dish.dishOptions.toList().take(2)
 
-        whenever(dishService.getFilteredDishOptionsByUser(any<User>())).thenReturn(filteredDishOptions)
+        val userLikes = setOf("spicy", "vegetarian")
+        val userDislikes = setOf("peanuts")
+
+        whenever(userService.getUserLikes(any())).thenReturn(
+            userLikes.map { happybeans.model.Tag(it) }.toSet(),
+        )
+        whenever(userService.getUserDislikes(any())).thenReturn(
+            userDislikes.map { happybeans.model.Tag(it) }.toSet(),
+        )
+        whenever(dishService.getFilteredDishOptionsByUserTags(userLikes, userDislikes)).thenReturn(filteredDishOptions)
 
         // When & Then
         mockMvc.perform(
@@ -57,11 +69,12 @@ class DishSearchControllerTest : AbstractRestDocsMockMvcTest() {
                         fieldWithPath("[].prepTimeMinutes").type(JsonFieldType.NUMBER).description("Preparation time in minutes"),
                         fieldWithPath("[].createdAt").type(JsonFieldType.STRING).description("Creation timestamp").optional(),
                         fieldWithPath("[].updatedAt").type(JsonFieldType.STRING).description("Last update timestamp").optional(),
-                        fieldWithPath("[].dishOptionTags").type(JsonFieldType.ARRAY).description("Dish option tags"),
                     ),
                 ),
             )
 
-        verify(dishService).getFilteredDishOptionsByUser(any<User>())
+        verify(userService).getUserLikes(any())
+        verify(userService).getUserDislikes(any())
+        verify(dishService).getFilteredDishOptionsByUserTags(userLikes, userDislikes)
     }
 }
