@@ -65,6 +65,51 @@ class DishOptionControllerTest : AbstractRestDocsMockMvcTest() {
     }
 
     @Test
+    @DisplayName("GET /api/restaurant-owner/dish-options/{optionId} -> 200 and dish option details")
+    fun getDishOptionById_ok() {
+        val optionId = 1L
+        val dishOption = TestFixture.createMargheritaPizzaWithAllOptions().dishOptions.first()
+        whenever(dishService.findDishOptionById(optionId)).thenReturn(dishOption)
+
+        mockMvc.perform(
+            RestDocumentationRequestBuilders.get("/api/restaurant-owner/dish-options/{optionId}", optionId)
+                .accept(MediaType.APPLICATION_JSON),
+        )
+            .andExpect(status().isOk)
+            .andExpect(content().contentTypeCompatibleWith(MediaType.APPLICATION_JSON))
+            .andExpect(jsonPath("$.id").value(dishOption.id))
+            .andExpect(jsonPath("$.name").value(dishOption.name))
+            .andExpect(jsonPath("$.description").value(dishOption.description))
+            .andExpect(jsonPath("$.price").value(dishOption.price))
+            .andExpect(jsonPath("$.image").value(dishOption.image))
+            .andExpect(jsonPath("$.available").value(dishOption.available))
+            .andExpect(jsonPath("$.prepTimeMinutes").value(dishOption.prepTimeMinutes))
+            .andExpect(jsonPath("$.dishId").value(dishOption.dish.id))
+            .andDo(
+                document(
+                    "dish-option-get",
+                    preprocessRequest(prettyPrint()),
+                    preprocessResponse(prettyPrint()),
+                    pathParameters(
+                        parameterWithName("optionId").description("ID of the dish option to retrieve"),
+                    ),
+                    responseFields(
+                        fieldWithPath("id").type(JsonFieldType.NUMBER).description("Dish option ID"),
+                        fieldWithPath("name").type(JsonFieldType.STRING).description("Dish option name"),
+                        fieldWithPath("description").type(JsonFieldType.STRING).description("Dish option description"),
+                        fieldWithPath("price").type(JsonFieldType.NUMBER).description("Dish option price"),
+                        fieldWithPath("image").type(JsonFieldType.STRING).description("Dish option image URL"),
+                        fieldWithPath("available").type(JsonFieldType.BOOLEAN).description("Whether the dish option is available"),
+                        fieldWithPath("prepTimeMinutes").type(JsonFieldType.NUMBER).description("Preparation time in minutes"),
+                        fieldWithPath("dishId").type(JsonFieldType.NUMBER).description("ID of the parent dish"),
+                    ),
+                ),
+            )
+
+        verify(dishService).findDishOptionById(optionId)
+    }
+
+    @Test
     @DisplayName("PUT /api/restaurant-owner/dish-options/{optionId} -> 200 and success message")
     fun updateDishOption_ok() {
         val optionId = 1L

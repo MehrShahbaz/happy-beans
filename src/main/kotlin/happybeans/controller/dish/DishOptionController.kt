@@ -1,7 +1,9 @@
 package happybeans.controller.dish
 
 import happybeans.dto.dish.DishOptionPatchRequest
+import happybeans.dto.dish.DishOptionResponse
 import happybeans.dto.dish.DishOptionUpdateRequest
+import happybeans.dto.dish.toResponse
 import happybeans.dto.response.MessageResponse
 import happybeans.model.Tag
 import happybeans.model.User
@@ -26,6 +28,16 @@ class DishOptionController(
     private val dishService: DishService,
 ) {
     private val logger = KotlinLogging.logger {}
+
+    @GetMapping("/{optionId}")
+    fun getDishOptionById(
+        @RestaurantOwner owner: User,
+        @PathVariable optionId: Long,
+    ): ResponseEntity<DishOptionResponse> {
+        logger.info("GET Get dish option by optionId: $optionId")
+        val dishOption = dishService.findDishOptionById(optionId)
+        return ResponseEntity.ok(dishOption.toResponse())
+    }
 
     @PutMapping("/{optionId}")
     fun updateDishOption(
@@ -61,6 +73,7 @@ class DishOptionController(
 
     @GetMapping("/{optionId}/tags")
     fun getDishOptionTags(
+        @RestaurantOwner owner: User,
         @PathVariable optionId: Long,
     ): ResponseEntity<Set<Tag>> {
         logger.info("GET Get dish option tags for $optionId}")
