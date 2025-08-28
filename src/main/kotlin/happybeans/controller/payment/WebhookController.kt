@@ -68,6 +68,18 @@ class WebhookController(
                 logger.info { "Payment failed for ${event.id}" }
                 orderPaymentService.handlePaymentFailure(stripeEvent)
             }
+            "checkout.session.completed" -> {
+                logger.info { "Checkout session completed for ${event.id}" }
+                orderPaymentService.handlePaymentSuccess(stripeEvent)
+            }
+            "checkout.session.async_payment_succeeded" -> {
+                logger.info { "Async payment succeeded for ${event.id}" }
+                orderPaymentService.handlePaymentSuccess(stripeEvent)
+            }
+            "checkout.session.async_payment_failed" -> {
+                logger.info { "Async payment failed for ${event.id}" }
+                orderPaymentService.handlePaymentFailure(stripeEvent)
+            }
         }
 
         return "ok"
