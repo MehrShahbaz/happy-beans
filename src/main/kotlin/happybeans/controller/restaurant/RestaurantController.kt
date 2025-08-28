@@ -34,7 +34,7 @@ class RestaurantController(
     ): ResponseEntity<Restaurant> {
         logger.info("GET restaurant with id $restaurantId for user ${user.id}")
         logger.info("User details - ID: ${user.id}, Email: ${user.email}, Role: ${user.role}")
-        
+
         return try {
             logger.info("Calling restaurantService.getRestaurantByIdAndOwnerId with restaurantId: $restaurantId, userId: ${user.id}")
             val restaurant = restaurantService.getRestaurantByIdAndOwnerId(restaurantId, user.id)
@@ -52,7 +52,7 @@ class RestaurantController(
     ): ResponseEntity<List<Restaurant>> {
         logger.info("GET all restaurants for user ${user.id}")
         logger.info("User details - ID: ${user.id}, Email: ${user.email}, Role: ${user.role}")
-        
+
         return try {
             logger.info("Calling restaurantService.getAllOwnedRestaurants with userId: ${user.id}")
             val restaurants = restaurantService.getAllOwnedRestaurants(user.id)
@@ -72,7 +72,7 @@ class RestaurantController(
         logger.info("POST restaurant for owner ${user.id}")
         logger.info("User details - ID: ${user.id}, Email: ${user.email}, Role: ${user.role}")
         logger.info("Restaurant creation request: ${request.name} for owner ${user.id}")
-        
+
         return try {
             logger.info("Calling restaurantService.createRestaurant for user ${user.id}")
             val savedRestaurant = restaurantService.createRestaurant(request, user)
