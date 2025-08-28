@@ -11,10 +11,10 @@ insert into tags (name) values ('vegan'), ('spicy'), ('gluten-free');
 insert into user_likes_tags (user_id, tag_id) values (2, 1), (3, 2);
 insert into user_dislikes_tags (user_id, tag_id) values (2, 3);
 
--- RESTAURANTS
-insert into restaurants (user_id, name, description, image, address_url)
-values (1, 'Happy Sushi', 'Best sushi in town', 'sushi.jpg', 'https://maps.example.com/1'),
-       (1, 'Pasta House', 'Italian pasta and pizza', 'pasta.jpg', 'https://maps.example.com/2');
+--- RESTAURANTS
+insert into restaurants (user_id, name, description, image, address_url, status)
+values (1, 'Happy Sushi', 'Best sushi in town', 'sushi.jpg', 'https://maps.example.com/1', 'ACTIVE'),
+       (1, 'Pasta House', 'Italian pasta and pizza', 'pasta.jpg', 'https://maps.example.com/2', 'ACTIVE');
 
 -- Working hours
 insert into restaurant_working_dates_hours (restaurant_id, day_of_week, open_time, close_time)
