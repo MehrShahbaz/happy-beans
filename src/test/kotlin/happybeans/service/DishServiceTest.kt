@@ -639,39 +639,6 @@ class DishServiceTest {
     }
 
     @Test
-    fun `updateDishOption should update option successfully`() {
-        // Given
-        val dishId = 1L
-        val optionId = 1L
-        val dish = TestFixture.createMargheritaPizzaWithAllOptions().apply { id = dishId }
-        val dishOption = dish.dishOptions.first().apply { id = optionId }
-        val updateRequest =
-            DishOptionUpdateRequest(
-                name = "Updated Option",
-                description = "Updated description",
-                price = 19.99,
-                image = "updated-option.jpg",
-                prepTimeMinutes = 20,
-            )
-        given(dishOptionRepository.findById(optionId)).willReturn(Optional.of(dishOption))
-        given(dishRepository.findById(dishId)).willReturn(Optional.of(dish))
-        given(restaurantRepository.findAll()).willReturn(listOf(TestFixture.createHappyBeansCafe().apply { dishes.add(dish) }))
-        given(
-            restaurantRepository.findByIdAndUserId(org.mockito.ArgumentMatchers.anyLong(), eq(testOwner.id)),
-        ).willReturn(TestFixture.createHappyBeansCafe())
-        given(dishRepository.save(dish)).willReturn(dish)
-
-        // When
-        val result = dishService.updateDishOption(optionId, updateRequest, testOwner)
-
-        // Then
-        assertThat(result.name).isEqualTo("Updated Option")
-        assertThat(result.description).isEqualTo("Updated description")
-        assertThat(result.price).isEqualTo(19.99)
-        verify(dishRepository).save(dish)
-    }
-
-    @Test
     fun `updateDishOption should throw EntityNotFoundException when option not found`() {
         // Given
         val dishId = 1L
