@@ -1,34 +1,61 @@
-# Happy Beans Food Delivery Application
-## Complete Workflow for Presentation
+# Happy Beans Backend API
+
+Welcome! Our team, **Happy Beans**, has developed a backend API for a food ordering platform. This project focuses on providing a **robust, extensible API** that enables users to order food from restaurants with a **personalized experience**. Our API serves **three distinct user types**: regular members, restaurant owners, and administrators.
 
 ---
-
 ## Table of Contents
-1. [System Overview](#system-overview)
-2. [User Flow Narratives](#user-flow-narratives)
-3. [Endpoint Reference](#endpoint-reference)
-4. [Key Features & Business Logic](#key-features--business-logic)
+1. [API Features](#api-features)
+2. [Tech & Architecture](#tech---architecture)
+3. [System Diagram & Key Components](#system-diagram--key-components)
+4. [Flow](#flow)
+5. [Stripe Payment Integration](#stripe-payment-integration)
+6. [Spring REST Docs](#spring-rest-docs)
+7. [AWS Setup](#aws-setup)
+8. [Email Dispatching](#email-dispatching)
+
+---
+## API Features
+
+### Personalized Recommendations
+Our API allows users to specify **likes and dislikes** using tags, which are then used to **filter and rank dishes**.
+
+### Secure Authentication
+The API utilizes a **role-based access system** with **JWTs** for authentication.
+
+### Integrated Payment System
+We have seamlessly integrated the **Stripe API** to handle payments.  
+The API manages the **entire payment lifecycle**, from creating a secure checkout session to processing webhook events for **payment success or failure**.
+
+### Comprehensive Documentation
+The API endpoints are well-documented using **Spring Rest Docs**, providing **clear and up-to-date information** on request/response formats, path parameters, and error codes.
 
 ---
 
-## System Overview
+## Tech - Architecture
 
-**Happy Beans** is a sophisticated Kotlin Spring Boot food delivery application featuring:
-- **Role-based Access Control**: Admin, Restaurant Owner, User/Member with comprehensive user management
-- **Intelligent Filtering**: Tag-based meal recommendations with preference conflict resolution
-- **Complete Order Management**: Cart → Order → Payment → Fulfillment with automated notifications
-- **Integrated Payments**: Stripe webhook processing with real-time status updates
-- **Review System**: Dish and restaurant reviews for quality assurance
-- **Email Integration**: Automated notifications for account creation and order confirmations
+### Tech Stack
+- **Language & Framework:** Kotlin + Spring Boot with Spring Data JPA
+- **Build Tool:** Gradle
+- **Database:** PostgreSQL on AWS RDS, H2 for testing
+- **Authentication:** JWTs with **custom interceptors** for role-based access
+- **Payment Integration:** Stripe API for handling payments and webhooks
+- **Testing:** SpringBootTest, Mockito/MockK for mocking, Postman for manual testing
+- **Documentation** Spring REST docs, GitHub wiki
 
-### **Platform Narrative**
-Happy Beans operates as a three-tier ecosystem where **Admins** serve as platform gatekeepers, reviewing restaurant applications and creating verified restaurant owner accounts. Upon approval, restaurant owners receive automated invitation emails with login credentials, enabling them to establish their digital storefronts. **Restaurant Owners** then craft their menus, set pricing, and manage orders while **Members** discover personalized dining experiences through intelligent tag-based filtering. The platform handles the complete customer journey from preference-driven discovery to secure payment processing, with automated email confirmations ensuring transparency throughout the ordering process.
+### System Diagram & Key Components
+The application follows a **modular, layered architecture**:
+
+- **Controllers:** Top layer handling HTTP requests for **members, restaurant owners, and admins**
+- **Services:** Business logic layer with core functionality like `CartProductService` and `MemberOrderService`
+- **Repositories:** Data persistence using **Spring Data JPA**
+- **Infrastructure:** Houses key components like `JwtProvider` for **token management**
+- **Interceptors:** Custom `HandlerInterceptor` implementations enforce **role-based access control**
+
+The **production infrastructure** is deployed on an **AWS EC2 instance** and monitored.
 
 ---
-
-## User Flow Narratives
-
-### **Complete Workflow for Presentation Day** 
+## Flow
+### **Complete Workflow**
 ```mermaid
 graph TD
 subgraph Phase1[1. Create Restaurant & Menu]
@@ -94,79 +121,55 @@ Phase 3 – Get Email & Checkout
 2.	Add To Cart → Add dish with selected options.
 3.	Checkout Cart → Place order, trigger payment (Stripe) and send confirmation email.
 
-⸻
+### Recommendation
+```kotlin
+@RestController
+@RequestMapping("/api/member/dishes/search")
+class DishSearchController(
+    private val dishService: DishService,
+    private val userService: UserService,
+) {
+    private val logger = KotlinLogging.logger {}
 
+    @GetMapping()
+    fun getFilteredDishOptionsByUser(
+        @LoginMember user: User,
+    ): ResponseEntity<List<DishOption>> {
+        logger.info("GET Dishes by user tags for user: ${user.id}")
 
-### **User/Member Complete Journey**
+        val likes = userService.getUserLikes(user.id).map { it.name }.toSet()
+        val dislikes = userService.getUserDislikes(user.id).map { it.name }.toSet()
 
-```mermaid
-graph TD
-    A[Register Account] --> B[Login & Get JWT]
-    B --> C[Set Preferences: Add Likes]
-    C --> D[Add Dislikes - Auto Conflict Resolution]
-    D --> E[Browse Filtered Dishes]
-    E --> F[Add Items to Cart]
-    F --> G[Adjust Quantities]
-    G --> H[Checkout - Create Order]
-    H --> I[Pay via Stripe]
-    I --> J[Order Confirmation]
-    J --> K[Leave Reviews]
+        val filteredDishOptions = dishService.getFilteredDishOptionsByUserTags(likes, dislikes)
+        return ResponseEntity.ok(filteredDishOptions)
+    }
+}
 ```
 
-**Detailed Flow:**
-1. **Registration** → Creates account with USER role
-2. **Authentication** → JWT token for all subsequent requests
-3. **Preference Setup** → Add multiple likes/dislikes with automatic conflict resolution
-4. **Discovery** → Get personalized dish recommendations based on preferences
-5. **Shopping** → Add dishes to cart, adjust quantities, review total
-6. **Ordering** → Convert cart to order with payment integration
-7. **Payment** → Stripe checkout with webhook confirmation
-8. **Follow-up** → Order tracking and review submission
 
-### **Restaurant Owner Journey**
+## Stripe Payment Integration
 
-```mermaid
-graph TD
-    A[Login with Provided Credentials] --> B[Create Restaurant Profile]
-    B --> C[Add Menu Items - Dishes]
-    C --> D[Create Dish Options - Sizes/Variants]
-    D --> E[Associate Tags for Filtering]
-    E --> F[Manage Availability & Pricing]
-    F --> G[Process Customer Orders]
-```
+For payments, we integrated **Stripe Checkout**. Instead of building our own UI for payment forms, we’re leveraging Stripe’s hosted checkout session, which handles all the heavy lifting—security, validation, and different payment methods.
 
-**Detailed Flow:**
-1. **Authentication** → Login with admin-provided credentials
-2. **Restaurant Setup** → Create restaurant with hours, location, details
-3. **Menu Creation** → Add dishes with multiple options (sizes, variants)
-4. **Tag Management** → Associate dietary/preference tags with dishes
-5. **Operations** → Update availability, pricing, restaurant status
-6. **Order Management** → View and process customer orders
+Here’s how the flow works:
 
-### **Admin Journey**
+* A checkout session is created when the user initiates a payment.
+* Once the payment succeeds, Stripe calls back to our **success endpoint**.
+* Inside that callback, we grab the **order ID from the payment metadata**.
+* Using that ID, we update both the **payment record** and the **order status** in our system.
 
-```mermaid
-graph TD
-    A[Admin Login] --> B[Review Join Requests]
-    B --> C[Create Restaurant Owners]
-    C --> D[System Oversight]
-    D --> E[Restaurant Management]
-    E --> F[User Administration]
-```
+That way, everything stays in sync automatically once Stripe confirms the transaction.
 
-**Detailed Flow:**
-1. **Authentication** → Admin login with elevated privileges
-2. **Application Review** → Process restaurant owner applications with accept/reject capabilities
-3. **Account Creation** → Create restaurant owners and automatically send invitation emails with credentials
-4. **System Administration** → Monitor all restaurants, create additional admin accounts, manage platform health
-5. **Quality Control** → Delete problematic restaurants, suspend restaurant status, remove user accounts
-6. **Email Management** → Automated email notifications for account approvals and system communications
+## Email Dispatching
+
+On certain events like order confirmations or notifications we send out emails.
+We’re handling this with **Java Mailer**, and right now we’re using Gmail as the SMTP provider.
+It’s a lightweight setup but reliable enough for our current needs.
 
 ---
 
+⸻
 ## Endpoint Reference
-
-**Total Endpoints: 50**
 
 ### **Authentication Endpoints (4)**
 
@@ -300,393 +303,117 @@ graph TD
 
 ---
 
-## Key Features & Business Logic
+## Spring REST Docs
 
-### **Intelligent Preference System**
-- **Automatic Conflict Resolution**: Adding to likes removes from dislikes (and vice versa)
-- **Smart Filtering**: Dishes with disliked tags excluded, liked tags prioritized
-- **Fallback Logic**: Shows all dishes if no preferences set
-- **Real-time Updates**: Preferences immediately affect dish recommendations
+**Spring REST Docs** generates accurate API documentation directly from tests.
+Instead of writing docs manually, you write tests, and Spring REST Docs produces snippets in AsciiDoc that later become full HTML documentation.
+This ensures that your API documentation is always **up to date and consistent** with your code.
 
-### **Cart Management**
-- **Quantity Adjustment**: Update existing items or add new ones
-- **Availability Checking**: Validates dish options before adding
-- **Total Calculation**: Real-time cart totals with item details
-- **Persistent State**: Cart survives between sessions until checkout
+**Why use it?**
+- Docs = truth from tests → no outdated API descriptions.
+- Lightweight → no extra runtime dependencies.
+- Flexible → you choose how docs are structured and styled.
+- Clean code → no need for annotations inside controllers.
+- Version control friendly → snippets and AsciiDoc live in the repo.
 
-### **Payment Processing**
-- **Stripe Integration**: Secure payment processing with webhooks
-- **Order States**: PENDING → COMPLETED/REJECTED based on payment
-- **Email Notifications**: Automatic order confirmation emails to members
-- **Cart Clearing**: Successful payment clears cart automatically
-
-### **Email Automation**
-- **Registration Approval**: Admin sends automated emails to approved restaurant owners with login credentials
-- **Order Confirmations**: Members receive email notifications when orders are successfully placed
-- **Account Management**: System-generated emails for account creation and status updates
-- **Transparent Communication**: Automated notifications ensure all parties stay informed
-
-### **Security & Authorization**
-- **JWT Authentication**: Token-based auth with role verification
-- **Resource Ownership**: Users can only access their own data
-- **Role-based Access**: Different endpoints for different user types
-- **Input Validation**: Comprehensive request validation with annotations
-
----
-
-## **MUST-HAVE DEMONSTRATION FLOWS**
-
-### **Admin Complete Flow (Realistic Order)**
-```mermaid
-graph TD
-    A[1. Admin Login] --> B[2. View All Restaurants]
-    B --> C[3. Create Restaurant Owner Account]
-    C --> D[4. Send Invitation Email]
+**Required Dependencies (Gradle Kotlin DSL)**
+These dependencies allow Spring REST Docs to capture request/response information during tests and convert them into **snippets**.
+```
+    dependencies {
+    // Core Spring REST Docs
+    testImplementation("org.springframework.restdocs:spring-restdocs-mockmvc")
+    // or for REST Assured
+    testImplementation("org.springframework.restdocs:spring-restdocs-restassured")
+    // Asciidoctor plugin support
+    asciidoctorExt("org.springframework.restdocs:spring-restdocs-asciidoctor")
+}
 ```
 
-**Step-by-Step Demo:**
-```bash
-# 1. Admin Login
-POST /api/admin/auth/login
-{
-  "email": "admin@happybeans.com",
-  "password": "admin123"
-}
-# Response: {"token": "eyJhbGciOi..."}
-
-# 2. View All Restaurants (System Overview)
-GET /api/admin/restaurants
-# Response: List of all restaurants in system
-
-# 3. Create New Restaurant Owner
-POST /api/admin/restaurant-owner
-{
-  "email": "newowner@restaurant.com",
-  "firstName": "New",
-  "lastName": "Owner"
-}
-# Response: {"message": "RestaurantOwner created!"}
-# Auto-generates password and sends invitation email
-```
-
-### **Restaurant Owner Complete Flow (Realistic Order)**
-```mermaid
-graph TD
-    A[1. Login] --> B[2. Create Restaurant]
-    B --> C[3. View Own Restaurants]
-    C --> D[4. Get Restaurant by ID]
-    D --> E[5. Update Restaurant Details]
-    E --> F[6. View All Dish Reviews]
-    F --> G[7. Check Dish Average Rating]
-    G --> H[8. Read Individual Reviews]
-    H --> I[9. Delete Restaurant if Needed]
-```
-
-**Step-by-Step Demo:**
-```bash
-# 1. Restaurant Owner Login
-POST /api/auth/restaurant-owner/login
-{
-  "email": "owner@restaurant.com",
-  "password": "generated_password_from_admin"
-}
-
-# 2. Create Restaurant
-POST /api/restaurant-owner/restaurants
-{
-  "name": "Demo Pizza Palace",
-  "description": "Best pizza in town",
-  "addressUrl": "123 Main St",
-  "image": "restaurant-image.jpg"
-}
-
-# 3. View All Own Restaurants
-GET /api/restaurant-owner/restaurants
-# Response: List of restaurants owned by this user
-
-# 4. Get Specific Restaurant Details
-GET /api/restaurant-owner/restaurants/{restaurantId}
-# Response: Full restaurant details
-
-# 5. Update Restaurant Information
-PATCH /api/restaurant-owner/restaurants/{restaurantId}
-{
-  "description": "Updated: The best pizza place in the city!"
-}
-
-# 6. View All Dish Reviews for Restaurant - MISSING ENDPOINT
-GET /api/restaurant-owner/reviews/dish
-# Response: All dish reviews for owner's restaurants
-
-# 7. Get Average Rating for Dish Option - MISSING ENDPOINT
-GET /api/restaurant-owner/reviews/dish/average-rating/{dishOptionId}
-# Response: {"averageRating": 4.2}
-
-# 8. View Individual Dish Reviews - MISSING ENDPOINT
-GET /api/restaurant-owner/reviews/dish/{dishOptionId}
-# Response: List of reviews with rating and message
-
-# 9. Delete Restaurant (if needed)
-DELETE /api/restaurant-owner/restaurants/{restaurantId}
-# Response: {"message": "Restaurant deleted successfully"}
-```
-
-### **Member/User Complete Flow (Realistic Order)**
-```mermaid
-graph TD
-    A[1. Register Account] --> B[2. Login]
-    B --> C[3. Add 2-3 Likes]
-    C --> D[4. Add 2-3 Dislikes with Overlap]
-    D --> E[5. Get Filtered Dishes]
-    E --> F[6. Add Dish Option to Cart]
-    F --> G[7. Adjust Cart Quantity]
-    G --> H[8. Create Order & Pay]
-```
-
-**Step-by-Step Demo:**
-```bash
-# 1. User Registration
-POST /api/member/auth/sign-up
-{
-  "email": "demo@user.com",
-  "password": "user123",
-  "firstName": "Demo",
-  "lastName": "User"
-}
-
-# 2. User Login
-POST /api/member/auth/login
-{
-  "email": "demo@user.com",
-  "password": "user123"
-}
-
-# 3. Add 2-3 Likes
-POST /api/member/likes
-{
-  "tagNames": ["vegetarian", "spicy", "cheese"]
-}
-
-# 4. Add 2-3 Dislikes (with overlap to show conflict resolution)
-POST /api/member/dislikes  
-{
-  "tagNames": ["bitter", "spicy", "seafood"]
-}
-# System automatically removes "spicy" from likes since it's in dislikes
-
-# 5. Get Filtered Dishes (personalized recommendations)
-GET /api/member/dishes/search
-# Returns dishes WITHOUT bitter/seafood tags, prioritizing vegetarian/cheese
-
-# 6. Add Dish Option to Cart
-POST /api/member/cart/dish/{dishId}/dish-option/{dishOptionId}
-{
-  "quantity": 1
-}
-
-# 7. Adjust Quantity in Cart
-PATCH /api/member/cart/dish-option/{dishOptionId}
-{
-  "quantity": 3
-}
-
-# 8. Order & Payment
-POST /api/member/orders/cart-checkout
-# Response: {"paymentUrl": "https://checkout.stripe.com/..."}
-# User completes payment, webhook processes success
-```
-
-## **MISSING BEHAVIORS IDENTIFIED**
-
-### **Restaurant Owner Missing Endpoints**
-The following endpoints exist as services but are commented out in `ReviewController`:
-
-| Status | Method | Missing Endpoint | Purpose | Implementation Needed |
-|--------|--------|------------------|---------|----------------------|
-| MISSING | `GET` | `/api/restaurant-owner/reviews/dish` | View all dish reviews for owner's restaurants | Uncomment & add @RestaurantOwner protection |
-| MISSING | `GET` | `/api/restaurant-owner/reviews/dish/average-rating/{dishOptionId}` | Get average rating for dish option | Uncomment & add ownership validation |  
-| MISSING | `GET` | `/api/restaurant-owner/reviews/restaurant` | View restaurant reviews for owned restaurants | Uncomment & add @RestaurantOwner protection |
-| MISSING | `GET` | `/api/restaurant-owner/reviews/restaurant/average-rating/{restaurantId}` | Get average restaurant rating | Uncomment & add ownership validation |
-
-### **Required Implementation Changes**
-
+**Plugins (Gradle)**
+The Asciidoctor plugin is used to transform your snippets and .adoc files into **HTML or PDF documentation**.
 ```kotlin
-// In ReviewController.kt - Uncomment and protect these endpoints:
+plugins {
+    id("org.asciidoctor.jvm.convert") version "3.3.2"
+}
+```
 
-@RestController  
-@RequestMapping("/api/restaurant-owner/reviews")
-class ReviewController(
-    private val dishReviewService: DishReviewService,
-    private val restaurantReviewService: RestaurantReviewService,
-) {
-    
-    @GetMapping("/dish")
-    fun getAllDishReviews(@RestaurantOwner owner: User): List<DishReviewDto> {
-        return dishReviewService.getAllReviewsForOwner(owner.id) // Add ownership filtering
-    }
+**Gradle Setup (snippets + build tasks)**
+This configuration ensures:
+1.	Tests produce snippets.
+2.	Asciidoctor assembles snippets into final docs.
+3.	Docs are automatically copied into static/docs and also packaged inside the final JAR.
+```kotlin
+// In build.gradle.kts
 
-    @GetMapping("/dish/average-rating/{dishOptionId}")
-    fun getAverageRatingForDishOption(
-        @PathVariable dishOptionId: Long,
-        @RestaurantOwner owner: User
-    ): Double {
-        // Add validation that dishOption belongs to owner's restaurant
-        return dishReviewService.getAverageRatingForDishOption(dishOptionId)
-    }
+val snippetsDir by extra { "build/generated-snippets" }
 
-    @GetMapping("/restaurant/average-rating/{restaurantId}")
-    fun getAverageRatingForRestaurant(
-        @PathVariable restaurantId: Long,
-        @RestaurantOwner owner: User  
-    ): Double {
-        // Add validation that restaurant belongs to owner
-        return restaurantReviewService.getAverageRatingForRestaurant(restaurantId)
+tasks.test {
+    // Make sure tests output snippets here
+    outputs.dir(snippetsDir)
+}
+
+tasks.asciidoctor {
+    // Use the snippets directory produced by tests
+    inputs.dir(snippetsDir)
+    configurations("asciidoctorExt")
+    dependsOn(tasks.test)
+    baseDirFollowsSourceFile()
+}
+
+//Copy built docs into static resources (useful for local preview and packaged app)
+tasks.register<Copy>("copyDocs") {
+    dependsOn(tasks.asciidoctor)
+    // Copy only the final HTML (index.html) produced by Asciidoctor
+    from("${tasks.asciidoctor.get().outputDir}/index.html")
+    into("src/main/resources/static/docs")
+}
+
+//Package docs into the JAR under static/docs/
+tasks.bootJar {
+    dependsOn(tasks.asciidoctor)
+    from("${tasks.asciidoctor.get().outputDir}/index.html") {
+        into("static/docs")
     }
 }
 ```
 
-## **IMPLEMENTATION PRIORITY**
+**Works with Testing Libraries**
+Works with Testing Libraries
+- MockMvc → for Spring MVC controllers.
+- REST Assured → for full HTTP-level testing.
+- WebTestClient → for reactive APIs.
 
-### **Ready for Demo (Existing Endpoints)**
-- **Admin**: Login, view restaurants, create restaurant owner
-- **Restaurant Owner**: Login, CRUD restaurants, view own restaurants by ID, update/delete
-- **Member**: Registration, login, preferences (likes/dislikes with conflict resolution), filtered dishes, cart management, order & payment
+## AWS Setup
 
-### **Missing for Complete Demo**
-1. **Restaurant Owner Review Endpoints** (Services exist, controllers commented out)
-   - View all dish reviews for owned restaurants  
-   - Get average rating for dish options
-   - View individual dish reviews with ratings and messages
-   - Get restaurant average rating
+For infrastructure, we’re using **AWS Application Load Balancer (ALB)** in front of our application.
 
-### **Recommended Implementation Order**
-1. **Uncomment** existing review endpoints in `ReviewController.kt`
-2. **Add** `@RestaurantOwner` authorization to protect endpoints
-3. **Add** ownership validation in service layer
-4. **Test** complete demo flows
+* The ALB is handling the routing of traffic to our app.
+* We’ve set up **AWS Certificate Manager** to issue and manage our HTTPS certificate.
+* This way, all traffic is secure by default, without us needing to worry about certificate renewals.
 
 ---
 
-## **PRESENTATION READY FLOWS**
+### Production & Performance
 
-All endpoints below are **FULLY FUNCTIONAL** and ready for live demonstration:
-  "email": "user@demo.com",
-  "password": "password123",
-  "firstName": "Demo",
-  "lastName": "User"
-}
+* CI/CD and Deployment
+* The pipeline begins with a commit to the main branch of our Git repository.
+* **Pre-Build Stage** - The buildspec.yml first grants execute permissions to Gradle wrapper.
+* **Build Stage** - With the environment ready, the command ./gradlew bootJar is executed.
+* AWS CodeDeploy handles the deployment to the EC2 instance.
+* appspec.yml file is the central command for this phase, orchestrating the deployment lifecycle on our single EC2 instance.
+* scripts/before_install.sh - ensures a clean slate and frees up the port for the new version.
+* scripts/after_install.sh - - Setting file ownership and permissions for the new JAR.
+* The start.sh script launches the new JAR file. It includes a smart health check loop that continuously polls the /api/health endpoint.
 
-# 2. Add Multiple Likes
-POST /api/member/likes
-{
-  "tagNames": ["vegetarian", "spicy", "healthy"]
-}
-
-# 3. Add Dislikes (with overlap to show conflict resolution)
-POST /api/member/dislikes
-{
-  "tagNames": ["bitter", "spicy"]  # "spicy" will be removed from likes
-}
-
-# 4. Get Filtered Dishes
-GET /api/member/dishes/search
-# Returns dishes without "bitter" or "spicy", prioritizing "vegetarian" and "healthy"
-
-# 5. Add to Cart
-POST /api/member/cart/dish/1/dish-option/2
-{
-  "quantity": 2
-}
-
-# 6. Adjust Quantity
-PATCH /api/member/cart/dish-option/2
-{
-  "quantity": 3
-}
-
-# 7. Checkout
-POST /api/member/orders/cart-checkout
-# Response: {"paymentUrl": "https://checkout.stripe.com/..."}
-
-# 8. Payment Success (webhook automatically processes)
-# Order status: PENDING → COMPLETED
-# Cart automatically cleared
-```
-
-### **Scenario 2: Restaurant Owner Setup**
-```bash
-# 1. Admin creates restaurant owner
-POST /api/admin/restaurant-owner
-{
-  "email": "owner@restaurant.com",
-  "firstName": "Restaurant",
-  "lastName": "Owner"
-}
-
-# 2. Owner logs in
-POST /api/auth/restaurant-owner/login
-{
-  "email": "owner@restaurant.com", 
-  "password": "generated_password"
-}
-
-# 3. Create restaurant
-POST /api/restaurant-owner/restaurants
-{
-  "name": "Demo Pizza Place",
-  "description": "Best pizza in town",
-  "workingHours": [...]
-}
-
-# 4. Add dish with options
-POST /api/restaurant-owner/restaurant/1/dishes
-{
-  "name": "Margherita Pizza",
-  "description": "Classic pizza",
-  "dishOptionRequests": [
-    {"name": "Small", "price": 12.99},
-    {"name": "Large", "price": 18.99}
-  ]
-}
-
-# 5. Add tags to dish options
-POST /api/restaurant-owner/dish-options/1/tags
-{
-  "tagNames": ["vegetarian", "cheese", "tomato"]
-}
-```
-
-### **Scenario 3: Admin Oversight**
-```bash
-# 1. View join requests
-GET /api/admin/join-request
-
-# 2. Accept application
-POST /api/admin/join-request/accept/1
-
-# 3. Monitor all restaurants
-GET /api/admin/restaurants
-
-# 4. Update restaurant status
-PATCH /api/admin/restaurants/1/status
-{
-  "status": "INACTIVE"
-}
-```
+### Logging & Monitoring
+Logging: We use Logback for structured logging, and a custom CorrelationIdFilter assigns a unique correlationId to each request. This allows for end-to-end tracing of a request across all services.
+Monitoring: Logs from the EC2 instance are pushed to AWS CloudWatch, providing a centralized location for real-time monitoring, log analysis, and performance metric tracking.
 
 ---
 
-## System Statistics & Capabilities
+## Reflection
+**What we’d do differently next time”**
 
-- **User Types**: 3 (Admin, Restaurant Owner, Member)
-- **Total Endpoints**: 50 RESTful endpoints
-- **Authentication**: JWT-based with role verification
-- **Database**: PostgreSQL with JPA/Hibernate
-- **Payment**: Stripe integration with webhooks
-- **Filtering**: Advanced tag-based recommendation system
-- **Reviews**: Dual system for dishes and restaurants
-- **Real-time**: Preference conflict resolution and cart updates
+Since this was a 3-week sprint with all of us still learning, we definitely learned a lot the hard way. If we did it again, we’d start by putting more effort into **system design** — both high-level architecture and low-level details. We kind of jumped straight into coding and later realized we were missing diagrams and a clear picture of how things should fit together. We’d also focus on **team communication and coding standards** earlier on. Sometimes our code looked like it was written by four different people… because it was. A bit more alignment upfront would have saved us time fixing things later. So yeah — next time, better planning, clearer design, and cleaner teamwork.
 
----
 
-*This documentation covers the complete Happy Beans food delivery application workflow suitable for the demonstration.*
